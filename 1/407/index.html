@@ -1732,7 +1732,7 @@ a:hover { text-decoration: underline }
 </style>
   <table id="5" style="margin: 10px; width:100%;"> <tr><td><b><span style="color:#FF9900;font-size:24px;">❦</span> 小猫周边</b></td></tr>  </table>    <ul id="articleList">
 	<li data-author="dalu" data-content="因着我喜爱这小猫，于是就好奇她母亲的模样，就让原主人发一些老猫的图片来；&lt;br&gt;&lt;img src=&quot;//file.e651.com/1651/407/catmama-baby-1.jpg&quot; width=&quot;98%&quot;&gt;&lt;br&gt;小咪宝和妈妈&lt;hr&gt;&lt;img src=&quot;//file.e651.com/1651/407/catmama-baby-2.jpg&quot; width=&quot;98%&quot;&gt;&lt;br&gt;小咪宝和妈妈&lt;hr&gt;&lt;img src=&quot;//file.e651.com/1651/407/catmama-baby-3.jpg&quot; width=&quot;98%&quot;&gt;&lt;br&gt;小咪宝和妈妈&lt;hr&gt;&lt;img src=&quot;//file.e651.com/1651/407/catmama-baby-4.jpg&quot; width=&quot;98%&quot;&gt;&lt;br&gt;小咪宝和妈妈&lt;hr&gt;&lt;img src=&quot;//file.e651.com/1651/407/catmama-baby-5.jpg&quot; width=&quot;98%&quot;&gt;&lt;br&gt;小咪宝和妈妈&lt;hr&gt;&lt;img src=&quot;//file.e651.com/1651/407/catmama-baby-6.jpg&quot; width=&quot;98%&quot;&gt;&lt;br&gt;小咪宝和妈妈&lt;hr&gt;&lt;img src=&quot;//file.e651.com/1651/407/catmama-1.jpg&quot; width=&quot;98%&quot;&gt;&lt;br&gt;猫妈妈的生活&lt;hr&gt;&lt;img src=&quot;//file.e651.com/1651/407/catmama-2.jpg&quot; width=&quot;98%&quot;&gt;&lt;br&gt;猫妈妈的生活&lt;hr&gt;&lt;img src=&quot;//file.e651.com/1651/407/catmama-3.jpg&quot; width=&quot;98%&quot;&gt;&lt;br&gt;猫妈妈的生活&lt;hr&gt;&lt;img src=&quot;//file.e651.com/1651/407/catmama-4.jpg&quot; width=&quot;98%&quot;&gt;&lt;br&gt;猫妈妈的生活&lt;hr&gt;&lt;img src=&quot;//file.e651.com/1651/407/catmama-5.jpg&quot; width=&quot;98%&quot;&gt;&lt;br&gt;猫妈妈的生活&lt;hr&gt;&lt;img src=&quot;//file.e651.com/1651/407/catmama-6.jpg&quot; width=&quot;98%&quot;&gt;&lt;br&gt;猫妈妈的生活&lt;hr&gt;&lt;img src=&quot;//file.e651.com/1651/407/catmama-7.jpg&quot; width=&quot;98%&quot;&gt;&lt;br&gt;猫妈妈的生活&lt;hr&gt;&lt;img src=&quot;//file.e651.com/1651/407/catmama-8.jpg&quot; width=&quot;98%&quot;&gt;&lt;br&gt;猫妈妈的生活
-" style="cursor: pointer; margin-bottom: 5px;  padding: 10px; background-color: #EEEEEE; ">❏ 原小猫女主人发来的母猫照片</li>
+" style="cursor: pointer; margin-bottom: 5px;  padding: 10px; background-color: #EEEEEE; ">❏ 原主人发来的母猫照片</li>
     </ul>
     <script>
 // 获取文章标题列表元素
@@ -1797,21 +1797,116 @@ articleList.addEventListener('click', function (event) {
     }
 });
 </script>
+<style>
+  /* 提示框样式 */
+  #tooltip {
+    position: absolute;
+    background: #F0F0F0;
+    color: #999999;
+    padding: 10px;
+    border-radius: 4px;
+    display: none; /* 初始隐藏 */
+    z-index: 1000;
+  }
+</style>
+ <!-- 提示框内容 -->
+<div id="tooltip">
+  这是一个 <strong>HTML</strong> 提示框。<br>测试用的<br></div>
 
 <table width="100%" border="0" align="center" cellpadding="20">
   <tr>
-    <td align="center"><span style="color:#CCCCCC;">联系王小丽 wangxiaoli@mycst.com <br>mycst.com © 1999-2019</span></td>
+    <td align="center"><span style="color:#CCCCCC; font-size:12px;">联系王小丽 wangxiaoli@mycst.com <br>
+创建于2024-09-09 更新于2025-01-05 <span id="trigger">☘</span><br>
+ mycst.com © 1999-2019</span></td>
   </tr>
-</table> 
-<audio autoplay="autoplay" src="//music.163.com/song/media/outer/url?id=1873326892.0mp3" controls="controls" preload id="p-music" loop="loop" hidden="true"></audio>
-<script language="javascript" type="text/javascript">
-	document.onclick = function(event){
-		event = (event || window.event);
-		var audio = document.getElementById('p-music');
-		audio.play();
-		audio.muted = false;
-	}
+</table>
+
+<script>
+  const trigger = document.getElementById('trigger');
+  const tooltip = document.getElementById('tooltip');
+
+  // 点击触发元素显示提示框
+  trigger.addEventListener('click', function(event) {
+    event.stopPropagation(); // 阻止事件冒泡
+    tooltip.style.display = 'block';
+    tooltip.style.left = `${event.pageX - 200}px`;
+    tooltip.style.top = `${event.pageY - 200}px`;
+  });
+
+  // 点击页面任意位置隐藏提示框
+  document.addEventListener('click', function() {
+    tooltip.style.display = 'none';
+  });
+
+  // 可选：点击提示框本身不隐藏
+  tooltip.addEventListener('click', function(event) {
+    event.stopPropagation();
+  });
 </script>
+ 
+
+    <style>
+        .audio-controller {
+            position: absolute;
+            top: 10px; 
+            right: 10px; 
+        }
+
+        .play-pause-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(204, 204, 204, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .play-pause-btn.playing .note-icon {
+            animation: spin 1s linear infinite;
+        }
+
+        .note-icon {
+            font-size: 24px;
+            color: white;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <div class="audio-controller">
+        <audio id="background-music" src="//music.163.com/song/media/outer/url?id=1873326892.mp3"  autoplay loop></audio>
+        <div class="play-pause-btn" id="play-pause-btn">
+            <div class="note-icon">♪</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const audio = document.getElementById('background-music');
+            const playPauseBtn = document.getElementById('play-pause-btn');
+
+            playPauseBtn.addEventListener('click', function () {
+                if (audio.paused) {
+                    audio.play();
+                    playPauseBtn.classList.add('playing');
+                } else {
+                    audio.pause();
+                    playPauseBtn.classList.remove('playing');
+                }
+            });
+        });
+    </script>
+
+
 <script>
 var _hmt = _hmt || [];
 (function() {
