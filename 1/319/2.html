@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小猫家庭成员</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center; /* 大标题居中 */
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #searchWrapper {
+            text-align: center; /* 搜索框居中 */
+            margin-bottom: 20px;
+        }
+        #searchInput {
+            padding: 10px;
+            width: 80%;
+            max-width: 400px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        #csvDisplay {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .csv-item {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .csv-item:hover {
+            transform: translateY(-5px);
+        }
+        .csv-item img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+        .csv-item-content {
+            padding: 15px;
+        }
+        .csv-item h3 {
+            margin-top: 0;
+            color: #333;
+            font-size: 1.2em;
+        }
+        .csv-item p {
+            margin: 5px 0;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto; /* Centered */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            max-width: 800px;
+            width: 90%;
+            position: relative;
+            animation-name: animatetop;
+            animation-duration: 0.4s
+        }
+        @keyframes animatetop {
+            from {top: -300px; opacity: 0}
+            to {top: 0; opacity: 1}
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal-body img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        .modal-body h2 {
+            margin-top: 0;
+            color: #333;
+            font-size: 1.8em;
+        }
+        .modal-body p {
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .modal-body strong {
+            color: #333;
+        }
+        #loadingMessage {
+            text-align: center;
+            font-size: 1.2em;
+            color: #888;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>小猫家庭成员</h1>
+
+    <div id="searchWrapper">
+        <input type="text" id="searchInput" placeholder="输入关键词搜索 (标题/标签/作者/内容)">
+    </div>
+
+    <div id="loadingMessage">正在加载数据文件...</div>
+
+    <div id="csvDisplay">
+        </div>
+
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="modal-body">
+                </div>
+        </div>
+    </div>
+
+<p style="text-align: center;">
+    [<a href="//e651.com/1/319/" target="_blank">小猫妈妈和外婆的资料</a>]
+</p>
+    <script>
+        const csvDisplay = document.getElementById('csvDisplay');
+        const detailModal = document.getElementById('detailModal');
+        const modalBody = detailModal.querySelector('.modal-body');
+        const closeButton = detailModal.querySelector('.close-button');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const searchInput = document.getElementById('searchInput'); // 获取搜索输入框
+
+        const CSV_FILE_PATH = 'data.csv'; // <--- 这里是你的本地CSV文件路径
+
+        let csvData = []; // 用于存储解析后的CSV原始数据
+        let filteredData = []; // 用于存储过滤后的数据
+
+        // 解析 CSV 字符串为 JavaScript 数组
+        function parseCSV(csvString) {
+            const lines = csvString.trim().split('\n');
+            if (lines.length === 0) return [];
+
+            const headers = lines[0].split(',').map(header => header.trim());
+            const data = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(value => value.trim());
+                if (values.length !== headers.length || lines[i].trim() === '') {
+                    console.warn(`Skipping malformed or empty row: ${lines[i]}`);
+                    continue; // 跳过列数不匹配或空行
+                }
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index];
+                });
+                data.push(row);
+            }
+            return data;
+        }
+
+        // 显示 CSV 列表（根据传入的数据）
+        function displayCSVList(dataToDisplay) {
+            loadingMessage.style.display = 'none'; // 隐藏加载信息
+            csvDisplay.innerHTML = ''; // 清空之前的内容
+            if (dataToDisplay.length === 0) {
+                csvDisplay.innerHTML = '<p style="text-align: center; color: #888;">没有找到符合条件的数据。</p>';
+                return;
+            }
+
+            dataToDisplay.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('csv-item');
+                // 注意：这里的index是filteredData的index，而非csvData的原始index
+                // 为了确保锚点正确对应原始数据，需要存储原始数据在csvData中的索引
+                // 这里假设filteredData的元素就是csvData中的元素，直接使用其引用
+                const originalIndex = csvData.indexOf(item); // 找到原始数据的索引
+                itemDiv.dataset.index = originalIndex;
+
+                const coverImage = item['封面'] || 'https://2.eemai.com/usr/uploads/demo/tools/php-auto-generate-image.php?width=400&height=300&bgcolor=0099FF&textcolor=FFFFFF&text=notpic';
+                 
+                itemDiv.innerHTML = `
+                    <img src="${coverImage}" alt="${item['标题']}">
+                    <div class="csv-item-content">
+                        <h3>${item['标题'] || '无标题'}</h3>
+                        <p><strong>标签:</strong> ${item['标签'] || '无标签'}</p>
+                        <p><strong>日期:</strong> ${item['日期'] || '无日期'}</p>
+                    </div>
+                `;
+                csvDisplay.appendChild(itemDiv);
+
+                itemDiv.addEventListener('click', () => showDetail(item, originalIndex));
+            });
+        }
+
+        // 显示详情弹窗
+        function showDetail(item, index) {
+            const coverImage = item['封面'];
+
+            modalBody.innerHTML = `
+                <!--<img src="${coverImage}" alt="${item['标题']}">-->
+                <h2>${item['标题'] || '无标题'}</h2>
+                <p><strong>标签:</strong> ${item['标签'] || '无标签'}</p>
+                <p><strong>日期:</strong> ${item['日期'] || '无日期'}</p>
+                <p><strong>作者:</strong> ${item['作者'] || '无作者'}</p>
+                <p><strong>内容:</strong> ${item['内容'] || '无内容'}</p>
+                <p>[<a href='//e651.com/1/319/' target='_blank'>查看小猫妈妈和外婆的资料</a>]</p>
+            `;
+            detailModal.style.display = 'flex'; // 显示弹窗
+
+            // 更新URL锚点
+            history.pushState(null, '', `#item-${index}`);
+        }
+
+        // 关闭详情弹窗
+        function closeDetail() {
+            detailModal.style.display = 'none';
+            // 移除URL锚点 (或者恢复到没有锚点的URL)
+            history.pushState(null, '', window.location.pathname + window.location.search);
+        }
+
+        // 检查URL锚点并显示详情页
+        function checkUrlAnchor() {
+            const hash = window.location.hash;
+            if (hash.startsWith('#item-')) {
+                const index = parseInt(hash.substring(6));
+                if (csvData[index]) { // 确保是原始数据中的索引
+                    showDetail(csvData[index], index);
+                }
+            }
+        }
+
+        // 搜索过滤功能
+        function filterCSVData() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+
+            if (!searchTerm) {
+                filteredData = [...csvData]; // 如果搜索词为空，显示所有数据
+            } else {
+                filteredData = csvData.filter(item => {
+                    // 检查标题、标签、作者和内容是否包含搜索词
+                    return (item['标题'] && item['标题'].toLowerCase().includes(searchTerm)) ||
+                           (item['标签'] && item['标签'].toLowerCase().includes(searchTerm)) ||
+                           (item['作者'] && item['作者'].toLowerCase().includes(searchTerm)) ||
+                           (item['内容'] && item['内容'].toLowerCase().includes(searchTerm));
+                });
+            }
+            displayCSVList(filteredData);
+        }
+
+
+        // 页面加载时自动读取CSV文件
+        window.addEventListener('load', () => {
+            fetch(CSV_FILE_PATH)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status} - Could not load ${CSV_FILE_PATH}. Make sure it exists and you are running this via a web server.`);
+                    }
+                    return response.text();
+                })
+                .then(csvString => {
+                    csvData = parseCSV(csvString);
+                    filteredData = [...csvData]; // 初始时，过滤数据就是所有数据
+                    displayCSVList(filteredData);
+                    checkUrlAnchor(); // 在数据加载后检查锚点
+                })
+                .catch(error => {
+                    console.error('Error fetching the CSV:', error);
+                    loadingMessage.innerHTML = `<p style="color: red;">加载 CSV 文件失败：${error.message}</p><p style="color: red;">请确保文件 ${CSV_FILE_PATH} 存在，并且您正在通过本地 Web 服务器运行此页面。</p>`;
+                });
+        });
+
+        // 事件监听：点击关闭按钮
+        closeButton.addEventListener('click', closeDetail);
+
+        // 事件监听：点击弹窗外部区域关闭
+        detailModal.addEventListener('click', (event) => {
+            if (event.target === detailModal) {
+                closeDetail();
+            }
+        });
+
+        // 事件监听：搜索输入框内容变化
+        searchInput.addEventListener('input', filterCSVData);
+
+
+        // 处理浏览器前进/后退按钮对锚点的影响
+        window.addEventListener('popstate', () => {
+            if (detailModal.style.display === 'flex' && !window.location.hash.startsWith('#item-')) {
+                closeDetail();
+            } else if (window.location.hash.startsWith('#item-') && csvData.length > 0) {
+                 checkUrlAnchor();
+            }
+        });
+
+    </script>
+</body>
+</html>
