@@ -7,13 +7,28 @@
 <style type="text/css">
 a { text-decoration: none; color: # }
 </style>
+  <script>
+        // 获取域名对应的文字（支持带www的域名）
+        function getSiteText() {
+            var domain = window.location.hostname.toUpperCase();
+            if (domain.includes('MYCST.COM')) return '人生档案馆';
+            if (domain.includes('NWIDT.COM')) return '时光访谈录';
+            if (domain.includes('XZ114.COM')) return '村志村史馆';
+            
+            return '新境传播';
+        }
+        // 一次性设置所有位置
+        var text = getSiteText();
+        document.getElementById('sitename').textContent = text;
+        
+    </script>
 </head>
 <body>
 <table width="100%" border="0" cellpadding="0" cellspacing="10">
 <tr valign="middle">
 <td align="center"><span style="font-size:99px;color:#009900;">☘︎</span> </td></tr>
 <tr valign="middle">
-<td align="center"><h1>人生档案馆</h1></td>
+<td align="center"><h1 id="sitename">人生档案馆</h1></td>
 </tr>
 <tr valign="middle">
 <td align="center"><br><br><br></td>
@@ -25,7 +40,7 @@ a { text-decoration: none; color: # }
 
 us@mycst.com<br><br><br><br><br><br>
 
-<span style="color:#CCCCCC;">@1995-2015 人生档案馆</span> 
+@1995-2015 <span style="color:#CCCCCC;" id="sitename">人生档案馆</span> 
 </body></td>
 </tr>
 </table>
@@ -33,4 +48,5 @@ us@mycst.com<br><br><br><br><br><br>
 
 </body>
 </html>
+
 
