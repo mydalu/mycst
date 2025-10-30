@@ -1,0 +1,298 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>乡村志博物馆</title>
+    <style>
+        body {
+            /*font-family: "宋体", SimSun, serif;*/
+            background-color: #f5f5dc;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            width: 720px;
+            margin: 0 auto;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+        header {
+            background-color: #8B4513;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-bottom: 3px solid #A0522D;
+        }
+        h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+        nav {
+            background-color: #D2B48C;
+            padding: 5px;
+            margin-bottom: 5px;
+        }
+        nav a {
+            color: #333;
+            text-decoration: none;
+            padding: 0 10px;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .main {
+            display: flex;
+        }
+        .content {
+            flex: 3;
+            padding-right: 20px;
+        }
+        .sidebar {
+            flex: 1;
+            border-left: 1px dotted #ccc;
+            padding-left: 20px;
+        }
+        footer {
+            margin-top: 20px;
+            border-top: 1px dotted #ccc;
+            padding-top: 10px;
+            font-size: 12px;
+            text-align: center;
+        }
+        .counter {
+            text-align: center;
+            margin: 5px 0;
+        }
+        img {
+            border: 1px solid #333;
+            max-width: 100%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        table, th, td {
+            border: 1px solid #333;
+        }
+        th, td {
+            padding: 5px;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+		      
+        <header>
+            <h1>乡村志博物馆</h1>
+<p>记录乡村历史，传承文化记忆</p>
+ </header>
+        
+        <nav>
+		<a href="index.html">首页</a>
+		|<a href="17.html" target="_blank">风格样式</a>
+|<a href="16.html" target="_blank">网络优势</a>
+        </nav>
+        
+        <div class="counter">
+            <img src="https://xz.eecms.com/skin/dalu/img/cunbanner3.gif" width="100%">
+        </div>
+        
+        <div class="main">
+            <div class="content">
+            
+		<p>《村史馆》数字平台&mdash;&mdash;旨在为村庄提供在线展示与数据长久保存的服务。可以帮助整理村志等相关资料，制作成在线网站，支持电脑、手机浏览的服务。</p>
+<table cellspacing="0" cellpadding="10" bordercolor="#FFCC66" border="1">
+    <thead>
+        <tr>
+            <th>维度对比</th>
+            <th>传统纸质模式</th>
+            <th>网络数字化模式</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>访问效率</td>
+            <td>村史馆或书柜中</td>
+            <td>随时点开</td>
+        </tr>
+        <tr>
+            <td>分享效率</td>
+            <td>送达或快递书本</td>
+            <td>随手转发</td>
+        </tr>
+        <tr>
+            <td>查询效率</td>
+            <td>翻开书本按行查找</td>
+            <td>关键词搜索直达</td>
+        </tr>
+        <tr>
+            <td>内容维度</td>
+            <td>文字+插图</td>
+            <td>全景+音频+视频等</td>
+        </tr>
+        <tr>
+            <td>传播范围</td>
+            <td>本村及周边</td>
+            <td>全互联网覆盖区域</td>
+        </tr>
+        <tr>
+            <td>更新成本</td>
+            <td>重印全套（5万元/次）</td>
+            <td>增量更新（200元/次）</td>
+        </tr>
+        <tr>
+            <td>衍生价值</td>
+            <td>无</td>
+            <td>文旅IP开发/学术研究/政策参考</td>
+        </tr>
+    </tbody>
+</table>
+<p>联系我们：19903777114</p>
+<p>电子邮箱：mydalu@msn.com</p>
+
+            </div>
+     <div class="sidebar">
+<h3>快速导航</h3>
+                <ul>
+				<li><a href="#search">村史沿革</a></li>
+				<li><a href="#search">家族档案</a></li>
+				<li><a href="#search">旧照相册</a></li>
+				<li><a href="#search">口述历史</a></li>
+                    <li><a href="#search">档案检索</a></li>
+                    <li><a href="#timeline">历史年表</a></li>
+                    <li><a href="#map">村庄地图</a></li>
+                </ul>
+<style>
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal[open] { display: flex; }
+        .modal-content {
+            width: 700px;
+            max-height: 90vh;
+            background: white;
+            padding: 2rem;
+            overflow: auto;
+            position: relative;
+            border-radius: 0.5rem;
+            box-shadow: 0 0 1rem rgba(0,0,0,0.3);
+        }
+        .close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+    </style>
+                <h3>分类</h3>
+        <ul>
+		<li><a data-modal="modal1" href="index.html#a1">介绍</a></li>
+<li><a data-modal="modal2" href="index.html#a2">文章</a></li>
+<li><a data-modal="modal3" href="index.html#a3">留声</a></li>
+<li><a data-modal="modal4" href="index.html#a4">画报</a></li>
+<li><a data-modal="modal5" href="index.html#a5">影像</a></li>
+<li><a data-modal="modal6" href="index.html#a6">见证</a></li>
+        </ul>
+
+        <div id="article-container">          
+                <h3>推荐</h3>
+<ul>
+<li><a href="19.html" target="_blank">村史馆设立标准</a></li>
+<li><a href="18.html" target="_blank">村志编修技巧</a></li>
+       </ul>         
+      </div>          
+                
+                <h3>相关链接</h3>
+                <ul>
+                    <li><a href="http://www.nwidt.com">新境传承</a></li>
+                    <li><a href="http://www.mycst.com">人生档案馆</a></li>
+                    <li><a href="http://www.xz114.com">乡志博物馆</a></li>
+					<li><a href="http://xz.eecms.com/5/10009">本馆链接</a></li>
+                </ul>
+            </div>
+</div>
+
+        
+<div id="modal1" class="modal" onclick="event.target === this && this.removeAttribute('open')">
+    <div class="modal-content">
+        <span class="close" onclick="this.closest('.modal').removeAttribute('open')">×</span>
+        <h2>介绍</h2>
+         <li> <a href="16.html" target="_blank">网络优势</a></li>
+    </div>
+</div>
+        
+<div id="modal2" class="modal" onclick="event.target === this && this.removeAttribute('open')">
+    <div class="modal-content">
+        <span class="close" onclick="this.closest('.modal').removeAttribute('open')">×</span>
+        <h2>文章</h2>
+         <li> <a href="19.html" target="_blank">村史馆设立标准</a></li>
+ <li> <a href="17.html" target="_blank">风格样式</a></li>
+    </div>
+</div>
+        
+<div id="modal3" class="modal" onclick="event.target === this && this.removeAttribute('open')">
+    <div class="modal-content">
+        <span class="close" onclick="this.closest('.modal').removeAttribute('open')">×</span>
+        <h2>留声</h2>
+         <li> <a href="18.html" target="_blank">村志编修技巧</a></li>
+    </div>
+</div>
+        
+<div id="modal4" class="modal" onclick="event.target === this && this.removeAttribute('open')">
+    <div class="modal-content">
+        <span class="close" onclick="this.closest('.modal').removeAttribute('open')">×</span>
+        <h2>画报</h2>
+            </div>
+</div>
+        
+<div id="modal5" class="modal" onclick="event.target === this && this.removeAttribute('open')">
+    <div class="modal-content">
+        <span class="close" onclick="this.closest('.modal').removeAttribute('open')">×</span>
+        <h2>影像</h2>
+            </div>
+</div>
+        
+<div id="modal6" class="modal" onclick="event.target === this && this.removeAttribute('open')">
+    <div class="modal-content">
+        <span class="close" onclick="this.closest('.modal').removeAttribute('open')">×</span>
+        <h2>见证</h2>
+            </div>
+</div>
+ 
+<script>
+    document.addEventListener('click', e => {
+        const modalId = e.target.dataset?.modal;
+        if (modalId) {
+            e.preventDefault();
+            document.getElementById(modalId).toggleAttribute('open');
+        }
+    });
+</script>
+
+
+
+
+        <footer>
+            <p>© 1995-2015 乡村博物馆 版权所有</p>
+            <p>创建日期2005-05-22 最后更新：2015-05-24</p>
+           
+        </footer>
+    </div>
+	
+ 
+</body>
+</html>
