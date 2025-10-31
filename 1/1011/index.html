@@ -1038,11 +1038,13 @@ audioList.addEventListener('click', function (event) {
     <td align="center"><span style="color:#CCCCCC; font-size:12px;">联系  <br>
 创建于2025-04-29 更新于2025-08-21 <span id="trigger">☘</span><br>
  mycst.com © 1999-2019</span> <!-- 显示浏览量 -->
-<div id="views" style="color:#999999;"></div>
+<div id="pageviews" style="color:#999999;font-size:12px;">...</div>
 <script>
-fetch('//e.aimanrenjian.org/tj/?id=1011&show=1')
-    .then(r => r.text())
-    .then(views => document.getElementById('views').textContent = '浏览量: ' + views);
+fetch('//visitors.e651.com/tj.php?id=1011&show=1')
+    .then(response => response.text())
+    .then(views => {
+        document.getElementById('pageviews').textContent = '访问量: ' + views;
+    });
 </script></td>
   </tr>
 </table>
