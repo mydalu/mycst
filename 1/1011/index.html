@@ -1080,29 +1080,13 @@ var _hmt = _hmt || [];
 
  <script src='//cp.eecms.com/e/public/onclick?enews=donews&classid=1&id=1026'></script>
   <!-- 显示浏览量 -->
-    <div id="pageviews" style="margin-top: 20px; padding: 10px; background: #f5f5f5;">
-        加载浏览量中...
-    </div>
+   <div id="views">统计中...</div>
 
-    <script>
-    // 统计并显示浏览量（替换1234为你的页面ID）
-    fetch('http://e.aimanrenjian.org/tj/?id=1011&show=1')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('网络响应不正常');
-            }
-            return response.text();
-        })
-        .then(views => {
-            document.getElementById('pageviews').innerHTML = 
-                '<strong>页面浏览量:</strong> ' + views + ' 次';
-        })
-        .catch(error => {
-            console.error('统计加载失败:', error);
-            document.getElementById('pageviews').innerHTML = 
-                '<strong>页面浏览量:</strong> 统计加载中...';
-        });
-    </script>
+<script>
+fetch('http://e.aimanrenjian.org/tj/?id=1234&show=1')
+    .then(r => r.text())
+    .then(views => document.getElementById('views').textContent = '浏览量: ' + views);
+</script>
 	
 </body>
 </html>
