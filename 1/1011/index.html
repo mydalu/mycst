@@ -1037,7 +1037,13 @@ audioList.addEventListener('click', function (event) {
   <tr>
     <td align="center"><span style="color:#CCCCCC; font-size:12px;">联系  <br>
 创建于2025-04-29 更新于2025-08-21 <span id="trigger">☘</span><br>
- mycst.com © 1999-2019</span></td>
+ mycst.com © 1999-2019</span> <!-- 显示浏览量 -->
+<div id="views" style="color:#999999;"></div>
+<script>
+fetch('//e.aimanrenjian.org/tj/?id=1011&show=1')
+    .then(r => r.text())
+    .then(views => document.getElementById('views').textContent = '浏览量: ' + views);
+</script></td>
   </tr>
 </table>
 </footer>
@@ -1079,13 +1085,7 @@ var _hmt = _hmt || [];
 
 
  <script src='//cp.eecms.com/e/public/onclick?enews=donews&classid=1&id=1026'></script>
-  <!-- 显示浏览量 -->
-<div id="views" style="color:#999999;"></div>
-<script>
-fetch('//e.aimanrenjian.org/tj/?id=1011&show=1')
-    .then(r => r.text())
-    .then(views => document.getElementById('views').textContent = '浏览量: ' + views);
-</script>
+  
 	
 </body>
 </html>
