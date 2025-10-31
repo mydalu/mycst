@@ -406,5 +406,13 @@ function scrollToTop() {
 // 为“回到顶部”按钮添加点击事件监听器  
 document.getElementById("backToTop").addEventListener("click", scrollToTop);			
  </script>  
+
+	<!-- 显示浏览量 -->
+<div id="views" style="color:#999999;"></div>
+<script>
+fetch('//e.aimanrenjian.org/tj/?id=10045&show=1')
+    .then(r => r.text())
+    .then(views => document.getElementById('views').textContent = '浏览量: ' + views);
+</script>
 </body>
 </html>
