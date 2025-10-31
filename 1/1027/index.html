@@ -508,7 +508,13 @@ var _hmt = _hmt || [];
 })();
 </script>
 
- 
+ <!-- 显示浏览量 -->
+<div id="views" style="color:#999999;"></div>
+<script>
+fetch('//e.aimanrenjian.org/tj/?id=1027&show=1')
+    .then(r => r.text())
+    .then(views => document.getElementById('views').textContent = '浏览量: ' + views);
+</script>
 </body>
 </html>
 
