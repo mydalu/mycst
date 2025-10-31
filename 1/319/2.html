@@ -329,12 +329,13 @@
 
     </script>
 
-    <!-- 显示浏览量 -->
-<div id="views" style="color:#999999;"></div>
+<div id="pageviews" style="color:#999999;font-size:12px;">...</div>
 <script>
-fetch('//e.aimanrenjian.org/tj/?id=319&show=1')
-    .then(r => r.text())
-    .then(views => document.getElementById('views').textContent = '浏览量: ' + views);
+fetch('//visitors.e651.com/tj.php?id=319&show=1')
+    .then(response => response.text())
+    .then(views => {
+        document.getElementById('pageviews').textContent = '访问量: ' + views;
+    });
 </script>
 </body>
 </html>
