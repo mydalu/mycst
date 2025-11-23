@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全景图片上传查看器</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    <link rel="stylesheet" href="pannellum.css"/>
+    
+    <style>
+        /* CSS 样式部分 */
+        body {
+            margin: 0;
+            overflow: hidden; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000;
+        }
+
+        /* Pannellum 渲染容器占据整个视口 */
+        #p-viewer {
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1; /* 保持在上传界面下方 */
+        }
+
+        /* 上传和提示区域 */
+        #info {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            color: white;
+            padding: 30px;
+            background-color: rgba(0, 0, 0, 0.75);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        #imageUploader {
+            margin-top: 15px;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="p-viewer"></div>
+
+    <div id="info">
+        <h1>全景图片查看器</h1>
+        <p>请上传一张 **等距柱状 (Equirectangular)** 全景图片 (.jpg 或 .png)</p>
+        <input type="file" id="imageUploader" accept="image/*">
+        
+            <div align="center"><br />
+<a href="/tools/" style="font-size:12px;color:#999999;text-decoration: none;">返回工具列表</a>	<span style="font-size:12px;color:#999999;">联系站长 E651@msn.com</span>
+</div>
+
+    </div>
+    
+
+
+    <script type="text/javascript" src="pannellum.js"></script>
+
+    <script>
+        // JavaScript 逻辑部分
+        const uploader = document.getElementById('imageUploader');
+        const infoDiv = document.getElementById('info');
+        let viewer = null; // 用于存储 Pannellum 实例
+
+        /**
+         * 初始化或更新 Pannellum Viewer
+         * @param {string} imageUrl - 图片的 Data URL
+         */
+        function initializeViewer(imageUrl) {
+            // 如果 viewer 已经存在，销毁并重新创建 (最可靠的方式)
+            if (viewer) {
+                viewer.destroy();
+            }
+
+            // 隐藏上传提示
+            infoDiv.style.display = 'none';
+
+            // 使用 Pannellum.viewer 初始化
+            viewer = pannellum.viewer('p-viewer', {
+                "type": "equirectangular",
+                "panorama": imageUrl,           // 使用上传图片的 Data URL
+                "autoLoad": true,              // 自动加载
+                "showZoom": true,              // 允许缩放
+                "autoRotate": 0,               // **移除自动旋转**
+                "compass": true,               // 显示指南针
+                "hfov": 100,                   // 初始视野角度
+            });
+        }
+
+        // 4. 图片上传处理
+        uploader.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // 使用 FileReader 读取文件内容
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageUrl = e.target.result;
+                    // 读取完成后，使用 Data URL 初始化 Pannellum Viewer
+                    initializeViewer(imageUrl);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>
