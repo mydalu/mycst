@@ -1,1 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E路无忧工具箱</title>
+    <style>
+        /* 2. CSS 样式 (嵌入在 <style> 标签中) */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f7f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        #search-box {
+            width: 100%;
+            padding: 12px 20px;
+            margin-bottom: 30px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box; /* 确保 padding 不会增加总宽度 */
+            transition: border-color 0.3s;
+        }
+        #search-box:focus {
+            border-color: #007bff; /* 聚焦时边框变色 */
+            outline: none;
+        }
+        .tool-list {
+            list-style: none;
+            padding: 0;
+        }
+        .tool-item {
+            /*display: flex; /* 使用 flex 布局 */
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            transition: background-color 0.2s, box-shadow 0.2s;
+        }
+        .tool-item:hover {
+            background-color: #eaf6ff;
+            box-shadow: 0 2px 5px rgba(0, 123, 255, 0.1);
+        }
+        .tool-item a {
+            flex-grow: 1; /* 链接占据剩余空间 */
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .tool-item p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+            /*margin-left: 20px;*/
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
 
+<div class="container">
+    <h1>📚 E路无忧工具箱</h1>
+
+    <input type="text" id="search-box" placeholder="输入关键词搜索工具..." onkeyup="filterTools()">
+
+    <ul id="tool-list" class="tool-list">
+        <li class="tool-item" data-keywords="">
+            <a href="sousuo.html" target="_blank">一键多搜工具</a>
+            <p>同时显示三个搜索引擎结果</p>
+        </li>
+        <li class="tool-item" data-keywords="">
+            <a href="text/fuhao.html" target="_blank">特殊符号大全</a>
+            <p>各种符号分类显示</p>
+        </li>
+        <li class="tool-item" data-keywords="">
+            <a href="photo/quanjing-vr/" target="_blank">全景照片查看器</a>
+            <p>上传2:1尺寸的全景图后自动查看</p>
+        </li>
+        <li class="tool-item" data-keywords="">
+            <a href="photo/shuiyinxiaochu.html" target="_blank">图片水印消除工具</a>
+            <p>可对单张图片在指定位置涂抹掉水印标识</p>
+        </li>
+        <li class="tool-item" data-keywords="">
+            <a href="video/shipinjietu.html" target="_blank">视频批量截图工具</a>
+            <p>可对视频进行指定时间的快速截图</p>
+        </li>
+        
+         <li class="tool-item" data-keywords="">
+            <a href="photo/zhengjianzhaopaiban.html" target="_blank">证件照排版打印工具</a>
+            <p>可对照片进行指定尺寸和纸张进行自动排版</p>
+        </li>
+        
+        
+        <li class="tool-item" data-keywords="">
+            <a href="photo/small-big-cut.html" target="_blank">图片压缩增大剪裁工具</a>
+            <p>可对照片进行压缩或增大或剪裁</p>
+        </li>
+        <li class="tool-item" data-keywords="">
+            <a href="photo/pintu.html" target="_blank">图片拼图工具</a>
+            <p>可对多张照片进行横向或竖向拼接生成大图</p>
+        </li>
+        <li class="tool-item" data-keywords="">
+            <a href="text/banji-suiji.html" target="_blank">班级团队活动随机任务分组</a>
+            <p>任务分配，成员分组，随机抽查点名</p>
+        </li>
+        <li class="tool-item" data-keywords="">
+            <a href="life/shengliqi.html" target="_blank">女性生理期排卵期安全期计算日历</a>
+            <p>可生成日历</p>
+        </li>
+        <li class="tool-item" data-keywords="">
+            <a href="text/xingmingpaixu.html" target="_blank">中文姓名按首字母或笔画排序工具</a>
+            <p>根据首字母及姓氏笔画数量排序</p>
+        </li>
+        <li class="tool-item" data-keywords="">
+            <a href="photo/tupianyansetihuan.html" target="_blank">图片颜色批量替换工具</a>
+            <p>可对多张图片中的指定颜色进行替换</p>
+        </li>
+        
+        <li class="tool-item" data-keywords="">
+            <a href="text/wenzilangdu.html" target="_blank">文字朗读工具</a>
+            <p>输入或粘贴文本可以进行中文语音朗读</p>
+        </li>
+        <li class="tool-item" data-keywords="">
+            <a href="text/wenbenchuli7.html" target="_blank">文本处理工具集7种</a>
+            <p>去除空行，去除空格，去除左边右边字符，关键词替换，合并空行，过滤符号</p>
+        </li>
+        <li class="tool-item" data-keywords="">
+            <a href="life/naozhong.html" target="_blank">网页自定义多组闹钟工具</a>
+            <p>可设置闹铃时间和历史闹钟</p>
+        </li>
+        <li class="tool-item" data-keywords="">
+            <a href="soft/wenjianchongmingming.html" target="_blank">文件批量重命名工具</a>
+            <p>支持照片按拍摄日期命名</p>
+        </li>
+         <li class="tool-item" data-keywords="">
+            <a href="text/cipin.html" target="_blank">文本词频统计工具</a>
+            <p>按词组统计重复数量</p>
+        </li>
+         <li class="tool-item" data-keywords="">
+            <a href="soft/word2html.html" target="_blank">word文档转html网页工具</a>
+            <p>内容中的图片自动压缩并以Base64编码内联显示</p>
+        </li>
+        </ul>
+</div>
+
+<div align="center"><br />
+	<span style="font-size:12px;color:#999999;">联系站长 E651@msn.com</span>
+</div>
+
+<script>
+    function filterTools() {
+        // 获取搜索框的值并转换为小写
+        const searchInput = document.getElementById('search-box');
+        const filter = searchInput.value.toLowerCase();
+
+        // 获取所有的工具列表项
+        const toolList = document.getElementById('tool-list');
+        const items = toolList.getElementsByClassName('tool-item');
+
+        // 遍历所有列表项
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            // 获取工具项的关键字（优先从 data-keywords 属性获取）
+            // 否则从工具标题和描述的文本内容中获取
+            const keywords = (item.getAttribute('data-keywords') || item.textContent).toLowerCase();
+
+            // 检查关键字是否包含搜索词
+            if (keywords.indexOf(filter) > -1) {
+                // 如果包含，则显示该列表项
+                item.classList.remove('hidden');
+            } else {
+                // 如果不包含，则隐藏该列表项
+                item.classList.add('hidden');
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
