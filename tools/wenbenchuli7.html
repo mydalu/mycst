@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高效文本编辑助手-文本处理工具</title>
+    <style>
+        /* 全局样式*/
+        body {
+            font-family: monospace; /* 使用等宽字体，早期网页常见 */
+            background-color: #DDDDDD; /* 浅灰色背景 */
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* 主容器：模拟网页主体区域的线框 */
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 15px; /* 减少内边距 */
+            background-color: #EEEEEE; /* 容器背景色 */
+            border: 1px solid #666666; /* 明显的边框线 */
+            border-radius: 0; /* 无圆角 */
+            box-shadow: none; /* 无阴影 */
+        }
+
+        /* 选项卡导航区：模拟表格行 */
+        .tab-navigation {
+            display: flex;
+            flex-wrap: wrap; /* 允许换行 */
+            margin-bottom: -1px; /* 让选项卡底部与内容区边框重合 */
+            border-bottom: 1px solid #666666; /* 底部边框 */
+        }
+
+        /* 选项卡按钮：模拟表格单元格 */
+        .tab-button {
+            background-color: #CCCCCC; /* 按钮背景色 */
+            border: 1px solid #666666; /* 按钮边框 */
+            border-bottom: none; /* 活动选项卡底部无边框，与内容区融合 */
+            padding: 8px 15px; /* 按钮内边距 */
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: normal; /* 字体不加粗 */
+            color: #333333;
+            border-radius: 0; /* 无圆角 */
+            transition: none; /* 无过渡效果 */
+            outline: none; /* 移除默认焦点轮廓 */
+            margin-right: 2px; /* 按钮之间的小间距 */
+            margin-bottom: -1px; /* 让按钮底部与导航边框重合 */
+        }
+
+        .tab-button:hover {
+            background-color: #BBBBBB; /* 鼠标悬停效果 */
+        }
+
+        /* 选中选项卡按钮的样式 */
+        .tab-button.active {
+            background-color: #EEEEEE; /* 与内容区背景色一致 */
+            border-color: #666666; /* 边框颜色 */
+            color: #000000; /* 选中文字颜色 */
+            position: relative;
+            z-index: 1; /* 确保在上方 */
+            border-bottom-color: #EEEEEE; /* 与内容区背景色融合 */
+        }
+
+        /* 选项卡内容区 */
+        .tab-content {
+            display: none;
+            padding: 15px;
+            border: 1px solid #666666; /* 明显边框 */
+            border-radius: 0;
+            background-color: #EEEEEE;
+            margin-top: 0; /* 与选项卡按钮对齐 */
+        }
+
+        .tab-content.active {
+            display: block; /* 显示选中内容 */
+        }
+
+        /* 各功能标题 */
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333333;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #AAAAAA; /* 简单分割线 */
+            padding-bottom: 5px;
+        }
+
+        /* 标签文字 */
+        label {
+            display: block;
+            font-weight: normal;
+            color: #333333;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        /* 文本输入框 */
+        textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #666666; /* 明显边框 */
+            border-radius: 0; /* 无圆角 */
+            box-sizing: border-box;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #333333;
+            transition: none; /* 无过渡效果 */
+            margin-bottom: 10px;
+            min-height: 100px; /* 输入框最小高度 */
+            background-color: #FFFFFF; /* 白色背景 */
+        }
+
+        /* 单行输入框 (数字和文本) */
+        input[type="number"],
+        input[type="text"] {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #666666; /* 明显边框 */
+            border-radius: 0; /* 无圆角 */
+            box-sizing: border-box;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #333333;
+            transition: none; /* 无过渡效果 */
+            margin-bottom: 10px; /* 间距 */
+            background-color: #FFFFFF; /* 白色背景 */
+            height: 32px; /* 明确单行高度 */
+        }
+
+
+        /* 输入框焦点样式：经典虚线蓝框 */
+        textarea:focus,
+        input[type="number"]:focus,
+        input[type="text"]:focus {
+            outline: 1px dashed #0000FF; /* 虚线边框 */
+            border-color: #0000FF; /* 蓝色边框 */
+            box-shadow: none; /* 无阴影 */
+        }
+        
+        /* 输出结果框 */
+        .output-box {
+            background-color: #FFFFFF; /* 白色背景 */
+            border: 1px solid #666666; /* 强边框 */
+            padding: 10px;
+            border-radius: 0;
+            color: #000000;
+            margin-top: 15px;
+            font-size: 14px;
+            min-height: 50px;
+            max-height: 120px; /* 限制高度 */
+            overflow-y: scroll; /* 强制显示滚动条 */
+            white-space: pre-wrap; /* 保留空白符和换行 */
+        }
+
+        /* 操作按钮区域 */
+        .action-area {
+            display: flex;
+            flex-direction: column;
+            gap: 5px; /* 按钮间距 */
+            margin-top: 10px;
+        }
+
+        /* 处理按钮和复制按钮通用样式 */
+        .action-button, .copy-button {
+            background-color: #008000; /* 深绿色背景 */
+            color: white;
+            padding: 8px 12px;
+            border-radius: 0;
+            font-weight: normal;
+            transition: none;
+            border: 1px solid #005500; /* 深绿色边框 */
+            cursor: pointer;
+            font-size: 14px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .action-button:hover, .copy-button:hover {
+            background-color: #006600; /* 鼠标悬停效果 */
+        }
+
+        /* 复制按钮的特定样式 */
+        .copy-button {
+            background-color: #0000FF; /* 蓝色背景 */
+            border-color: #0000AA; /* 深蓝色边框 */
+        }
+        .copy-button:hover {
+            background-color: #0000AA; /* 鼠标悬停效果 */
+        }
+
+        /* 消息提示框样式 */
+        .message-box {
+            padding: 8px;
+            border-radius: 0;
+            margin-top: 8px;
+            font-size: 12px;
+            visibility: hidden; /* 默认隐藏 */
+            opacity: 0;
+            transition: none; /* 无过渡 */
+            border: 1px solid; /* 通用边框 */
+            background-color: #FFFFCC; /* 浅黄色背景 */
+            color: #666600; /* 深黄色文字 */
+        }
+        /* 消息提示框显示时 */
+        .message-box.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+        /* 信息提示框 */
+        .message-box.info {
+            background-color: #DDEEDD; /* 浅绿色背景 */
+            border-color: #00AA00;
+            color: #006600;
+        }
+        /* 错误提示框 */
+        .message-box.error {
+            background-color: #FFDDDD; /* 浅红色背景 */
+            border-color: #FF0000;
+            color: #AA0000;
+        }
+        
+        /* 输入组 */
+        .input-group {
+            margin-bottom: 10px;
+        }
+        /* 复选框间距 */
+        .input-group input[type="checkbox"] {
+            margin-right: 5px;
+        }
+        /* 复选框标签样式 */
+        .input-group label[for="useWildcard"] {
+            display: inline-block;
+            font-weight: normal;
+            color: #333333;
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center; color: #000000; font-size: 32px; margin-bottom: 30px; border-bottom: 2px solid #000000; padding-bottom: 10px;">文本处理工具</h1>
+
+        <div class="tab-navigation">
+            <button class="tab-button" data-tab-id="removeEmptyLines"><a href="#removeEmptyLines" style="text-decoration: none; color: inherit;">去除空行</a></button>
+            <button class="tab-button" data-tab-id="removeSpaces"><a href="#removeSpaces" style="text-decoration: none; color: inherit;">去除行空格</a></button>
+            <button class="tab-button" data-tab-id="removeLeftChars"><a href="#removeLeftChars" style="text-decoration: none; color: inherit;">去除左边字符</a></button>
+            <button class="tab-button" data-tab-id="removeRightChars"><a href="#removeRightChars" style="text-decoration: none; color: inherit;">去除右边字符</a></button>
+            <button class="tab-button" data-tab-id="keywordReplace"><a href="#keywordReplace" style="text-decoration: none; color: inherit;">关键词替换</a></button>
+            <button class="tab-button" data-tab-id="consolidateEmptyLines"><a href="#consolidateEmptyLines" style="text-decoration: none; color: inherit;">合并空行</a></button>
+            <button class="tab-button" data-tab-id="filterSpecialChars"><a href="#filterSpecialChars" style="text-decoration: none; color: inherit;">过滤特殊符号</a></button>
+        </div>
+
+        <div class="tab-content" id="removeEmptyLines">
+            <h2 class="section-title">去除文本中的空行</h2>
+            <label for="input1">输入文本：</label>
+            <textarea id="input1" placeholder="请在此输入文本..."></textarea>
+            <div class="action-area">
+                <button id="process1" class="action-button">处理文本</button>
+                <button id="copy1" class="copy-button">复制结果</button>
+            </div>
+            <div id="output1" class="output-box"></div>
+            <div id="message1" class="message-box"></div>
+        </div>
+
+        <div class="tab-content" id="removeSpaces">
+            <h2 class="section-title">去除文本中每行的空格</h2>
+            <label for="input2">输入文本：</label>
+            <textarea id="input2" placeholder="请在此输入文本..."></textarea>
+            <div class="action-area">
+                <button id="process2" class="action-button">处理文本</button>
+                <button id="copy2" class="copy-button">复制结果</button>
+            </div>
+            <div id="output2" class="output-box"></div>
+            <div id="message2" class="message-box"></div>
+        </div>
+
+        <div class="tab-content" id="removeLeftChars">
+            <h2 class="section-title">去除每行左边指定数量的字符</h2>
+            <label for="input3">输入文本：</label>
+            <textarea id="input3" placeholder="请在此输入文本..."></textarea>
+            <label for="numLeftChars">去除字符数量：</label>
+            <input type="number" id="numLeftChars" value="1" min="0">
+            <div class="action-area">
+                <button id="process3" class="action-button">处理文本</button>
+                <button id="copy3" class="copy-button">复制结果</button>
+            </div>
+            <div id="output3" class="output-box"></div>
+            <div id="message3" class="message-box"></div>
+        </div>
+
+        <div class="tab-content" id="removeRightChars">
+            <h2 class="section-title">去除每行右边指定数量的字符</h2>
+            <label for="input4">输入文本：</label>
+            <textarea id="input4" placeholder="请在此输入文本..."></textarea>
+            <label for="numRightChars">去除字符数量：</label>
+            <input type="number" id="numRightChars" value="1" min="0">
+            <div class="action-area">
+                <button id="process4" class="action-button">处理文本</button>
+                <button id="copy4" class="copy-button">复制结果</button>
+            </div>
+            <div id="output4" class="output-box"></div>
+            <div id="message4" class="message-box"></div>
+        </div>
+
+        <div class="tab-content" id="keywordReplace">
+            <h2 class="section-title">文本关键词替换</h2>
+            <label for="input5">输入文本：</label>
+            <textarea id="input5" placeholder="请在此输入文本..."></textarea>
+            <div class="input-group">
+                <label for="findKeyword">查找关键词：</label>
+                <input type="text" id="findKeyword" placeholder="例如：旧词 或 old*text">
+                <input type="checkbox" id="useWildcard"> <label for="useWildcard" style="display: inline;">使用通配符 ( * )</label>
+            </div>
+            <div class="input-group">
+                <label for="replaceWith">替换为：</label>
+                <input type="text" id="replaceWith" placeholder="例如：新词">
+            </div>
+            <div class="action-area">
+                <button id="process5" class="action-button">执行替换</button>
+                <button id="copy5" class="copy-button">复制结果</button>
+            </div>
+            <div id="output5" class="output-box"></div>
+            <div id="message5" class="message-box"></div>
+        </div>
+
+        <div class="tab-content" id="consolidateEmptyLines">
+            <h2 class="section-title">合并多个空行为一个空行</h2>
+            <label for="input6">输入文本：</label>
+            <textarea id="input6" placeholder="请在此输入文本..."></textarea>
+            <div class="action-area">
+                <button id="process6" class="action-button">处理文本</button>
+                <button id="copy6" class="copy-button">复制结果</button>
+            </div>
+            <div id="output6" class="output-box"></div>
+            <div id="message6" class="message-box"></div>
+        </div>
+
+        <div class="tab-content" id="filterSpecialChars">
+            <h2 class="section-title">过滤文本中所有特殊符号</h2>
+            <label for="input7">输入文本：</label>
+            <textarea id="input7" placeholder="请在此输入文本..."></textarea>
+            <div class="action-area">
+                <button id="process7" class="action-button">处理文本</button>
+                <button id="copy7" class="copy-button">复制结果</button>
+            </div>
+            <div id="output7" class="output-box"></div>
+            <div id="message7" class="message-box"></div>
+        </div>
+    </div>
+
+    <script>
+        // Helper function to display messages
+        function showMessage(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.classList.remove('hidden', 'info', 'error');
+            element.classList.add('visible'); // Make visible
+            if (isError) {
+                element.classList.add('error');
+            } else {
+                element.classList.add('info');
+            }
+            // Hide message after a few seconds
+            setTimeout(() => {
+                element.classList.remove('visible');
+                element.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Helper function for copy to clipboard
+        function copyTextToClipboard(text, messageElementId) {
+            let messageDiv = document.getElementById(messageElementId);
+            // Fallback for older browsers or iframe restrictions
+            let textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.width = "2em";
+            textArea.style.height = "2em";
+            textArea.style.padding = "0";
+            textArea.style.border = "none";
+            textArea.style.outline = "none";
+            textArea.style.boxShadow = "none";
+            textArea.style.background = "transparent";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showMessage(messageElementId, '已复制到剪贴板！', false);
+                } else {
+                    showMessage(messageElementId, '复制失败！', true);
+                }
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+                showMessage(messageElementId, '复制失败！', true);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // --- Tab Functionality ---
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        function activateTab(tabId) {
+            // Hide all tab contents
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Deactivate all tab buttons
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Activate the selected tab content and button
+            document.getElementById(tabId).classList.add('active');
+            // Fix: Find the button by its data-tab-id
+            const activeButton = document.querySelector(`.tab-button[data-tab-id="${tabId}"]`);
+            if (activeButton) { // Ensure button is found before trying to add class
+                activeButton.classList.add('active');
+            }
+
+
+            // Update URL hash
+            history.replaceState(null, '', `#${tabId}`);
+        }
+
+        // Add event listeners to tab buttons
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.dataset.tabId;
+                activateTab(tabId);
+            });
+        });
+
+        // Activate tab based on URL hash on page load
+        window.onload = () => {
+            const hash = window.location.hash.substring(1); // Remove '#'
+            if (hash && document.getElementById(hash)) {
+                activateTab(hash);
+            } else {
+                // Default to the first tab if no hash or invalid hash
+                activateTab('removeEmptyLines');
+            }
+        };
+
+
+        // --- Core Text Processing Functions ---
+
+        // 1. Remove Empty Lines
+        document.getElementById('process1').addEventListener('click', () => {
+            const inputText = document.getElementById('input1').value;
+            const lines = inputText.split('\n');
+            const processedLines = lines.filter(line => line.trim() !== '');
+            const outputText = processedLines.join('\n');
+            document.getElementById('output1').textContent = outputText;
+            showMessage('message1', '空行已去除！');
+        });
+        document.getElementById('copy1').addEventListener('click', () => {
+            copyTextToClipboard(document.getElementById('output1').textContent, 'message1');
+        });
+
+        // 2. Remove Spaces from Each Line
+        document.getElementById('process2').addEventListener('click', () => {
+            const inputText = document.getElementById('input2').value;
+            const lines = inputText.split('\n');
+            const processedLines = lines.map(line => line.replace(/\s/g, ''));
+            const outputText = processedLines.join('\n');
+            document.getElementById('output2').textContent = outputText;
+            showMessage('message2', '每行空格已去除！');
+        });
+        document.getElementById('copy2').addEventListener('click', () => {
+            copyTextToClipboard(document.getElementById('output2').textContent, 'message2');
+        });
+
+        // 3. Remove Left Characters
+        document.getElementById('process3').addEventListener('click', () => {
+            const inputText = document.getElementById('input3').value;
+            const numChars = parseInt(document.getElementById('numLeftChars').value);
+
+            if (isNaN(numChars) || numChars < 0) {
+                showMessage('message3', '请输入有效的非负数字！', true);
+                return;
+            }
+
+            const lines = inputText.split('\n');
+            const processedLines = lines.map(line => {
+                return line.substring(numChars);
+            });
+            const outputText = processedLines.join('\n');
+            document.getElementById('output3').textContent = outputText;
+            showMessage('message3', `每行左边 ${numChars} 个字符已去除！`);
+        });
+        document.getElementById('copy3').addEventListener('click', () => {
+            copyTextToClipboard(document.getElementById('output3').textContent, 'message3');
+        });
+
+        // 4. Remove Right Characters
+        document.getElementById('process4').addEventListener('click', () => {
+            const inputText = document.getElementById('input4').value;
+            const numChars = parseInt(document.getElementById('numRightChars').value);
+
+            if (isNaN(numChars) || numChars < 0) {
+                showMessage('message4', '请输入有效的非负数字！', true);
+                return;
+            }
+
+            const lines = inputText.split('\n');
+            const processedLines = lines.map(line => {
+                return line.substring(0, line.length - numChars);
+            });
+            const outputText = processedLines.join('\n');
+            document.getElementById('output4').textContent = outputText;
+            showMessage('message4', `每行右边 ${numChars} 个字符已去除！`);
+        });
+        document.getElementById('copy4').addEventListener('click', () => {
+            copyTextToClipboard(document.getElementById('output4').textContent, 'message4');
+        });
+
+        // 5. Keyword Replacement
+        document.getElementById('process5').addEventListener('click', () => {
+            const inputText = document.getElementById('input5').value;
+            const findKeyword = document.getElementById('findKeyword').value;
+            const replaceWith = document.getElementById('replaceWith').value;
+            const useWildcard = document.getElementById('useWildcard').checked;
+            const outputDiv = document.getElementById('output5');
+            const messageDiv = document.getElementById('message5');
+
+            if (!findKeyword) {
+                showMessage('message5', '请输入要查找的关键词！', true);
+                return;
+            }
+
+            let regexPattern;
+            if (useWildcard) {
+                // Fix: Correctly handle wildcard '*' by escaping other regex special characters first,
+                // then replacing '*' with '.*'
+                const escapedForRegex = findKeyword.replace(/[.+?^${}()|[\]\\]/g, '\\$&'); // Escape all special chars EXCEPT *
+                const wildcardTransformed = escapedForRegex.replace(/\*/g, '.*'); // Convert * to .*
+                
+                try {
+                    regexPattern = new RegExp(wildcardTransformed, 'g'); // Global replace
+                } catch (e) {
+                    showMessage('message5', '通配符模式下，关键词中的正则表达式无效！', true);
+                    return;
+                }
+            } else {
+                // For literal string replacement, escape all regex special characters
+                const literalKeyword = findKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                regexPattern = new RegExp(literalKeyword, 'g'); // Global replace
+            }
+            
+            const processedText = inputText.replace(regexPattern, replaceWith);
+            outputDiv.textContent = processedText;
+            showMessage('message5', '关键词替换完成！');
+        });
+        document.getElementById('copy5').addEventListener('click', () => {
+            copyTextToClipboard(document.getElementById('output5').textContent, 'message5');
+        });
+
+        // 6. Consolidate Empty Lines
+        document.getElementById('process6').addEventListener('click', () => {
+            const inputText = document.getElementById('input6').value;
+            // This regex matches one or more occurrences of (newline, optional spaces, newline)
+            // And replaces it with exactly two newlines, effectively leaving one empty line.
+            const processedText = inputText.replace(/(\r?\n|\r)\s*(\r?\n|\r)+/g, '\n\n');
+            document.getElementById('output6').textContent = processedText;
+            showMessage('message6', '多个空行已合并为一个空行！');
+        });
+        document.getElementById('copy6').addEventListener('click', () => {
+            copyTextToClipboard(document.getElementById('output6').textContent, 'message6');
+        });
+
+        // 7. Filter Special Characters
+        document.getElementById('process7').addEventListener('click', () => {
+            const inputText = document.getElementById('input7').value;
+            // This regex matches any character that is NOT:
+            // a-z, A-Z (English letters)
+            // 0-9 (numbers)
+            // \s (whitespace characters like space, tab, newline, carriage return)
+            // \p{L} (Any kind of letter from any language)
+            // \p{N} (Any kind of numeric character in any script)
+            // The 'g' flag means global (replace all occurrences)
+            // The 'u' flag means unicode (important for \p{} or ranges like Chinese characters)
+            const processedText = inputText.replace(/[^\p{L}\p{N}\s]/gu, ''); 
+            document.getElementById('output7').textContent = processedText;
+            showMessage('message7', '所有特殊符号已过滤！');
+        });
+        document.getElementById('copy7').addEventListener('click', () => {
+            copyTextToClipboard(document.getElementById('output7').textContent, 'message7');
+        });
+    </script>
+ <div align="center"><br />
+<a href="/tools/" style="font-size:12px;color:#999999;text-decoration: none;">返回工具列表</a>	<span style="font-size:12px;color:#999999;">联系站长 E651@msn.com</span>
+</div>
+</body>
+</html>
+

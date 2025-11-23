@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片水印消除工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .upload-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .file-input-button:hover {
+            background: #0056b3;
+        }
+
+        .canvas-container {
+            text-align: center;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        #imageCanvas {
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: crosshair;
+            max-width: 100%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .control-group {
+            display: inline-block;
+            margin: 0 10px;
+            vertical-align: top;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .control-group input[type="range"] {
+            width: 120px;
+        }
+
+        .control-group input[type="number"] {
+            width: 60px;
+            padding: 3px 6px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .btn-primary {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #218838;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .instructions {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #495057;
+        }
+
+        .brush-preview {
+            position: absolute;
+            border: 2px dashed rgba(255, 0, 0, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            display: none;
+            background: rgba(255, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖼️ 图片水印消除工具</h1>
+        
+        <div class="instructions">
+            <strong>使用说明：</strong><br>
+            1. 点击"选择图片"上传需要处理的图片<br>
+            2. 在图片上按住鼠标左键拖拽选择水印区域<br>
+            3. 调整画笔大小和强度参数<br>
+            4. 系统会自动平滑处理选中区域，消除水印<br>
+            5. 处理完成后可下载处理好的图片
+        </div>
+
+        <div class="upload-section">
+            <div class="file-input-wrapper">
+                <input type="file" id="imageInput" class="file-input" accept="image/*">
+                <span class="file-input-button">📁 选择图片</span>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="imageCanvas"></canvas>
+            <div id="brushPreview" class="brush-preview"></div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>画笔大小</label>
+                <input type="range" id="brushSize" min="10" max="50" value="20">
+                <input type="number" id="brushSizeNum" min="10" max="50" value="20">
+            </div>
+            
+            <div class="control-group">
+                <label>消除强度</label>
+                <input type="range" id="intensity" min="0.1" max="1" step="0.1" value="0.3">
+                <input type="number" id="intensityNum" min="0.1" max="1" step="0.1" value="0.3">
+            </div>
+            
+            <div class="control-group">
+                <button id="undoBtn" class="btn btn-secondary">↶ 撤销</button>
+                <button id="resetBtn" class="btn btn-secondary">🔄 重置</button>
+                <button id="downloadBtn" class="btn btn-primary">💾 下载</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class WatermarkRemover {
+            constructor() {
+                this.canvas = document.getElementById('imageCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.imageInput = document.getElementById('imageInput');
+                this.brushPreview = document.getElementById('brushPreview');
+                
+                // 控制元素
+                this.brushSize = document.getElementById('brushSize');
+                this.brushSizeNum = document.getElementById('brushSizeNum');
+                this.intensity = document.getElementById('intensity');
+                this.intensityNum = document.getElementById('intensityNum');
+                this.undoBtn = document.getElementById('undoBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.downloadBtn = document.getElementById('downloadBtn');
+                
+                // 状态变量
+                this.originalImageData = null;
+                this.currentImageData = null;
+                this.isDrawing = false;
+                this.lastX = 0;
+                this.lastY = 0;
+                this.history = [];
+                this.brushRadius = 20;
+                this.erasureIntensity = 0.3;
+                
+                this.initEventListeners();
+            }
+            
+            initEventListeners() {
+                // 文件上传
+                this.imageInput.addEventListener('change', (e) => this.loadImage(e));
+                
+                // 画笔控制
+                this.brushSize.addEventListener('input', (e) => {
+                    this.brushRadius = parseInt(e.target.value);
+                    this.brushSizeNum.value = this.brushRadius;
+                    this.updateBrushPreview();
+                });
+                
+                this.brushSizeNum.addEventListener('input', (e) => {
+                    this.brushRadius = parseInt(e.target.value);
+                    this.brushSize.value = this.brushRadius;
+                    this.updateBrushPreview();
+                });
+                
+                this.intensity.addEventListener('input', (e) => {
+                    this.erasureIntensity = parseFloat(e.target.value);
+                    this.intensityNum.value = this.erasureIntensity;
+                });
+                
+                this.intensityNum.addEventListener('input', (e) => {
+                    this.erasureIntensity = parseFloat(e.target.value);
+                    this.intensity.value = this.erasureIntensity;
+                });
+                
+                // 按钮控制
+                this.undoBtn.addEventListener('click', () => this.undo());
+                this.resetBtn.addEventListener('click', () => this.reset());
+                this.downloadBtn.addEventListener('click', () => this.download());
+                
+                // 画布绘制事件
+                this.canvas.addEventListener('mousedown', (e) => this.startDrawing(e));
+                this.canvas.addEventListener('mousemove', (e) => this.draw(e));
+                this.canvas.addEventListener('mouseup', () => this.stopDrawing());
+                this.canvas.addEventListener('mouseout', () => this.stopDrawing());
+                
+                // 触摸事件支持
+                this.canvas.addEventListener('touchstart', (e) => this.handleTouch(e, 'start'));
+                this.canvas.addEventListener('touchmove', (e) => this.handleTouch(e, 'move'));
+                this.canvas.addEventListener('touchend', (e) => this.handleTouch(e, 'end'));
+            }
+            
+            loadImage(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        this.setupCanvas(img);
+                        this.saveState();
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            setupCanvas(img) {
+                // 计算合适的画布尺寸，保持图片比例
+                const maxWidth = 800;
+                const maxHeight = 600;
+                let { width, height } = img;
+                
+                if (width > maxWidth || height > maxHeight) {
+                    const ratio = Math.min(maxWidth / width, maxHeight / height);
+                    width *= ratio;
+                    height *= ratio;
+                }
+                
+                this.canvas.width = width;
+                this.canvas.height = height;
+                
+                // 绘制图片
+                this.ctx.drawImage(img, 0, 0, width, height);
+                
+                // 保存原始图像数据
+                this.originalImageData = this.ctx.getImageData(0, 0, width, height);
+                this.currentImageData = this.ctx.getImageData(0, 0, width, height);
+                
+                // 隐藏画笔预览
+                this.brushPreview.style.display = 'none';
+            }
+            
+            getMousePos(e) {
+                const rect = this.canvas.getBoundingClientRect();
+                const scaleX = this.canvas.width / rect.width;
+                const scaleY = this.canvas.height / rect.height;
+                
+                return {
+                    x: (e.clientX - rect.left) * scaleX,
+                    y: (e.clientY - rect.top) * scaleY
+                };
+            }
+            
+            startDrawing(e) {
+                this.isDrawing = true;
+                const pos = this.getMousePos(e);
+                this.lastX = pos.x;
+                this.lastY = pos.y;
+                this.showBrushPreview(pos.x, pos.y);
+                this.saveState();
+            }
+            
+            draw(e) {
+                if (!this.isDrawing) return;
+                
+                const pos = this.getMousePos(e);
+                this.eraseArea(this.lastX, this.lastY, pos.x, pos.y);
+                
+                this.lastX = pos.x;
+                this.lastY = pos.y;
+                this.updateBrushPreview(pos.x, pos.y);
+            }
+            
+            stopDrawing() {
+                this.isDrawing = false;
+                this.brushPreview.style.display = 'none';
+            }
+            
+            eraseArea(x1, y1, x2, y2) {
+                const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+                const data = imageData.data;
+                const width = imageData.width;
+                const height = imageData.height;
+                
+                // 计算要处理的区域
+                const minX = Math.min(x1, x2) - this.brushRadius;
+                const maxX = Math.max(x1, x2) + this.brushRadius;
+                const minY = Math.min(y1, y2) - this.brushRadius;
+                const maxY = Math.max(y1, y2) + this.brushRadius;
+                
+                // 限制在画布范围内
+                const clampedMinX = Math.max(0, Math.floor(minX));
+                const clampedMaxX = Math.min(width - 1, Math.ceil(maxX));
+                const clampedMinY = Math.max(0, Math.floor(minY));
+                const clampedMaxY = Math.min(height - 1, Math.ceil(maxY));
+                
+                // 混合像素实现平滑消除效果
+                for (let y = clampedMinY; y <= clampedMaxY; y++) {
+                    for (let x = clampedMinX; x <= clampedMaxX; x++) {
+                        const distance = Math.sqrt((x - (x1 + x2) / 2) ** 2 + (y - (y1 + y2) / 2) ** 2);
+                        
+                        if (distance <= this.brushRadius) {
+                            const influence = 1 - (distance / this.brushRadius);
+                            const pixelIndex = (y * width + x) * 4;
+                            
+                            if (pixelIndex < data.length) {
+                                // 获取周围像素的平均值
+                                const avgColor = this.getAverageColor(x, y, width, height, 5);
+                                
+                                // 混合当前像素和周围平均颜色
+                                data[pixelIndex] = data[pixelIndex] * (1 - influence * this.erasureIntensity) + 
+                                                  avgColor.r * influence * this.erasureIntensity;
+                                data[pixelIndex + 1] = data[pixelIndex + 1] * (1 - influence * this.erasureIntensity) + 
+                                                     avgColor.g * influence * this.erasureIntensity;
+                                data[pixelIndex + 2] = data[pixelIndex + 2] * (1 - influence * this.erasureIntensity) + 
+                                                     avgColor.b * influence * this.erasureIntensity;
+                                // Alpha通道保持不变
+                            }
+                        }
+                    }
+                }
+                
+                this.ctx.putImageData(imageData, 0, 0);
+                this.currentImageData = imageData;
+            }
+            
+            getAverageColor(x, y, width, height, radius) {
+                let r = 0, g = 0, b = 0, count = 0;
+                
+                for (let dy = -radius; dy <= radius; dy++) {
+                    for (let dx = -radius; dx <= radius; dx++) {
+                        const nx = x + dx;
+                        const ny = y + dy;
+                        
+                        if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                            const index = (ny * width + nx) * 4;
+                            r += this.currentImageData.data[index];
+                            g += this.currentImageData.data[index + 1];
+                            b += this.currentImageData.data[index + 2];
+                            count++;
+                        }
+                    }
+                }
+                
+                return {
+                    r: count > 0 ? Math.round(r / count) : 0,
+                    g: count > 0 ? Math.round(g / count) : 0,
+                    b: count > 0 ? Math.round(b / count) : 0
+                };
+            }
+            
+            showBrushPreview(x, y) {
+                this.brushPreview.style.display = 'block';
+                this.brushPreview.style.left = (x - this.brushRadius) + 'px';
+                this.brushPreview.style.top = (y - this.brushRadius) + 'px';
+                this.brushPreview.style.width = (this.brushRadius * 2) + 'px';
+                this.brushPreview.style.height = (this.brushRadius * 2) + 'px';
+            }
+            
+            updateBrushPreview(x, y) {
+                if (this.brushPreview.style.display !== 'none') {
+                    this.brushPreview.style.left = (x - this.brushRadius) + 'px';
+                    this.brushPreview.style.top = (y - this.brushRadius) + 'px';
+                    this.brushPreview.style.width = (this.brushRadius * 2) + 'px';
+                    this.brushPreview.style.height = (this.brushRadius * 2) + 'px';
+                }
+            }
+            
+            saveState() {
+                this.history.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
+                if (this.history.length > 10) {
+                    this.history.shift(); // 限制历史记录数量
+                }
+            }
+            
+            undo() {
+                if (this.history.length > 1) {
+                    this.history.pop(); // 移除当前状态
+                    const previousState = this.history[this.history.length - 1];
+                    this.ctx.putImageData(previousState, 0, 0);
+                    this.currentImageData = previousState;
+                }
+            }
+            
+            reset() {
+                if (this.originalImageData) {
+                    this.ctx.putImageData(this.originalImageData, 0, 0);
+                    this.currentImageData = this.originalImageData;
+                    this.history = [this.originalImageData];
+                }
+            }
+            
+            download() {
+                const link = document.createElement('a');
+                link.download = 'processed_image.png';
+                link.href = this.canvas.toDataURL();
+                link.click();
+            }
+            
+            handleTouch(e, type) {
+                e.preventDefault();
+                const touch = e.touches[0] || e.changedTouches[0];
+                if (!touch) return;
+                
+                const mouseEvent = new MouseEvent(
+                    type === 'start' ? 'mousedown' : type === 'move' ? 'mousemove' : 'mouseup',
+                    {
+                        clientX: touch.clientX,
+                        clientY: touch.clientY
+                    }
+                );
+                
+                this.canvas.dispatchEvent(mouseEvent);
+            }
+        }
+        
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', () => {
+            new WatermarkRemover();
+        });
+    </script>
+<div align="center"><br />
+<a href="/tools/" style="font-size:12px;color:#999999;text-decoration: none;">返回工具列表</a>	<span style="font-size:12px;color:#999999;">联系站长 E651@msn.com</span>
+</div>
+
+</body>
+</html>
+

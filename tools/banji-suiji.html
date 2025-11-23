@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>班级活动小工具</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .tool-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #444;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border-left: 4px solid #4CAF50;
+            position: relative;
+        }
+        .result-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .result-controls button {
+            padding: 5px 10px;
+            font-size: 14px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        .group {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #e9f7ef;
+            border-radius: 4px;
+        }
+        .assignment {
+            margin-bottom: 5px;
+            padding: 5px;
+            background-color: #e8f4f8;
+            border-radius: 3px;
+        }
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-radius: 5px 5px 0 0;
+            margin-bottom: -1px;
+        }
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 10px 16px;
+            transition: 0.3s;
+            color: #333;
+            margin-right: 0;
+            border-radius: 0;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .tabcontent {
+            display: none;
+            animation: fadeEffect 1s;
+        }
+        @keyframes fadeEffect {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        .copy-btn {
+            background-color: #2196F3;
+        }
+        .copy-btn:hover {
+            background-color: #0b7dda;
+        }
+        .clear-btn {
+            background-color: #f44336;
+        }
+        .clear-btn:hover {
+            background-color: #da190b;
+        }
+    </style>
+</head>
+<body>
+    <h1>班级活动小工具</h1>
+    
+    <div class="tab">
+        <button class="tablinks active" onclick="openTab(event, 'randomSelect')">随机点名</button>
+        <button class="tablinks" onclick="openTab(event, 'taskAssign')">任务分配</button>
+        <button class="tablinks" onclick="openTab(event, 'randomGroup')">随机分组</button>
+    </div>
+    
+    <!-- 随机点名工具 -->
+    <div id="randomSelect" class="tool-section tabcontent" style="display: block;">
+        <h2>随机点名</h2>
+        <p>输入人员名单（每行一个名字）：</p>
+        <textarea id="nameList1" placeholder="张三&#10;李四&#10;王五&#10;赵六&#10;..."></textarea>
+        <div>
+            <label for="selectCount">抽取数量：</label>
+            <input type="number" id="selectCount" min="1" value="1">
+            <button onclick="randomSelect()">随机抽取</button>
+        </div>
+        <div id="result1" class="result">
+            <div class="result-controls">
+                <button class="copy-btn" onclick="copyResult('result1')">复制结果</button>
+                <button class="clear-btn" onclick="clearResults('result1')">清空结果</button>
+            </div>
+            <div id="result1-content"></div>
+        </div>
+    </div>
+    
+    <!-- 任务分配工具 -->
+    <div id="taskAssign" class="tool-section tabcontent">
+        <h2>任务分配</h2>
+        <p>输入人员名单（每行一个名字）：</p>
+        <textarea id="nameList2" placeholder="张三&#10;李四&#10;王五&#10;赵六&#10;..."></textarea>
+        <p>输入任务列表（每行一个任务）：</p>
+        <textarea id="taskList" placeholder="擦黑板&#10;扫地&#10;整理讲台&#10;倒垃圾&#10;..."></textarea>
+        <div>
+            <button onclick="assignTasks()">随机分配任务</button>
+        </div>
+        <div id="result2" class="result">
+            <div class="result-controls">
+                <button class="copy-btn" onclick="copyResult('result2')">复制结果</button>
+                <button class="clear-btn" onclick="clearResults('result2')">清空结果</button>
+            </div>
+            <div id="result2-content"></div>
+        </div>
+    </div>
+    
+    <!-- 随机分组工具 -->
+    <div id="randomGroup" class="tool-section tabcontent">
+        <h2>随机分组</h2>
+        <p>输入人员名单（每行一个名字）：</p>
+        <textarea id="nameList3" placeholder="张三&#10;李四&#10;王五&#10;赵六&#10;..."></textarea>
+        <div>
+            <label for="groupType">分组方式：</label>
+            <select id="groupType" onchange="toggleGroupOptions()">
+                <option value="byNumber">按每组人数</option>
+                <option value="byGroup">按组数</option>
+            </select>
+            <span id="numberPerGroupContainer">
+                <label for="numberPerGroup">每组人数：</label>
+                <input type="number" id="numberPerGroup" min="1" value="4">
+            </span>
+            <span id="groupCountContainer" style="display:none;">
+                <label for="groupCount">组数：</label>
+                <input type="number" id="groupCount" min="1" value="3">
+            </span>
+            <button onclick="randomGroup()">随机分组</button>
+        </div>
+        <div id="result3" class="result">
+            <div class="result-controls">
+                <button class="copy-btn" onclick="copyResult('result3')">复制结果</button>
+                <button class="clear-btn" onclick="clearResults('result3')">清空结果</button>
+            </div>
+            <div id="result3-content"></div>
+        </div>
+    </div>
+
+
+<p style="text-align: center;">
+    <span style="color: rgb(127, 127, 127);">如果你有别的需求，也可以联系我定制</span>
+</p>
+    <script>
+        // 切换标签页
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+        
+        // 切换分组选项
+        function toggleGroupOptions() {
+            var groupType = document.getElementById("groupType").value;
+            if (groupType === "byNumber") {
+                document.getElementById("numberPerGroupContainer").style.display = "inline";
+                document.getElementById("groupCountContainer").style.display = "none";
+            } else {
+                document.getElementById("numberPerGroupContainer").style.display = "none";
+                document.getElementById("groupCountContainer").style.display = "inline";
+            }
+        }
+        
+        // 随机点名
+        function randomSelect() {
+            var nameList = document.getElementById("nameList1").value.trim();
+            var count = parseInt(document.getElementById("selectCount").value);
+            
+            if (!nameList) {
+                alert("请输入人员名单！");
+                return;
+            }
+            
+            var names = nameList.split('\n').filter(name => name.trim() !== '');
+            
+            if (count > names.length) {
+                alert("抽取数量不能大于总人数！");
+                return;
+            }
+            
+            // 随机选择
+            var selected = [];
+            var tempNames = [...names];
+            
+            for (var i = 0; i < count; i++) {
+                var randomIndex = Math.floor(Math.random() * tempNames.length);
+                selected.push(tempNames[randomIndex]);
+                tempNames.splice(randomIndex, 1);
+            }
+            
+            // 显示结果
+            var resultHtml = "<h3>随机抽取结果：</h3>";
+            resultHtml += "<p>" + selected.join("、") + "</p>";
+            document.getElementById("result1-content").innerHTML = resultHtml;
+        }
+        
+        // 任务分配
+        function assignTasks() {
+            var nameList = document.getElementById("nameList2").value.trim();
+            var taskList = document.getElementById("taskList").value.trim();
+            
+            if (!nameList || !taskList) {
+                alert("请输入人员名单和任务列表！");
+                return;
+            }
+            
+            var names = nameList.split('\n').filter(name => name.trim() !== '');
+            var tasks = taskList.split('\n').filter(task => task.trim() !== '');
+            
+            if (tasks.length > names.length) {
+                alert("任务数量不能多于人数！");
+                return;
+            }
+            
+            // 随机分配
+            var shuffledNames = [...names].sort(() => Math.random() - 0.5);
+            var assignments = [];
+            
+            for (var i = 0; i < tasks.length; i++) {
+                assignments.push({
+                    name: shuffledNames[i],
+                    task: tasks[i]
+                });
+            }
+            
+            // 显示结果
+            var resultHtml = "<h3>任务分配结果：</h3>";
+            assignments.forEach(item => {
+                resultHtml += `<div class="assignment"><strong>${item.name}</strong>: ${item.task}</div>`;
+            });
+            
+            // 显示未分配人员
+            if (shuffledNames.length > tasks.length) {
+                resultHtml += "<h4>未分配任务人员：</h4>";
+                var unassigned = shuffledNames.slice(tasks.length);
+                resultHtml += "<p>" + unassigned.join("、") + "</p>";
+            }
+            
+            document.getElementById("result2-content").innerHTML = resultHtml;
+        }
+        
+        // 随机分组
+        function randomGroup() {
+            var nameList = document.getElementById("nameList3").value.trim();
+            var groupType = document.getElementById("groupType").value;
+            
+            if (!nameList) {
+                alert("请输入人员名单！");
+                return;
+            }
+            
+            var names = nameList.split('\n').filter(name => name.trim() !== '');
+            var shuffledNames = [...names].sort(() => Math.random() - 0.5);
+            
+            var groups = [];
+            var groupCount, numberPerGroup;
+            
+            if (groupType === "byNumber") {
+                numberPerGroup = parseInt(document.getElementById("numberPerGroup").value);
+                if (numberPerGroup < 1) {
+                    alert("每组人数至少为1！");
+                    return;
+                }
+                groupCount = Math.ceil(shuffledNames.length / numberPerGroup);
+            } else {
+                groupCount = parseInt(document.getElementById("groupCount").value);
+                if (groupCount < 1) {
+                    alert("组数至少为1！");
+                    return;
+                }
+                numberPerGroup = Math.floor(shuffledNames.length / groupCount);
+            }
+            
+            // 创建分组
+            for (var i = 0; i < groupCount; i++) {
+                groups.push([]);
+            }
+            
+            // 分配人员到各组
+            for (var i = 0; i < shuffledNames.length; i++) {
+                var groupIndex = i % groupCount;
+                groups[groupIndex].push(shuffledNames[i]);
+            }
+            
+            // 显示结果
+            var resultHtml = "<h3>分组结果：</h3>";
+            groups.forEach((group, index) => {
+                if (group.length > 0) {
+                    resultHtml += `<div class="group"><strong>第${index + 1}组</strong> (${group.length}人): `;
+                    resultHtml += group.join("、") + "</div>";
+                }
+            });
+            
+            document.getElementById("result3-content").innerHTML = resultHtml;
+        }
+        
+        // 清空结果
+        function clearResults(resultId) {
+            document.getElementById(resultId + "-content").innerHTML = "";
+        }
+        
+        // 复制结果到剪贴板
+        function copyResult(resultId) {
+            const resultContent = document.getElementById(resultId + "-content");
+            if (!resultContent || resultContent.textContent.trim() === "") {
+                alert("没有可复制的内容！");
+                return;
+            }
+            
+            // 创建一个临时textarea元素
+            const textarea = document.createElement("textarea");
+            textarea.value = resultContent.textContent;
+            textarea.style.position = "fixed";  // 防止页面滚动
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                // 执行复制命令
+                const successful = document.execCommand("copy");
+                const msg = successful ? "复制成功！" : "复制失败，请手动复制";
+                alert(msg);
+            } catch (err) {
+                alert("复制失败，请手动复制: " + err);
+            }
+            
+            // 移除临时元素
+            document.body.removeChild(textarea);
+        }
+    </script>
+<div align="center"><br />
+<a href="/tools/" style="font-size:12px;color:#999999;text-decoration: none;">返回工具列表</a>	<span style="font-size:12px;color:#999999;">联系站长 E651@msn.com</span>
+</div>
+</body>
+</html>
+

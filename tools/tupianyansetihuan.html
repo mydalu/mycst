@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片颜色批量处理工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        input[type="color"] {
+            width: 60px;
+            height: 30px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .preview-item {
+            width: 150px;
+            border: 1px solid #ddd;
+            padding: 5px;
+            border-radius: 4px;
+            background-color: white;
+        }
+        .preview-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .preview-item p {
+            margin: 5px 0 0;
+            font-size: 12px;
+            text-align: center;
+            word-break: break-all;
+        }
+        .color-selector {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .color-box {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>图片颜色批量处理工具</h1>
+        
+        <div class="form-group">
+            <label for="imageFiles">选择图片文件 (可多选):</label>
+            <input type="file" id="imageFiles" accept="image/*" multiple>
+        </div>
+        
+        <div class="color-selector">
+            <div class="color-box">
+                <label for="oldColor">原颜色:</label>
+                <input type="color" id="oldColor" value="#ff0000">
+            </div>
+            <div class="color-box">
+                <label for="newColor">新颜色:</label>
+                <input type="color" id="newColor" value="#00ff00">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="tolerance">颜色容差 (0-100):</label>
+            <input type="range" id="tolerance" min="0" max="100" value="10">
+            <span id="toleranceValue">10</span>
+        </div>
+        
+        <button id="processBtn" disabled>处理图片并下载</button>
+        
+        <div id="status" class="status"></div>
+        
+        <div class="preview" id="previewContainer"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const imageFilesInput = document.getElementById('imageFiles');
+            const oldColorInput = document.getElementById('oldColor');
+            const newColorInput = document.getElementById('newColor');
+            const toleranceInput = document.getElementById('tolerance');
+            const toleranceValue = document.getElementById('toleranceValue');
+            const processBtn = document.getElementById('processBtn');
+            const previewContainer = document.getElementById('previewContainer');
+            const statusDiv = document.getElementById('status');
+            
+            let selectedFiles = [];
+            
+            // 更新容差显示值
+            toleranceInput.addEventListener('input', function() {
+                toleranceValue.textContent = this.value;
+            });
+            
+            // 文件选择处理
+            imageFilesInput.addEventListener('change', function(e) {
+                selectedFiles = Array.from(e.target.files);
+                previewContainer.innerHTML = '';
+                
+                if (selectedFiles.length > 0) {
+                    processBtn.disabled = false;
+                    statusDiv.style.display = 'block';
+                    statusDiv.textContent = `已选择 ${selectedFiles.length} 个文件`;
+                    
+                    // 显示预览
+                    selectedFiles.forEach(file => {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const previewItem = document.createElement('div');
+                            previewItem.className = 'preview-item';
+                            
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            
+                            const fileName = document.createElement('p');
+                            fileName.textContent = file.name;
+                            
+                            previewItem.appendChild(img);
+                            previewItem.appendChild(fileName);
+                            previewContainer.appendChild(previewItem);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                } else {
+                    processBtn.disabled = true;
+                    statusDiv.style.display = 'none';
+                }
+            });
+            
+            // 处理按钮点击
+            processBtn.addEventListener('click', async function() {
+                if (selectedFiles.length === 0) return;
+                
+                processBtn.disabled = true;
+                statusDiv.textContent = '正在处理图片...';
+                
+                const oldColor = hexToRgb(oldColorInput.value);
+                const newColor = hexToRgb(newColorInput.value);
+                const tolerance = parseInt(toleranceInput.value);
+                
+                // 由于不使用JSZip，改为逐个下载处理后的图片
+                for (let i = 0; i < selectedFiles.length; i++) {
+                    const file = selectedFiles[i];
+                    try {
+                        statusDiv.textContent = `正在处理 ${i+1}/${selectedFiles.length}: ${file.name}`;
+                        await processAndDownloadImage(file, oldColor, newColor, tolerance);
+                    } catch (error) {
+                        console.error(`处理文件 ${file.name} 时出错:`, error);
+                        statusDiv.textContent = `处理 ${file.name} 时出错: ${error.message}`;
+                    }
+                }
+                
+                statusDiv.textContent = `处理完成！共处理 ${selectedFiles.length} 个文件`;
+                processBtn.disabled = false;
+            });
+            
+            // 处理并下载单个图片
+            async function processAndDownloadImage(file, oldColor, newColor, tolerance) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            const canvas = document.createElement('canvas');
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0);
+                            
+                            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                            const data = imageData.data;
+                            
+                            // 替换颜色
+                            for (let i = 0; i < data.length; i += 4) {
+                                const r = data[i];
+                                const g = data[i + 1];
+                                const b = data[i + 2];
+                                
+                                // 计算颜色距离
+                                const distance = colorDistance(
+                                    { r, g, b },
+                                    oldColor
+                                );
+                                
+                                // 如果在容差范围内，则替换颜色
+                                if (distance <= tolerance) {
+                                    data[i] = newColor.r;
+                                    data[i + 1] = newColor.g;
+                                    data[i + 2] = newColor.b;
+                                }
+                            }
+                            
+                            ctx.putImageData(imageData, 0, 0);
+                            
+                            // 转换为Blob并下载
+                            canvas.toBlob(blob => {
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = file.name;
+                                document.body.appendChild(a);
+                                a.click();
+                                setTimeout(() => {
+                                    document.body.removeChild(a);
+                                    URL.revokeObjectURL(url);
+                                    resolve();
+                                }, 100);
+                            }, file.type || 'image/png');
+                        };
+                        img.onerror = () => reject(new Error('图片加载失败'));
+                        img.src = e.target.result;
+                    };
+                    reader.onerror = () => reject(new Error('文件读取失败'));
+                    reader.readAsDataURL(file);
+                });
+            }
+            
+            // 计算颜色距离
+            function colorDistance(color1, color2) {
+                const dr = color1.r - color2.r;
+                const dg = color1.g - color2.g;
+                const db = color1.b - color2.b;
+                return Math.sqrt(dr * dr + dg * dg + db * db);
+            }
+            
+            // 十六进制颜色转RGB对象
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : { r: 0, g: 0, b: 0 };
+            }
+        });
+    </script>
+    
+    <div align="center"><br />
+<a href="/tools/" style="font-size:12px;color:#999999;text-decoration: none;">返回工具列表</a>	<span style="font-size:12px;color:#999999;">联系站长 E651@msn.com</span>
+</div>
+</body>
+</html>

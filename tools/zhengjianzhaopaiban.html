@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>证件照排版工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            grid-column: 1 / -1;
+            margin-top: 10px;
+        }
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        #generateBtn {
+            background-color: #4CAF50;
+        }
+        #generateBtn:hover {
+            background-color: #45a049;
+        }
+        #downloadBtn {
+            background-color: #2196F3;
+        }
+        #downloadBtn:hover {
+            background-color: #0b7dda;
+        }
+        .upload-btn {
+            background-color: #ff9800;
+        }
+        .upload-btn:hover {
+            background-color: #e68a00;
+        }
+        #previewContainer {
+            margin-top: 20px;
+            border: 1px dashed #ccc;
+            min-height: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+        #previewCanvas {
+            display: block;
+            margin: 0 auto;
+            background-color: white;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        #imageUpload {
+            display: none;
+        }
+        .photo-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e9f7ef;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>证件照排版工具</h1>
+    <div class="container">
+        <div class="controls">
+            <div class="control-group">
+                <label for="imageUpload">选择证件照：</label>
+                <button class="upload-btn" onclick="document.getElementById('imageUpload').click()">上传图片</button>
+                <input type="file" id="imageUpload" accept="image/*">
+            </div>
+            
+            <div class="control-group">
+                <label for="photoSize">证件照尺寸：</label>
+                <select id="photoSize">
+                    <option value="1">1寸 (2.5cm × 3.5cm)</option>
+                    <option value="2">2寸 (3.5cm × 4.9cm)</option>
+                    <option value="3">3寸 (5.0cm × 7.2cm)</option>
+                    <option value="custom">自定义尺寸</option>
+                </select>
+            </div>
+            
+            <div class="control-group" id="customSizeGroup" style="display: none;">
+                <label for="customWidth">自定义宽度(cm)：</label>
+                <input type="number" id="customWidth" step="0.1" min="1" value="2.5">
+                
+                <label for="customHeight">自定义高度(cm)：</label>
+                <input type="number" id="customHeight" step="0.1" min="1" value="3.5">
+            </div>
+            
+            <div class="control-group">
+                <label for="paperSize">相纸尺寸：</label>
+                <select id="paperSize">
+                    <option value="A4">A4 (21cm × 29.7cm)</option>
+                    <option value="A5">A5 (14.8cm × 21cm)</option>
+                    <option value="letter">Letter (21.6cm × 27.9cm)</option>
+                    <option value="5inch">5寸 (12.7cm × 8.9cm)</option>
+                    <option value="6inch">6寸 (15.2cm × 10.2cm)</option>
+                    <option value="7inch">7寸 (17.8cm × 12.7cm)</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label for="margin">页边距(px)：</label>
+                <input type="number" id="margin" min="0" value="10">
+                
+                <label for="gap">照片间距(px)：</label>
+                <input type="number" id="gap" min="0" value="5">
+            </div>
+            
+            <div class="button-group">
+                <button id="generateBtn">生成排版</button>
+                <button id="downloadBtn" disabled>下载排版结果</button>
+            </div>
+        </div>
+        
+        <div class="photo-info" id="photoInfo" style="display: none;">
+            <p>每张照片尺寸: <span id="photoDimensions"></span> cm</p>
+            <p>每行照片数: <span id="photosPerRow"></span></p>
+            <p>每列照片数: <span id="photosPerCol"></span></p>
+            <p>总照片数: <span id="totalPhotos"></span></p>
+        </div>
+        
+        <div id="previewContainer">
+            <canvas id="previewCanvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // 证件照尺寸定义 (cm)
+        const photoSizes = {
+            '1': { width: 2.5, height: 3.5 },
+            '2': { width: 3.5, height: 4.9 },
+            '3': { width: 5.0, height: 7.2 }
+        };
+        
+        // 相纸尺寸定义 (cm)
+        const paperSizes = {
+            'A4': { width: 21.0, height: 29.7 },
+            'A5': { width: 14.8, height: 21.0 },
+            'letter': { width: 21.6, height: 27.9 },
+            '5inch': { width: 12.7, height: 8.9 },
+            '6inch': { width: 15.2, height: 10.2 },
+            '7inch': { width: 17.8, height: 12.7 }
+        };
+        
+        // 全局变量
+        let uploadedImage = null;
+        let generatedCanvas = null;
+        
+        // DOM元素
+        const photoSizeSelect = document.getElementById('photoSize');
+        const customSizeGroup = document.getElementById('customSizeGroup');
+        const customWidthInput = document.getElementById('customWidth');
+        const customHeightInput = document.getElementById('customHeight');
+        const paperSizeSelect = document.getElementById('paperSize');
+        const marginInput = document.getElementById('margin');
+        const gapInput = document.getElementById('gap');
+        const generateBtn = document.getElementById('generateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const ctx = previewCanvas.getContext('2d');
+        const imageUpload = document.getElementById('imageUpload');
+        const photoInfo = document.getElementById('photoInfo');
+        const photoDimensionsSpan = document.getElementById('photoDimensions');
+        const photosPerRowSpan = document.getElementById('photosPerRow');
+        const photosPerColSpan = document.getElementById('photosPerCol');
+        const totalPhotosSpan = document.getElementById('totalPhotos');
+        
+        // 事件监听器
+        photoSizeSelect.addEventListener('change', function() {
+            customSizeGroup.style.display = this.value === 'custom' ? 'block' : 'none';
+        });
+        
+        imageUpload.addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        uploadedImage = img;
+                        // 自动生成排版
+                        generateLayout();
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+        
+        generateBtn.addEventListener('click', generateLayout);
+        
+        downloadBtn.addEventListener('click', function() {
+            if (generatedCanvas) {
+                const link = document.createElement('a');
+                link.download = '证件照排版.png';
+                link.href = generatedCanvas.toDataURL('image/png');
+                link.click();
+            }
+        });
+        
+        // 生成排版
+        function generateLayout() {
+            if (!uploadedImage) {
+                alert('请先上传证件照');
+                return;
+            }
+            
+            // 获取用户选择的参数
+            const margin = parseInt(marginInput.value);
+            const gap = parseInt(gapInput.value);
+            const paperSize = paperSizes[paperSizeSelect.value];
+            
+            // 获取证件照尺寸
+            let photoWidth, photoHeight;
+            const selectedPhotoSize = photoSizeSelect.value;
+            
+            if (selectedPhotoSize === 'custom') {
+                photoWidth = parseFloat(customWidthInput.value);
+                photoHeight = parseFloat(customHeightInput.value);
+            } else {
+                photoWidth = photoSizes[selectedPhotoSize].width;
+                photoHeight = photoSizes[selectedPhotoSize].height;
+            }
+            
+            // 计算DPI (假设屏幕DPI为96)
+            const dpi = 96;
+            const cmToPx = dpi / 2.54;
+            
+            // 计算照片和纸张的像素尺寸
+            const photoWidthPx = Math.round(photoWidth * cmToPx);
+            const photoHeightPx = Math.round(photoHeight * cmToPx);
+            const paperWidthPx = Math.round(paperSize.width * cmToPx);
+            const paperHeightPx = Math.round(paperSize.height * cmToPx);
+            
+            // 计算可排版区域
+            const usableWidth = paperWidthPx - 2 * margin;
+            const usableHeight = paperHeightPx - 2 * margin;
+            
+            // 计算每行每列可以放多少照片
+            const photosPerRow = Math.floor((usableWidth + gap) / (photoWidthPx + gap));
+            const photosPerCol = Math.floor((usableHeight + gap) / (photoHeightPx + gap));
+            
+            // 计算总照片数
+            const totalPhotos = photosPerRow * photosPerCol;
+            
+            // 更新信息显示
+            photoDimensionsSpan.textContent = `${photoWidth.toFixed(1)} × ${photoHeight.toFixed(1)}`;
+            photosPerRowSpan.textContent = photosPerRow;
+            photosPerColSpan.textContent = photosPerCol;
+            totalPhotosSpan.textContent = totalPhotos;
+            photoInfo.style.display = 'block';
+            
+            // 创建画布
+            previewCanvas.width = paperWidthPx;
+            previewCanvas.height = paperHeightPx;
+            
+            // 填充白色背景
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, paperWidthPx, paperHeightPx);
+            
+            // 计算起始位置
+            const startX = margin;
+            const startY = margin;
+            
+            // 绘制照片
+            for (let row = 0; row < photosPerCol; row++) {
+                for (let col = 0; col < photosPerRow; col++) {
+                    const x = startX + col * (photoWidthPx + gap);
+                    const y = startY + row * (photoHeightPx + gap);
+                    
+                    // 绘制照片
+                    ctx.drawImage(uploadedImage, x, y, photoWidthPx, photoHeightPx);
+                    
+                    // 绘制边框
+                    ctx.strokeStyle = '#ddd';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(x, y, photoWidthPx, photoHeightPx);
+                }
+            }
+            
+            // 保存生成的画布
+            generatedCanvas = previewCanvas;
+            downloadBtn.disabled = false;
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置默认值
+            photoSizeSelect.value = '1';
+            paperSizeSelect.value = 'A4';
+            marginInput.value = '10';
+            gapInput.value = '5';
+        });
+    </script>
+
+<div align="center"><br />
+<a href="/tools/" style="font-size:12px;color:#999999;text-decoration: none;">返回工具列表</a>	<span style="font-size:12px;color:#999999;">联系站长 E651@msn.com</span>
+</div>
+</body>
+</html>

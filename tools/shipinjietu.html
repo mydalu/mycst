@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快速视频截图工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .video-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        video {
+            max-width: 100%;
+            background-color: #000;
+            display: none; /* 隐藏实际播放的视频 */
+        }
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        input, select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .screenshots {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 10px;
+        }
+        .screenshot-item {
+            border: 1px solid #ddd;
+            padding: 5px;
+            border-radius: 4px;
+            background-color: white;
+        }
+        .screenshot-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .screenshot-info {
+            font-size: 12px;
+            text-align: center;
+            margin-top: 5px;
+            color: #666;
+        }
+        .download-all {
+            background-color: #2196F3;
+            margin-top: 20px;
+        }
+        .download-all:hover {
+            background-color: #0b7dda;
+        }
+        .status {
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .progress-bar {
+            height: 20px;
+            background-color: #4CAF50;
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s;
+            text-align: center;
+            color: white;
+            line-height: 20px;
+            font-size: 12px;
+        }
+        .preview {
+            max-width: 100%;
+            max-height: 200px;
+            display: block;
+            margin: 10px auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>快速视频截图工具</h1>
+        
+        <div class="video-container">
+            <video id="video" controls>
+                <source id="videoSource" type="video/mp4">
+                您的浏览器不支持HTML5视频
+            </video>
+            <img id="preview" class="preview" style="display: none;">
+        </div>
+        
+        <div class="controls">
+            <input type="file" id="videoInput" accept="video/*">
+            <select id="interval">
+                <option value="1">每1秒</option>
+                <option value="5">每5秒</option>
+                <option value="10" selected>每10秒</option>
+                <option value="30">每30秒</option>
+                <option value="60">每60秒</option>
+                <option value="custom">自定义</option>
+            </select>
+            <input type="number" id="customInterval" value="10" min="1" style="display: none;">
+            <span>秒截取一次</span>
+            <button id="startBtn" disabled>开始截图</button>
+            <button id="stopBtn" disabled>停止</button>
+            <button id="downloadAllBtn" class="download-all" disabled>下载全部截图</button>
+        </div>
+        
+        <div class="progress-container" style="display: none;">
+            <div class="progress-bar" id="progressBar">0%</div>
+        </div>
+        
+        <div class="status" id="status">请选择视频文件</div>
+        
+        <div class="screenshots" id="screenshotsContainer"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const videoInput = document.getElementById('videoInput');
+            const video = document.getElementById('video');
+            const videoSource = document.getElementById('videoSource');
+            const preview = document.getElementById('preview');
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const downloadAllBtn = document.getElementById('downloadAllBtn');
+            const intervalSelect = document.getElementById('interval');
+            const customInterval = document.getElementById('customInterval');
+            const screenshotsContainer = document.getElementById('screenshotsContainer');
+            const status = document.getElementById('status');
+            const progressContainer = document.querySelector('.progress-container');
+            const progressBar = document.getElementById('progressBar');
+            
+            let videoFile = null;
+            let captureTimeout = null;
+            let isCapturing = false;
+            let screenshots = [];
+            let canvas = null;
+            let canvasCtx = null;
+            
+            // 初始化canvas
+            function initCanvas() {
+                if (!canvas) {
+                    canvas = document.createElement('canvas');
+                    canvasCtx = canvas.getContext('2d');
+                }
+            }
+            
+            // 监听视频文件选择
+            videoInput.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    videoFile = e.target.files[0];
+                    const videoURL = URL.createObjectURL(videoFile);
+                    videoSource.src = videoURL;
+                    video.load();
+                    
+                    // 等待视频元数据加载完成
+                    video.addEventListener('loadedmetadata', function() {
+                        initCanvas();
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        
+                        startBtn.disabled = false;
+                        status.textContent = `视频已加载 (时长: ${formatTime(video.duration)})，点击"开始截图"按钮开始截取`;
+                        
+                        // 显示第一帧作为预览
+                        video.currentTime = 0;
+                        video.addEventListener('seeked', function() {
+                            canvasCtx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                            preview.src = canvas.toDataURL('image/jpeg', 0.8);
+                            preview.style.display = 'block';
+                        }, { once: true });
+                    });
+                }
+            });
+            
+            // 监听间隔选择变化
+            intervalSelect.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    customInterval.style.display = 'inline-block';
+                } else {
+                    customInterval.style.display = 'none';
+                }
+            });
+            
+            // 开始截图
+            startBtn.addEventListener('click', function() {
+                if (!videoFile) return;
+                
+                // 获取间隔时间
+                let interval = intervalSelect.value === 'custom' ? 
+                    parseInt(customInterval.value) : parseInt(intervalSelect.value);
+                
+                if (isNaN(interval) || interval < 1) {
+                    status.textContent = '请输入有效的截取间隔时间';
+                    return;
+                }
+                
+                // 清空之前的截图
+                screenshotsContainer.innerHTML = '';
+                screenshots = [];
+                
+                isCapturing = true;
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                downloadAllBtn.disabled = true;
+                videoInput.disabled = true;
+                intervalSelect.disabled = true;
+                customInterval.disabled = true;
+                
+                // 显示进度条
+                progressContainer.style.display = 'block';
+                progressBar.style.width = '0%';
+                progressBar.textContent = '0%';
+                
+                status.textContent = `正在快速截取视频截图，间隔: ${interval}秒...`;
+                
+                // 开始截图流程
+                let currentTime = 0;
+                const totalFrames = Math.ceil(video.duration / interval);
+                let framesCaptured = 0;
+                
+                function captureFrame() {
+                    if (!isCapturing || currentTime > video.duration) {
+                        stopCapturing();
+                        return;
+                    }
+                    
+                    // 设置视频时间点
+                    video.currentTime = Math.min(currentTime, video.duration - 0.1);
+                    
+                    // 当视频跳转到指定时间点时捕获帧
+                    video.addEventListener('seeked', function onSeeked() {
+                        video.removeEventListener('seeked', onSeeked);
+                        
+                        // 捕获当前帧
+                        canvasCtx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                        const time = formatTime(currentTime);
+                        
+                        // 保存截图
+                        screenshots.push({
+                            dataUrl: dataUrl,
+                            time: time,
+                            timestamp: currentTime
+                        });
+                        
+                        // 显示截图缩略图
+                        const screenshotItem = document.createElement('div');
+                        screenshotItem.className = 'screenshot-item';
+                        
+                        const img = document.createElement('img');
+                        img.src = dataUrl;
+                        img.alt = `截图 ${time}`;
+                        
+                        const info = document.createElement('div');
+                        info.className = 'screenshot-info';
+                        info.textContent = time;
+                        
+                        screenshotItem.appendChild(img);
+                        screenshotItem.appendChild(info);
+                        screenshotsContainer.appendChild(screenshotItem);
+                        
+                        // 更新进度
+                        framesCaptured++;
+                        const progress = (framesCaptured / totalFrames) * 100;
+                        progressBar.style.width = `${progress}%`;
+                        progressBar.textContent = `${Math.round(progress)}%`;
+                        
+                        status.textContent = `已截取 ${framesCaptured}/${totalFrames} 张截图 (当前: ${time})`;
+                        
+                        // 继续下一帧
+                        currentTime += interval;
+                        if (currentTime <= video.duration) {
+                            captureTimeout = setTimeout(captureFrame, 0);
+                        } else {
+                            stopCapturing();
+                        }
+                    });
+                }
+                
+                // 开始第一帧捕获
+                captureFrame();
+            });
+            
+            // 停止截图
+            stopBtn.addEventListener('click', stopCapturing);
+            
+            // 下载全部截图
+            downloadAllBtn.addEventListener('click', function() {
+                if (screenshots.length === 0) return;
+                
+                // 创建ZIP文件
+                status.textContent = '正在准备下载...';
+                
+                // 使用JSZip库来创建ZIP文件
+                // 注意：实际使用时需要引入JSZip库，这里简化处理，逐个下载
+                let delay = 0;
+                screenshots.forEach((screenshot, index) => {
+                    setTimeout(() => {
+                        const link = document.createElement('a');
+                        link.href = screenshot.dataUrl;
+                        link.download = `screenshot_${index + 1}_${screenshot.time.replace(/:/g, '-')}.jpg`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        
+                        if (index === screenshots.length - 1) {
+                            status.textContent = `已下载 ${screenshots.length} 张截图`;
+                        }
+                    }, delay);
+                    delay += 100; // 添加少量延迟避免浏览器阻止多次下载
+                });
+            });
+            
+            // 停止截图函数
+            function stopCapturing() {
+                clearTimeout(captureTimeout);
+                isCapturing = false;
+                
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                downloadAllBtn.disabled = screenshots.length === 0;
+                videoInput.disabled = false;
+                intervalSelect.disabled = false;
+                customInterval.disabled = false;
+                
+                status.textContent = `截图完成，共截取 ${screenshots.length} 张截图`;
+            }
+            
+            // 格式化时间 (秒 -> HH:MM:SS)
+            function formatTime(seconds) {
+                const date = new Date(null);
+                date.setSeconds(seconds);
+                return date.toISOString().substr(11, 8);
+            }
+        });
+    </script>
+
+
+<div align="center"><br />
+<a href="/tools/" style="font-size:12px;color:#999999;text-decoration: none;">返回工具列表</a>	<span style="font-size:12px;color:#999999;">联系站长 E651@msn.com</span>
+</div>
+</body>
+</html>

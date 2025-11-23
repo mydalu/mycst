@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本词频统计工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+        }
+        .word-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .word {
+            font-weight: bold;
+        }
+        .count {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>文本词频统计工具</h1>
+    <textarea id="inputText" placeholder="请输入要分析的文本内容..."></textarea>
+    <button onclick="analyzeText()">分析文本</button>
+    <div id="result"></div>
+
+    <script>
+        // 改进的中文分词函数
+        function segmentChineseText(text) {
+            // 简单的中文分词算法（按词语边界分割）
+            // 实际应用中可以使用更专业的分词库
+            return text.replace(
+                /([\u4e00-\u9fa5]+)/g, 
+                ' $1 '
+            ).split(/\s+/)
+            .filter(word => word.length > 0);
+        }
+
+        function analyzeText() {
+            // 获取用户输入的文本
+            const inputText = document.getElementById('inputText').value.trim();
+            
+            if (!inputText) {
+                alert('请输入要分析的文本内容');
+                return;
+            }
+            
+            // 先处理英文部分（保留英文单词）
+            let words = [];
+            let remainingText = inputText;
+            
+            // 提取英文单词
+            const englishParts = remainingText.split(/([a-zA-Z]+)/);
+            for (let i = 0; i < englishParts.length; i++) {
+                if (i % 2 === 1) {
+                    // 英文单词
+                    words.push(englishParts[i].toLowerCase());
+                } else {
+                    // 非英文部分，进行中文分词
+                    const chineseWords = segmentChineseText(englishParts[i]);
+                    words = words.concat(chineseWords);
+                }
+            }
+            
+            // 过滤掉空字符串和标点符号
+            words = words.filter(word => {
+                return word.length > 0 && 
+                       !/^[，。、；：！？「」『』【】（）《》〈〉"'\.,;:!?\-]+$/.test(word);
+            });
+            
+            // 统计词频
+            const wordCount = {};
+            words.forEach(word => {
+                wordCount[word] = (wordCount[word] || 0) + 1;
+            });
+            
+            // 转换为数组并排序
+            const sortedWords = Object.entries(wordCount)
+                .map(([word, count]) => ({ word, count }))
+                .sort((a, b) => b.count - a.count || a.word.localeCompare(b.word));
+            
+            // 显示结果
+            displayResults(sortedWords);
+        }
+        
+        function displayResults(words) {
+            const resultDiv = document.getElementById('result');
+            
+            if (words.length === 0) {
+                resultDiv.innerHTML = '<p>没有找到可统计的词语。</p>';
+                return;
+            }
+            
+            let html = '<h2>词频统计结果</h2>';
+            html += '<div id="wordList">';
+            
+            words.forEach(item => {
+                html += `
+                    <div class="word-item">
+                        <span class="word">${item.word}</span>
+                        <span class="count">出现次数: ${item.count}</span>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            resultDiv.innerHTML = html;
+        }
+    </script>
+ <div align="center"><br />
+<a href="/tools/" style="font-size:12px;color:#999999;text-decoration: none;">返回工具列表</a>	<span style="font-size:12px;color:#999999;">联系站长 E651@msn.com</span>
+</div>
+</body>
+</html>
+

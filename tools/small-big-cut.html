@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多功能图片处理工具</title>
+    <!-- Tailwind CSS CDN for styling -->
+ <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* Align content to top initially */
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            margin-right: 0.5rem;
+        }
+        .tab-button.active {
+            background-color: #3b82f6; /* blue-500 */
+            color: #ffffff;
+        }
+        .tab-button:not(.active):hover {
+            background-color: #eff6ff; /* blue-50 */
+            color: #2563eb; /* blue-700 */
+        }
+        .file-input-label {
+            display: inline-block;
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-bottom: 1rem;
+        }
+        .file-input-label:hover {
+            background-color: #2563eb; /* blue-700 */
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .image-preview-card {
+            background-color: #f9fafb; /* gray-50 */
+            border: 1px solid #e5e7eb; /* gray-200 */
+            border-radius: 0.5rem;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .image-preview-card img, .image-preview-card canvas {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .download-button {
+            background-color: #10b981; /* emerald-500 */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .download-button:hover {
+            background-color: #059669; /* emerald-700 */
+        }
+        .download-all-button {
+            background-color: #f97316; /* orange-500 */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 1rem;
+        }
+        .download-all-button:hover {
+            background-color: #ea580c; /* orange-700 */
+        }
+        .info-text {
+            font-size: 0.875rem; /* text-sm */
+            color: #4b5563; /* gray-600 */
+        }
+
+        /* Cropping specific styles */
+        #cropCanvasContainer {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+            max-height: 60vh; /* Limit height to prevent excessive scrolling */
+            overflow: hidden;
+            border: 1px dashed #9ca3af;
+            border-radius: 0.5rem;
+            /* Added min-height to ensure container has space before image loads */
+            min-height: 200px;
+        }
+        #cropCanvas {
+            display: block; /* Remove extra space below canvas */
+        }
+        #cropSelectionBox {
+            position: absolute;
+            border: 2px dashed #dc2626; /* red-600 */
+            background-color: rgba(220, 38, 38, 0.2); /* red-600 with transparency */
+            cursor: grab; /* Changed to grab for better UX */
+            touch-action: none;
+            box-sizing: border-box; /* Ensures padding/border are included in width/height */
+        }
+        #cropSelectionBox:active {
+            cursor: grabbing;
+        }
+        .resize-handle {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: #3b82f6; /* blue-500 */
+            border: 1px solid white;
+            border-radius: 50%;
+            z-index: 10;
+        }
+        .resize-handle.top-left { top: -6px; left: -6px; cursor: nwse-resize; }
+        .resize-handle.top-right { top: -6px; right: -6px; cursor: nesw-resize; }
+        .resize-handle.bottom-left { bottom: -6px; left: -6px; cursor: nesw-resize; }
+        .resize-handle.bottom-right { bottom: -6px; right: -6px; cursor: nwse-resize; }
+
+        /* Custom message box */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            z-index: 1000;
+            display: none;
+        }
+        .message-box-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+    </style>
+</head>
+<body class="p-4 bg-gray-100 min-h-screen flex flex-col items-center">
+
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">多功能图片处理工具</h1>
+
+        <div class="flex justify-center mb-6 border-b border-gray-200">
+            <button id="tabCompress" class="tab-button active">图片压缩</button>
+            <button id="tabIncrease" class="tab-button">增加图片大小</button>
+            <button id="tabCrop" class="tab-button">证件照裁剪</button>
+        </div>
+
+        <!-- 功能区容器 -->
+        <div id="functionSections">
+            <!-- 图片压缩区 -->
+            <div id="compressSection" class="active-section">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">图片压缩</h2>
+                <input type="file" id="compressFileInput" multiple accept="image/*">
+                <label for="compressFileInput" class="file-input-label">选择图片</label>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="compressTargetSize">
+                        目标大小 (KB):
+                    </label>
+                    <div class="flex flex-wrap gap-2 mb-2">
+                        <button class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm" data-size="50">50KB</button>
+                        <button class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm" data-size="100">100KB</button>
+                        <button class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm" data-size="200">200KB</button>
+                        <button class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm" data-size="300">300KB</button>
+                        <button class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm" data-size="500">500KB</button>
+                        <button class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm" data-size="800">800KB</button>
+                    </div>
+                    <input type="number" id="customCompressSize" placeholder="自定义大小 (KB)" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <button id="applyCompressSize" class="mt-2 px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600">应用大小</button>
+                </div>
+                <button id="processCompressButton" class="px-6 py-3 rounded-md bg-green-500 text-white font-semibold hover:bg-green-600 mb-4">开始压缩</button>
+
+                <div id="compressResults" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- 压缩结果将在这里显示 -->
+                </div>
+                <button id="downloadAllCompressed" class="download-all-button hidden">下载所有压缩图片</button>
+            </div>
+
+            <!-- 增加图片大小区 -->
+            <div id="increaseSection" class="hidden">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">增加图片文件大小</h2>
+                <input type="file" id="increaseFileInput" multiple accept="image/*">
+                <label for="increaseFileInput" class="file-input-label">选择图片</label>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="increaseTargetSize">
+                        目标大小 (KB):
+                    </label>
+                    <div class="flex flex-wrap gap-2 mb-2">
+                        <button class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm" data-size="50">50KB</button>
+                        <button class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm" data-size="100">100KB</button>
+                        <button class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm" data-size="200">200KB</button>
+                        <button class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm" data-size="300">300KB</button>
+                        <button class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm" data-size="500">500KB</button>
+                        <button class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm" data-size="800">800KB</button>
+                    </div>
+                    <input type="number" id="customIncreaseSize" placeholder="自定义大小 (KB)" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <button id="applyIncreaseSize" class="mt-2 px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600">应用大小</button>
+                </div>
+                <button id="processIncreaseButton" class="px-6 py-3 rounded-md bg-green-500 text-white font-semibold hover:bg-green-600 mb-4">开始处理</button>
+
+                <div id="increaseResults" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- 增加大小结果将在这里显示 -->
+                </div>
+                <button id="downloadAllIncreased" class="download-all-button hidden">下载所有处理图片</button>
+            </div>
+
+            <!-- 证件照裁剪区 -->
+            <div id="cropSection" class="hidden">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">证件照裁剪</h2>
+                <input type="file" id="cropFileInput" accept="image/*">
+                <label for="cropFileInput" class="file-input-label">选择图片</label>
+
+                <div id="cropTools" class="flex flex-col md:flex-row gap-4 mb-4 items-center">
+                    <div class="flex flex-wrap gap-2">
+                        <!-- Updated ID Photo Ratios -->
+                        <button class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm" data-ratio="25:35">1寸 (25x35mm)</button>
+                        <button class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm" data-ratio="35:49">2寸 (35x49mm)</button>
+                        <button class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm" data-ratio="35:52">3寸 (35x52mm)</button>
+                        <button class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm" data-ratio="free">自由裁剪</button>
+                    </div>
+                    <button id="resetCrop" class="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 text-sm">重置</button>
+                </div>
+
+                <div id="cropCanvasContainer" class="w-full max-w-xl mx-auto mb-4 overflow-hidden">
+                    <canvas id="cropCanvas" class="border border-gray-300 rounded-md"></canvas>
+                    <!-- IMPORTANT: cropSelectionBox moved directly inside cropCanvasContainer.
+                         Its positioning needs to be relative to the canvas itself. -->
+                    <div id="cropSelectionBox" class="hidden">
+                        <div class="resize-handle top-left"></div>
+                        <div class="resize-handle top-right"></div>
+                        <div class="resize-handle bottom-left"></div>
+                        <div class="resize-handle bottom-right"></div>
+                    </div>
+                </div>
+
+                <button id="applyCropButton" class="px-6 py-3 rounded-md bg-green-500 text-white font-semibold hover:bg-green-600 mb-4">应用裁剪</button>
+
+                <div id="croppedImageResult" class="flex flex-col items-center">
+                    <!-- 裁剪结果将在这里显示 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Message Box -->
+    <div id="messageBoxOverlay" class="message-box-overlay"></div>
+    <div id="messageBox" class="message-box">
+        <p id="messageBoxContent" class="mb-4 text-gray-800"></p>
+        <button id="messageBoxClose" class="px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600 float-right">确定</button>
+    </div>
+
+    <script>
+        // Custom message box functions
+        function showMessageBox(message) {
+            const messageBox = document.getElementById('messageBox');
+            const messageBoxContent = document.getElementById('messageBoxContent');
+            const messageBoxOverlay = document.getElementById('messageBoxOverlay');
+            messageBoxContent.textContent = message;
+            messageBox.style.display = 'block';
+            messageBoxOverlay.style.display = 'block';
+        }
+
+        function hideMessageBox() {
+            const messageBox = document.getElementById('messageBox');
+            const messageBoxOverlay = document.getElementById('messageBoxOverlay');
+            messageBox.style.display = 'none';
+            messageBoxOverlay.style.display = 'none';
+        }
+
+        document.getElementById('messageBoxClose').addEventListener('click', hideMessageBox);
+        document.getElementById('messageBoxOverlay').addEventListener('click', hideMessageBox);
+
+
+        // --- Tab Switching Logic ---
+        const tabCompress = document.getElementById('tabCompress');
+        const tabIncrease = document.getElementById('tabIncrease');
+        const tabCrop = document.getElementById('tabCrop');
+
+        const compressSection = document.getElementById('compressSection');
+        const increaseSection = document.getElementById('increaseSection');
+        const cropSection = document.getElementById('cropSection');
+
+        const allSections = [compressSection, increaseSection, cropSection];
+        const allTabs = [tabCompress, tabIncrease, tabCrop];
+
+        function switchTab(activeTab, activeSection) {
+            allTabs.forEach(tab => tab.classList.remove('active'));
+            allSections.forEach(section => section.classList.add('hidden'));
+            allSections.forEach(section => section.classList.remove('active-section'));
+
+            activeTab.classList.add('active');
+            activeSection.classList.remove('hidden');
+            activeSection.classList.add('active-section');
+        }
+
+        tabCompress.addEventListener('click', () => switchTab(tabCompress, compressSection));
+        tabIncrease.addEventListener('click', () => switchTab(tabIncrease, increaseSection));
+        tabCrop.addEventListener('click', () => switchTab(tabCrop, cropSection));
+
+
+        // --- Helper Functions ---
+
+        /**
+         * Converts bytes to KB string with 2 decimal places.
+         * @param {number} bytes
+         * @returns {string}
+         */
+        function bytesToKB(bytes) {
+            return (bytes / 1024).toFixed(2) + ' KB';
+        }
+
+        /**
+         * Loads an image file onto a canvas.
+         * @param {File} file
+         * @returns {Promise<{image: HTMLImageElement, canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D}>}
+         */
+        function loadImageToCanvas(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+                        resolve({ image: img, canvas: canvas, ctx: ctx });
+                    };
+                    img.onerror = reject;
+                    img.src = event.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        /**
+         * Downloads a Blob as a file.
+         * @param {Blob} blob
+         * @param {string} filename
+         */
+        function downloadBlob(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // --- Image Compression Logic ---
+        const compressFileInput = document.getElementById('compressFileInput');
+        const compressResults = document.getElementById('compressResults');
+        const predefinedCompressSizeButtons = document.querySelectorAll('#compressSection button[data-size]');
+        const customCompressSizeInput = document.getElementById('customCompressSize');
+        const applyCompressSizeButton = document.getElementById('applyCompressSize');
+        const processCompressButton = document.getElementById('processCompressButton');
+        const downloadAllCompressedButton = document.getElementById('downloadAllCompressed');
+
+        let targetCompressSizeKB = 0; // In KB
+        let processedCompressFiles = []; // To store blobs for batch download
+
+        predefinedCompressSizeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                targetCompressSizeKB = parseInt(button.dataset.size);
+                customCompressSizeInput.value = targetCompressSizeKB;
+                showMessageBox(`目标压缩大小已设置为 ${targetCompressSizeKB} KB`);
+            });
+        });
+
+        applyCompressSizeButton.addEventListener('click', () => {
+            const customSize = parseInt(customCompressSizeInput.value);
+            if (!isNaN(customSize) && customSize > 0) {
+                targetCompressSizeKB = customSize;
+                showMessageBox(`目标压缩大小已设置为 ${targetCompressSizeKB} KB`);
+            } else {
+                showMessageBox('请输入有效的自定义大小 (大于0)');
+            }
+        });
+
+        compressFileInput.addEventListener('change', () => {
+            compressResults.innerHTML = ''; // Clear previous results
+            processedCompressFiles = [];
+            downloadAllCompressedButton.classList.add('hidden');
+        });
+
+        processCompressButton.addEventListener('click', async () => {
+            const files = compressFileInput.files;
+            if (files.length === 0) {
+                showMessageBox('请先选择图片文件！');
+                return;
+            }
+            if (targetCompressSizeKB <= 0) {
+                showMessageBox('请设置一个有效的目标压缩大小！');
+                return;
+            }
+
+            compressResults.innerHTML = '';
+            processedCompressFiles = [];
+            downloadAllCompressedButton.classList.add('hidden');
+
+            const targetBytes = targetCompressSizeKB * 1024;
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const card = document.createElement('div');
+                card.className = 'image-preview-card';
+                card.innerHTML = `
+                    <p class="font-bold text-lg">${file.name}</p>
+                    <div class="flex justify-around w-full text-sm">
+                        <span>原文件:</span>
+                        <span>尺寸: <span class="original-dims"></span></span>
+                        <span>大小: <span class="original-size"></span></span>
+                    </div>
+                    <img src="" alt="原始预览" class="max-w-xs h-auto original-preview mb-2"/>
+                    <p class="text-sm text-gray-500">正在处理...</p>
+                    <div class="flex justify-around w-full text-sm">
+                        <span>压缩后:</span>
+                        <span>尺寸: <span class="compressed-dims"></span></span>
+                        <span>大小: <span class="compressed-size"></span></span>
+                    </div>
+                    <canvas class="hidden compressed-canvas"></canvas>
+                    <button class="download-button hidden">下载</button>
+                `;
+                compressResults.appendChild(card);
+
+                const originalPreview = card.querySelector('.original-preview');
+                const originalDimsSpan = card.querySelector('.original-dims');
+                const originalSizeSpan = card.querySelector('.original-size');
+                const compressedDimsSpan = card.querySelector('.compressed-dims');
+                const compressedSizeSpan = card.querySelector('.compressed-size');
+                const compressedCanvas = card.querySelector('.compressed-canvas');
+                const downloadBtn = card.querySelector('.download-button');
+                const processingText = card.querySelector('p.text-gray-500');
+
+                try {
+                    const { image, canvas, ctx } = await loadImageToCanvas(file);
+                    originalPreview.src = image.src;
+                    originalDimsSpan.textContent = `${image.width}x${image.height}`;
+                    originalSizeSpan.textContent = bytesToKB(file.size);
+
+                    let quality = 0.8; // Starting quality
+                    let compressedBlob = null;
+                    let currentSize = Infinity;
+                    let attempts = 0;
+                    const maxAttempts = 30; // Increased attempts for better convergence
+
+                    // Binary search for optimal quality
+                    let minQuality = 0;
+                    let maxQuality = 1;
+
+                    // Preserve original dimensions for compression, primarily adjust quality
+                    compressedCanvas.width = image.width;
+                    compressedCanvas.height = image.height;
+                    const compressedCtx = compressedCanvas.getContext('2d');
+                    compressedCtx.drawImage(image, 0, 0, image.width, image.height);
+
+                    while (attempts < maxAttempts) {
+                        await new Promise(resolve => compressedCanvas.toBlob(blob => {
+                            if (blob) { // Ensure blob is not null
+                                compressedBlob = blob;
+                                currentSize = blob.size;
+                            } else {
+                                // Fallback if toBlob fails for some quality
+                                currentSize = Infinity;
+                            }
+                            resolve();
+                        }, 'image/jpeg', quality));
+
+                        if (!compressedBlob) { // If blob generation failed, break or handle error
+                            processingText.textContent = `处理失败: 无法生成图片Blob (质量: ${quality.toFixed(2)})`;
+                            break;
+                        }
+
+                        // Exit conditions:
+                        // 1. Size is within tolerance
+                        // 2. Already at min/max quality and cannot improve
+                        if (Math.abs(currentSize - targetBytes) < targetBytes * 0.05 || // Within 5% tolerance
+                            (quality === 1 && currentSize <= targetBytes) || // Already at max quality and reached target
+                            (quality === 0.01 && currentSize >= targetBytes) // Already at min quality and cannot go lower
+                        ) {
+                            break;
+                        }
+
+                        if (currentSize > targetBytes) {
+                            maxQuality = quality;
+                            quality = (minQuality + quality) / 2;
+                        } else {
+                            minQuality = quality;
+                            quality = (quality + maxQuality) / 2;
+                        }
+
+                        // Prevent quality from going below minimum
+                        if (quality < 0.01) quality = 0.01;
+                        // Prevent quality from going above maximum
+                        if (quality > 1) quality = 1;
+
+                        attempts++;
+                    }
+
+                    // Final check and message if target not met
+                    if (compressedBlob && currentSize > targetBytes * 1.1) { // If still more than 10% above target
+                        processingText.textContent = `处理完成，但未能达到目标大小 ${targetCompressSizeKB} KB (当前: ${bytesToKB(currentSize)})。可能需要进一步处理或牺牲画质。`;
+                    } else if (compressedBlob) {
+                        processingText.textContent = '处理完成！';
+                    } else {
+                         processingText.textContent = `处理失败: 最终Blob为空。`;
+                    }
+
+
+                    if (compressedBlob) {
+                        compressedDimsSpan.textContent = `${compressedCanvas.width}x${compressedCanvas.height}`;
+                        compressedSizeSpan.textContent = bytesToKB(compressedBlob.size);
+
+                        const processedImgUrl = URL.createObjectURL(compressedBlob);
+                        const imgElement = document.createElement('img');
+                        imgElement.src = processedImgUrl;
+                        imgElement.alt = "压缩后预览";
+                        imgElement.className = "max-w-xs h-auto compressed-preview mb-2";
+                        card.insertBefore(imgElement, compressedCanvas.nextSibling); // Insert after canvas
+                        compressedCanvas.remove(); // Remove unused canvas
+
+                        downloadBtn.classList.remove('hidden');
+                        downloadBtn.onclick = () => {
+                            downloadBlob(compressedBlob, `compressed_${file.name.split('.')[0]}.jpeg`);
+                        };
+
+                        processedCompressFiles.push({ blob: compressedBlob, filename: `compressed_${file.name.split('.')[0]}.jpeg` });
+                    }
+
+                } catch (error) {
+                    processingText.textContent = `处理失败: ${error.message}`;
+                    console.error('Compression error:', error);
+                }
+            }
+            if (processedCompressFiles.length > 0) {
+                downloadAllCompressedButton.classList.remove('hidden');
+            }
+        });
+
+        downloadAllCompressedButton.addEventListener('click', () => {
+            if (processedCompressFiles.length === 0) {
+                showMessageBox('没有可下载的压缩图片。');
+                return;
+            }
+            processedCompressFiles.forEach(item => {
+                downloadBlob(item.blob, item.filename);
+            });
+            showMessageBox('所有压缩图片已下载。');
+        });
+
+        // --- Image Size Increase Logic ---
+        const increaseFileInput = document.getElementById('increaseFileInput');
+        const increaseResults = document.getElementById('increaseResults');
+        const predefinedIncreaseSizeButtons = document.querySelectorAll('#increaseSection button[data-size]');
+        const customIncreaseSizeInput = document.getElementById('customIncreaseSize');
+        const applyIncreaseSizeButton = document.getElementById('applyIncreaseSize');
+        const processIncreaseButton = document.getElementById('processIncreaseButton');
+        const downloadAllIncreasedButton = document.getElementById('downloadAllIncreased');
+
+        let targetIncreaseSizeKB = 0; // In KB
+        let processedIncreaseFiles = []; // To store blobs for batch download
+
+        predefinedIncreaseSizeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                targetIncreaseSizeKB = parseInt(button.dataset.size);
+                customIncreaseSizeInput.value = targetIncreaseSizeKB;
+                showMessageBox(`目标增加大小已设置为 ${targetIncreaseSizeKB} KB`);
+            });
+        });
+
+        applyIncreaseSizeButton.addEventListener('click', () => {
+            const customSize = parseInt(customIncreaseSizeInput.value);
+            if (!isNaN(customSize) && customSize > 0) {
+                targetIncreaseSizeKB = customSize;
+                showMessageBox(`目标增加大小已设置为 ${targetIncreaseSizeKB} KB`);
+            } else {
+                showMessageBox('请输入有效的自定义大小 (大于0)');
+            }
+        });
+
+        increaseFileInput.addEventListener('change', () => {
+            increaseResults.innerHTML = ''; // Clear previous results
+            processedIncreaseFiles = [];
+            downloadAllIncreasedButton.classList.add('hidden');
+        });
+
+        processIncreaseButton.addEventListener('click', async () => {
+            const files = increaseFileInput.files;
+            if (files.length === 0) {
+                showMessageBox('请先选择图片文件！');
+                return;
+            }
+            if (targetIncreaseSizeKB <= 0) {
+                showMessageBox('请设置一个有效的目标增加大小！');
+                return;
+            }
+
+            increaseResults.innerHTML = '';
+            processedIncreaseFiles = [];
+            downloadAllIncreasedButton.classList.add('hidden');
+
+            const targetBytes = targetIncreaseSizeKB * 1024;
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const card = document.createElement('div');
+                card.className = 'image-preview-card';
+                card.innerHTML = `
+                    <p class="font-bold text-lg">${file.name}</p>
+                    <div class="flex justify-around w-full text-sm">
+                        <span>原文件:</span>
+                        <span>尺寸: <span class="original-dims"></span></span>
+                        <span>大小: <span class="original-size"></span></span>
+                    </div>
+                    <img src="" alt="原始预览" class="max-w-xs h-auto original-preview mb-2"/>
+                    <p class="text-sm text-gray-500">正在处理...</p>
+                    <div class="flex justify-around w-full text-sm">
+                        <span>处理后:</span>
+                        <span>尺寸: <span class="increased-dims"></span></span>
+                        <span>大小: <span class="increased-size"></span></span>
+                    </div>
+                    <canvas class="hidden increased-canvas"></canvas>
+                    <button class="download-button hidden">下载</button>
+                `;
+                increaseResults.appendChild(card);
+
+                const originalPreview = card.querySelector('.original-preview');
+                const originalDimsSpan = card.querySelector('.original-dims');
+                const originalSizeSpan = card.querySelector('.original-size');
+                const increasedDimsSpan = card.querySelector('.increased-dims');
+                const increasedSizeSpan = card.querySelector('.increased-size');
+                const increasedCanvas = card.querySelector('.increased-canvas');
+                const downloadBtn = card.querySelector('.download-button');
+                const processingText = card.querySelector('p.text-gray-500');
+
+                try {
+                    const { image, canvas, ctx } = await loadImageToCanvas(file);
+                    originalPreview.src = image.src;
+                    originalDimsSpan.textContent = `${image.width}x${image.height}`;
+                    originalSizeSpan.textContent = bytesToKB(file.size);
+
+                    let increasedBlob = null;
+                    let currentSize = file.size;
+
+                    // Start with original dimensions and attempt to increase size
+                    increasedCanvas.width = image.width;
+                    increasedCanvas.height = image.height;
+                    const increasedCtx = increasedCanvas.getContext('2d');
+                    increasedCtx.drawImage(image, 0, 0, image.width, image.height);
+
+                    // Try to get max quality JPEG first
+                    await new Promise(resolve => increasedCanvas.toBlob(blob => {
+                        increasedBlob = blob;
+                        currentSize = blob.size;
+                        resolve();
+                    }, 'image/jpeg', 1.0)); // Always max quality JPEG initially
+
+                    let originalWidth = image.width;
+                    let originalHeight = image.height;
+                    let scaleFactor = 1.0;
+                    const maxScaleAttempts = 15; // Increased attempts
+
+                    // If still too small, slightly scale up and re-encode
+                    let attempts = 0;
+                    while (currentSize < targetBytes * 0.95 && attempts < maxScaleAttempts) { // Try to get within 5%
+                        scaleFactor += 0.05; // Increase size by 5% each time
+                        let newWidth = originalWidth * scaleFactor;
+                        let newHeight = originalHeight * scaleFactor;
+
+                        increasedCanvas.width = newWidth;
+                        increasedCanvas.height = newHeight;
+                        increasedCtx.clearRect(0, 0, newWidth, newHeight);
+                        increasedCtx.drawImage(image, 0, 0, newWidth, newHeight);
+
+                        await new Promise(resolve => increasedCanvas.toBlob(blob => {
+                            increasedBlob = blob;
+                            currentSize = blob.size;
+                            resolve();
+                        }, 'image/jpeg', 1.0)); // Always max quality JPEG
+
+                        attempts++;
+                    }
+
+                    if (currentSize < targetBytes * 0.95) { // If still significantly below target
+                        processingText.textContent = `处理完成，但未能完全达到目标大小 ${targetIncreaseSizeKB} KB (当前: ${bytesToKB(currentSize)})。这可能是因为文件大小增加有其物理极限，避免过度拉伸导致画质严重下降。`;
+                    } else {
+                        processingText.textContent = '处理完成！';
+                    }
+
+                    increasedDimsSpan.textContent = `${increasedCanvas.width}x${increasedCanvas.height}`;
+                    increasedSizeSpan.textContent = bytesToKB(increasedBlob.size);
+
+                    const processedImgUrl = URL.createObjectURL(increasedBlob);
+                    const imgElement = document.createElement('img');
+                    imgElement.src = processedImgUrl;
+                    imgElement.alt = "增加大小后预览";
+                    imgElement.className = "max-w-xs h-auto increased-preview mb-2";
+                    card.insertBefore(imgElement, increasedCanvas.nextSibling); // Insert after canvas
+                    increasedCanvas.remove(); // Remove unused canvas
+
+                    downloadBtn.classList.remove('hidden');
+                    downloadBtn.onclick = () => {
+                        downloadBlob(increasedBlob, `increased_${file.name.split('.')[0]}.jpeg`);
+                    };
+
+                    processedIncreaseFiles.push({ blob: increasedBlob, filename: `increased_${file.name.split('.')[0]}.jpeg` });
+
+                } catch (error) {
+                    processingText.textContent = `处理失败: ${error.message}`;
+                    console.error('Increase size error:', error);
+                }
+            }
+            if (processedIncreaseFiles.length > 0) {
+                downloadAllIncreasedButton.classList.remove('hidden');
+            }
+        });
+
+        downloadAllIncreasedButton.addEventListener('click', () => {
+            if (processedIncreaseFiles.length === 0) {
+                showMessageBox('没有可下载的处理图片。');
+                return;
+            }
+            processedIncreaseFiles.forEach(item => {
+                downloadBlob(item.blob, item.filename);
+            });
+            showMessageBox('所有处理图片已下载。');
+        });
+
+        // --- Image Cropping Logic ---
+        const cropFileInput = document.getElementById('cropFileInput');
+        const cropCanvas = document.getElementById('cropCanvas');
+        const cropCanvasContainer = document.getElementById('cropCanvasContainer');
+        const cropCtx = cropCanvas.getContext('2d');
+        const cropSelectionBox = document.getElementById('cropSelectionBox');
+        const cropRatioButtons = document.querySelectorAll('#cropTools button[data-ratio]');
+        const applyCropButton = document.getElementById('applyCropButton');
+        const croppedImageResult = document.getElementById('croppedImageResult');
+        const resetCropButton = document.getElementById('resetCrop');
+
+        let originalCropImage = null; // Stores the original Image object for cropping
+        let currentCropRatio = null; // Stores the selected aspect ratio (e.g., '1:1', '35:49')
+        let cropSelection = { x: 0, y: 0, width: 0, height: 0 }; // Current selection box position and size
+        let isDragging = false;
+        let isResizing = false;
+        let resizeHandle = ''; // 'top-left', 'top-right', etc.
+        let dragStartX, dragStartY; // Mouse start position for drag/resize (relative to canvas element)
+
+        // Store the canvas's current offset within its container to correctly position the selection box
+        // This is crucial for "what you see is what you get"
+        let canvasRenderOffsetX = 0;
+        let canvasRenderOffsetY = 0;
+
+
+        function setCropCanvasSize(image) {
+            const originalImageAspectRatio = image.width / image.height;
+            const containerWidth = cropCanvasContainer.clientWidth;
+            const containerHeight = cropCanvasContainer.clientHeight > 0 ? cropCanvasContainer.clientHeight : window.innerHeight * 0.6;
+
+            let canvasWidth, canvasHeight;
+
+            // Calculate canvas dimensions to fit within container while maintaining image aspect ratio
+            if (containerWidth / originalImageAspectRatio <= containerHeight) {
+                canvasWidth = containerWidth;
+                canvasHeight = canvasWidth / originalImageAspectRatio;
+            } else {
+                canvasHeight = containerHeight;
+                canvasWidth = canvasHeight * originalImageAspectRatio;
+            }
+
+            cropCanvas.width = canvasWidth;
+            cropCanvas.height = canvasHeight;
+            cropCtx.drawImage(image, 0, 0, canvasWidth, canvasHeight);
+
+            // Dynamically calculate the canvas's offset relative to its flex container's top-left corner
+            // This is needed because flexbox centers the canvas within its parent.
+            const canvasRect = cropCanvas.getBoundingClientRect();
+            const containerRect = cropCanvasContainer.getBoundingClientRect();
+            canvasRenderOffsetX = canvasRect.left - containerRect.left;
+            canvasRenderOffsetY = canvasRect.top - containerRect.top;
+
+            // Reset selection and box state
+            cropSelection = { x: 0, y: 0, width: 0, height: 0 };
+            cropSelectionBox.style.width = '0px';
+            cropSelectionBox.style.height = '0px';
+            cropSelectionBox.style.left = '0px';
+            cropSelectionBox.style.top = '0px';
+            cropSelectionBox.classList.add('hidden');
+        }
+
+        cropFileInput.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+            croppedImageResult.innerHTML = '';
+
+            try {
+                const { image } = await loadImageToCanvas(file);
+                originalCropImage = image;
+                setCropCanvasSize(image);
+                cropSelectionBox.classList.remove('hidden');
+                // Apply a default crop selection, either based on current ratio or 'free'
+                applyDefaultCropSelectionWithRatio(currentCropRatio || 'free');
+            } catch (error) {
+                showMessageBox(`加载图片失败: ${error.message}`);
+                console.error('Error loading image for crop:', error);
+            }
+        });
+
+        resetCropButton.addEventListener('click', () => {
+            if (originalCropImage) {
+                setCropCanvasSize(originalCropImage);
+                cropSelectionBox.classList.remove('hidden');
+                croppedImageResult.innerHTML = '';
+                // Re-apply current ratio or default to 'free'
+                applyDefaultCropSelectionWithRatio(currentCropRatio || 'free');
+            } else {
+                showMessageBox('没有图片可以重置。');
+            }
+        });
+
+        function applyDefaultCropSelectionWithRatio(ratioString) {
+            const minSize = 50;
+            let newWidth, newHeight;
+            const canvasWidth = cropCanvas.width;
+            const canvasHeight = cropCanvas.height;
+
+            if (ratioString === 'free') {
+                newWidth = canvasWidth * 0.7;
+                newHeight = canvasHeight * 0.7;
+            } else {
+                const [ratioW, ratioH] = ratioString.split(':').map(Number);
+                if (isNaN(ratioW) || isNaN(ratioH) || ratioH === 0) return;
+                const aspectRatio = ratioW / ratioH;
+
+                // Calculate largest possible box that fits within canvas maintaining aspect ratio
+                if (canvasWidth / aspectRatio <= canvasHeight) {
+                    newWidth = canvasWidth;
+                    newHeight = newWidth / aspectRatio;
+                } else {
+                    newHeight = canvasHeight;
+                    newWidth = newHeight * aspectRatio;
+                }
+
+                // Start with 80% of the max possible size for fixed ratios
+                newWidth *= 0.8;
+                newHeight *= 0.8;
+
+                // Ensure it's not smaller than minSize
+                if (newWidth < minSize) { newWidth = minSize; newHeight = newWidth / aspectRatio; }
+                if (newHeight < minSize) { newHeight = minSize; newWidth = newHeight * aspectRatio; }
+
+                // Final clamp to ensure it doesn't exceed canvas dimensions after minSize adjustment
+                if (newWidth > canvasWidth || newHeight > canvasHeight) {
+                     if (canvasWidth / aspectRatio <= canvasHeight) {
+                        newWidth = canvasWidth;
+                        newHeight = newWidth / aspectRatio;
+                    } else {
+                        newHeight = canvasHeight;
+                        newWidth = newHeight * aspectRatio;
+                    }
+                }
+            }
+
+            // Set initial position to center of the canvas
+            cropSelection.x = (canvasWidth - newWidth) / 2;
+            cropSelection.y = (canvasHeight - newHeight) / 2;
+            cropSelection.width = newWidth;
+            cropSelection.height = newHeight;
+
+            // Final boundary check to catch any floating point errors and ensure it's fully within bounds
+            cropSelection.x = Math.max(0, Math.min(cropSelection.x, canvasWidth - cropSelection.width));
+            cropSelection.y = Math.max(0, Math.min(cropSelection.y, canvasHeight - cropSelection.height));
+            cropSelection.width = Math.min(cropSelection.width, canvasWidth - cropSelection.x);
+            cropSelection.height = Math.min(cropSelection.height, canvasHeight - cropSelection.y);
+
+            updateSelectionBoxStyle();
+        }
+
+        // Handle aspect ratio buttons
+        cropRatioButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const ratio = button.dataset.ratio;
+                currentCropRatio = ratio === 'free' ? null : ratio;
+                showMessageBox(`裁剪比例已设置为: ${button.textContent}`);
+
+                if (originalCropImage) {
+                    applyDefaultCropSelectionWithRatio(ratio);
+                }
+            });
+        });
+
+        // Mouse/Touch events for cropping selection box
+        let startPointerX, startPointerY; // Global start coordinates of the pointer relative to canvas
+        let initialCropSelection; // Stores the cropSelection state at the start of drag/resize
+
+        function getEventPoint(e) {
+            const rect = cropCanvas.getBoundingClientRect();
+            let clientX, clientY;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            // Return coordinates relative to the canvas's drawing area
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        // Apply style to selection box based on cropSelection
+        function updateSelectionBoxStyle() {
+            // Position the cropSelectionBox relative to its parent (cropCanvasContainer)
+            // by adding the canvas's current offset within that container.
+            cropSelectionBox.style.left = `${canvasRenderOffsetX + cropSelection.x}px`;
+            cropSelectionBox.style.top = `${canvasRenderOffsetY + cropSelection.y}px`;
+            cropSelectionBox.style.width = `${cropSelection.width}px`;
+            cropSelectionBox.style.height = `${cropSelection.height}px`;
+        }
+
+        cropSelectionBox.addEventListener('mousedown', startDrag);
+        cropSelectionBox.addEventListener('touchstart', startDrag, { passive: false });
+
+        function startDrag(e) {
+            if (!originalCropImage) return;
+
+            e.preventDefault();
+            initialCropSelection = { ...cropSelection }; // Save current state
+            const point = getEventPoint(e); // Get point relative to canvas
+            startPointerX = point.x;
+            startPointerY = point.y;
+
+            if (e.target.classList.contains('resize-handle')) {
+                isDragging = false;
+                isResizing = true;
+                resizeHandle = e.target.classList[1];
+            } else {
+                isDragging = true;
+                isResizing = false;
+            }
+
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+            document.addEventListener('touchmove', drag, { passive: false });
+            document.addEventListener('touchend', stopDrag);
+            document.addEventListener('touchcancel', stopDrag);
+        }
+
+        function drag(e) {
+            if (!originalCropImage || (!isDragging && !isResizing)) return;
+            e.preventDefault();
+
+            const point = getEventPoint(e); // Get point relative to canvas
+            const dx = point.x - startPointerX;
+            const dy = point.y - startPointerY;
+
+            const minSize = 20;
+            const canvasWidth = cropCanvas.width;
+            const canvasHeight = cropCanvas.height;
+
+            if (isDragging) {
+                let newX = initialCropSelection.x + dx;
+                let newY = initialCropSelection.y + dy;
+
+                // Clamp new position to canvas boundaries
+                newX = Math.max(0, Math.min(newX, canvasWidth - initialCropSelection.width));
+                newY = Math.max(0, Math.min(newY, canvasHeight - initialCropSelection.height));
+
+                cropSelection.x = newX;
+                cropSelection.y = newY;
+
+            } else if (isResizing) {
+                let newX1 = initialCropSelection.x;
+                let newY1 = initialCropSelection.y;
+                let newX2 = initialCropSelection.x + initialCropSelection.width;
+                let newY2 = initialCropSelection.y + initialCropSelection.height;
+
+                // Adjust proposed corners based on handle and delta
+                if (resizeHandle.includes('left')) newX1 += dx;
+                if (resizeHandle.includes('top')) newY1 += dy;
+                if (resizeHandle.includes('right')) newX2 += dx;
+                if (resizeHandle.includes('bottom')) newY2 += dy;
+
+                // Clamp raw coordinates to canvas bounds FIRST
+                newX1 = Math.max(0, newX1);
+                newY1 = Math.max(0, newY1);
+                newX2 = Math.min(canvasWidth, newX2);
+                newY2 = Math.min(canvasHeight, newY2);
+
+                let tempWidth = newX2 - newX1;
+                let tempHeight = newY2 - newY1;
+
+                // Enforce minimum size AFTER initial clamp
+                if (tempWidth < minSize) {
+                    tempWidth = minSize;
+                    if (resizeHandle.includes('left')) newX1 = newX2 - minSize; else newX2 = newX1 + minSize;
+                }
+                if (tempHeight < minSize) {
+                    tempHeight = minSize;
+                    if (resizeHandle.includes('top')) newY1 = newY2 - minSize; else newY2 = newY1 + minSize;
+                }
+
+                // Apply aspect ratio if active
+                if (currentCropRatio) {
+                    const [ratioW, ratioH] = currentCropRatio.split(':').map(Number);
+                    if (ratioW && ratioH) {
+                        const aspectRatio = ratioW / ratioH;
+
+                        // Calculate new dimensions based on the aspect ratio,
+                        // prioritizing the dimension that changed most or is constrained by the handle
+                        if (Math.abs(dx) > Math.abs(dy) || (resizeHandle.includes('left') || resizeHandle.includes('right'))) {
+                            tempHeight = tempWidth / aspectRatio;
+                        } else {
+                            tempWidth = tempHeight * aspectRatio;
+                        }
+
+                        // Re-clamp based on new aspect-ratio-locked dimensions
+                        // Adjust coordinates based on which handle is fixed (opposite of resizeHandle)
+                        if (resizeHandle === 'top-left') {
+                            newX1 = newX2 - tempWidth;
+                            newY1 = newY2 - tempHeight;
+                        } else if (resizeHandle === 'top-right') {
+                            newY1 = newY2 - tempHeight;
+                            newX2 = newX1 + tempWidth;
+                        } else if (resizeHandle === 'bottom-left') {
+                            newX1 = newX2 - tempWidth;
+                            newY2 = newY1 + tempHeight;
+                        } else if (resizeHandle === 'bottom-right') {
+                            newX2 = newX1 + tempWidth;
+                            newY2 = newY1 + tempHeight;
+                        }
+
+                        // Final clamp after aspect ratio and position adjustment
+                        newX1 = Math.max(0, newX1);
+                        newY1 = Math.max(0, newY1);
+                        newX2 = Math.min(canvasWidth, newX2);
+                        newY2 = Math.min(canvasHeight, newY2);
+
+                        tempWidth = newX2 - newX1;
+                        tempHeight = newY2 - newY1;
+
+                        // One last adjustment to strictly enforce ratio and min size if floating point errors occur
+                        if (tempWidth < minSize) {tempWidth = minSize; tempHeight = tempWidth / aspectRatio;}
+                        if (tempHeight < minSize) {tempHeight = minSize; tempWidth = tempHeight * aspectRatio;}
+
+                        if (tempWidth / aspectRatio > tempHeight + 1e-6) { // Add epsilon for float comparison
+                            tempWidth = tempHeight * aspectRatio;
+                        } else if (tempHeight / aspectRatio > tempWidth + 1e-6) {
+                            tempHeight = tempWidth / aspectRatio;
+                        }
+                    }
+                }
+
+                // Assign final calculated values to cropSelection
+                cropSelection.x = newX1;
+                cropSelection.y = newY1;
+                cropSelection.width = tempWidth;
+                cropSelection.height = tempHeight;
+
+                // Final clamp of the entire box to ensure it's within canvas bounds
+                cropSelection.x = Math.max(0, Math.min(cropSelection.x, canvasWidth - cropSelection.width));
+                cropSelection.y = Math.max(0, Math.min(cropSelection.y, canvasHeight - cropSelection.height));
+                cropSelection.width = Math.min(cropSelection.width, canvasWidth - cropSelection.x);
+                cropSelection.height = Math.min(cropSelection.height, canvasHeight - cropSelection.y);
+            }
+
+            updateSelectionBoxStyle();
+        }
+
+        function stopDrag() {
+            isDragging = false;
+            isResizing = false;
+            resizeHandle = '';
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', stopDrag);
+            document.removeEventListener('touchmove', drag);
+            document.removeEventListener('touchend', stopDrag);
+            document.removeEventListener('touchcancel', stopDrag);
+        }
+
+        applyCropButton.addEventListener('click', () => {
+            if (!originalCropImage) {
+                showMessageBox('请先选择一张图片进行裁剪。');
+                return;
+            }
+            // Ensure cropSelection has valid positive dimensions after any operations
+            if (cropSelection.width <= 0 || cropSelection.height <= 0 || cropSelection.width < 20 || cropSelection.height < 20) {
+                showMessageBox('请在图片上拖动以选择一个有效的裁剪区域 (最小20x20像素)。');
+                return;
+            }
+
+            // Calculate actual pixel coordinates on the original image
+            const scaleX = originalCropImage.width / cropCanvas.width;
+            const scaleY = originalCropImage.height / cropCanvas.height;
+
+            const croppedX = Math.round(cropSelection.x * scaleX);
+            const croppedY = Math.round(cropSelection.y * scaleY);
+            const croppedWidth = Math.round(cropSelection.width * scaleX);
+            const croppedHeight = Math.round(cropSelection.height * scaleY);
+
+            const croppedCanvas = document.createElement('canvas');
+            croppedCanvas.width = croppedWidth;
+            croppedCanvas.height = croppedHeight;
+            const croppedCtx = croppedCanvas.getContext('2d');
+
+            croppedCtx.drawImage(
+                originalCropImage,
+                croppedX,
+                croppedY,
+                croppedWidth,
+                croppedHeight,
+                0,
+                0,
+                croppedWidth,
+                croppedHeight
+            );
+
+            croppedCanvas.toBlob(blob => {
+                if (blob) {
+                    const url = URL.createObjectURL(blob);
+                    const imgElement = document.createElement('img');
+                    imgElement.src = url;
+                    imgElement.alt = '裁剪后的图片';
+                    imgElement.className = 'max-w-full h-auto rounded-md shadow-md mb-2';
+
+                    const downloadLink = document.createElement('button');
+                    downloadLink.className = 'download-button';
+                    downloadLink.textContent = '下载裁剪图片';
+                    downloadLink.onclick = () => {
+                        downloadBlob(blob, `cropped_id_photo_${Date.now()}.jpeg`);
+                    };
+
+                    croppedImageResult.innerHTML = ''; // Clear previous
+                    croppedImageResult.appendChild(imgElement);
+                    croppedImageResult.appendChild(downloadLink);
+                    showMessageBox('图片裁剪成功！');
+                } else {
+                    showMessageBox('无法生成裁剪后的图片。');
+                }
+            }, 'image/jpeg', 0.95); // Save as JPEG with high quality
+        });
+
+        // Initialize first tab
+        switchTab(tabCompress, compressSection);
+
+    </script>
+
+<div align="center"><br />
+<a href="/tools/" style="font-size:12px;color:#999999;text-decoration: none;">返回工具列表</a>	<span style="font-size:12px;color:#999999;">联系站长 E651@msn.com</span>
+</div>
+</body>
+</html>
+
