@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单多组闹铃功能</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 16px; /* Equivalent to p-4 */
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 600px; /* Max-width for readability */
+            margin: 32px auto; /* Equivalent to margin-y-8 auto */
+            padding: 24px; /* Equivalent to p-6 */
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            color: #334155;
+            font-size: 24px; /* Equivalent to text-2xl */
+            font-weight: bold; /* Equivalent to font-bold */
+            margin-bottom: 16px; /* Equivalent to mb-4 */
+        }
+
+        label {
+            font-weight: 600; /* Equivalent to font-semibold */
+            color: #475569;
+            font-size: 14px; /* Equivalent to text-sm */
+            display: block;
+            margin-bottom: 8px; /* Equivalent to mb-2 */
+        }
+
+        input[type="time"],
+        input[type="text"] {
+            width: 100%;
+            padding: 8px 12px; /* Equivalent to py-2 px-3 */
+            border: 1px solid #cbd5e1; /* Equivalent to border */
+            border-radius: 6px; /* Equivalent to rounded-md */
+            box-sizing: border-box; /* To include padding in width */
+            font-size: 16px;
+            line-height: 1.5;
+            color: #475569;
+            transition: all 0.15s ease-in-out; /* Equivalent to transition duration-150 ease-in-out */
+        }
+
+        input[type="time"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #6366f1; /* Equivalent to focus:border-indigo-500 */
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25); /* Equivalent to focus:ring-2 focus:ring-indigo-500 */
+        }
+
+        .btn-primary {
+            background-color: #6366f1;
+            color: white;
+            padding: 12px 24px; /* Equivalent to py-3 px-6 */
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+
+        .message-box {
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 16px;
+            word-wrap: break-word;
+            font-size: 14px;
+        }
+        .message-box.info {
+            background-color: #e0f2fe;
+            border-left: 4px solid #3b82f6;
+            color: #1e40af;
+        }
+        .message-box.error {
+            background-color: #fee2e2;
+            border-left: 4px solid #dc2626;
+            color: #991b1b;
+        }
+
+        /* Alarm Modal Styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            visibility: hidden; /* Start hidden */
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal-content {
+            background-color: #ffffff;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+        .modal-content h3 {
+            font-size: 28px; /* Equivalent to text-2xl */
+            font-weight: bold;
+            color: #dc2626; /* Equivalent to text-red-600 */
+            margin-bottom: 16px;
+        }
+        .modal-content p {
+            font-size: 18px; /* Equivalent to text-lg */
+            color: #334155; /* Equivalent to text-gray-800 */
+            margin-bottom: 24px;
+        }
+        .modal-content button {
+            background-color: #ef4444; /* Equivalent to bg-red-500 */
+            color: white;
+            font-weight: 600;
+            padding: 8px 16px; /* Equivalent to py-2 px-4 */
+            border-radius: 9999px; /* Equivalent to rounded-full */
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .modal-content button:hover {
+            background-color: #dc2626; /* Equivalent to hover:bg-red-600 */
+        }
+
+        /* Alarm list item styling */
+        .alarms-list {
+            list-style: none; /* Remove bullet points */
+            padding: 0;
+            margin: 0;
+        }
+
+        .alarm-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background-color: #e0e7ff; /* Lighter indigo */
+            border-radius: 6px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            margin-bottom: 12px; /* For space-y-3 */
+        }
+        .alarm-item p {
+            margin: 0;
+        }
+        .alarm-item .alarm-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align text to the left */
+        }
+        .alarm-item .alarm-time {
+            font-weight: 600;
+            color: #312e81; /* Darker indigo */
+            font-size: 18px;
+        }
+        .alarm-item .alarm-remark {
+            font-size: 14px;
+            color: #4338ca; /* Indigo-600 */
+        }
+        .alarm-item .alarm-countdown {
+            font-size: 12px;
+            color: #6b7280; /* Gray for countdown */
+            margin-top: 4px;
+        }
+        .alarm-item .delete-alarm-btn {
+            background-color: #f87171; /* Lighter red */
+            color: white;
+            padding: 6px 12px;
+            border-radius: 9999px; /* rounded-full */
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.15s ease-in-out;
+            flex-shrink: 0; /* Prevent button from shrinking */
+            margin-left: 10px; /* Space from countdown */
+        }
+        .alarm-item .delete-alarm-btn:hover {
+            background-color: #ef4444; /* Red-500 */
+        }
+
+        /* Styling for past alarms */
+        .alarm-item.past-alarm {
+            background-color: #f3f4f6; /* Slightly different background for past alarms */
+            opacity: 0.7; /* Slightly dim past alarms */
+        }
+        .alarm-item.past-alarm .alarm-time,
+        .alarm-item.past-alarm .alarm-remark,
+        .alarm-item.past-alarm .alarm-countdown {
+            color: #a0a0a0; /* Darker grey for past alarms */
+        }
+
+
+        /* Current time display */
+        #currentTimeDisplay {
+            font-size: 40px; /* Larger font */
+            font-weight: bold;
+            color: #1a202c;
+            text-align: center;
+            margin-bottom: 24px; /* mb-6 */
+            background-color: #e2e8f0;
+            padding: 12px; /* py-3 */
+            border-radius: 8px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* General spacing */
+        .mb-4 { margin-bottom: 16px; }
+        .mb-6 { margin-bottom: 24px; }
+        .mb-8 { margin-bottom: 32px; }
+        .pb-4 { padding-bottom: 16px; }
+        .border-b { border-bottom: 1px solid #e2e8f0; } /* border-b */
+        .rounded-lg { border-radius: 8px; }
+        .shadow-inner { box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); } /* From shadow-inner */
+        .bg-blue-50 { background-color: #eff6ff; } /* bg-blue-50 */
+        .text-blue-800 { color: #1e40af; } /* text-blue-800 */
+        .text-sm { font-size: 14px; }
+    </style>
+</head>
+<body class="p-4">
+    <div class="container">
+        <h1 class="section-title" style="text-align: center; color: #4338ca;">简单多组闹铃功能</h1>
+
+        <div id="currentTimeDisplay">
+            00:00:00
+        </div>
+
+        <div class="mb-8 p-4 bg-blue-50 rounded-lg shadow-inner">
+            <p class="text-sm text-blue-800">
+                在这里设置您的闹铃时间，并添加备注。时间到达时，闹铃将自动响起并弹出提示！
+            </p>
+        </div>
+
+        <div class="mb-6 border-b pb-4">
+            <h2 class="section-title">设置新闹铃</h2>
+            <div class="mb-4">
+                <label for="alarmTime">选择时间：</label>
+                <input type="time" id="alarmTime">
+            </div>
+            <div class="mb-4">
+                <label for="alarmRemark">闹铃备注：</label>
+                <input type="text" id="alarmRemark" placeholder="例如：吃药时间，开会提醒">
+            </div>
+            <button id="addAlarmButton" class="btn-primary">添加闹铃</button>
+            <div id="addAlarmMessage" class="message-box hidden"></div>
+        </div>
+
+        <div>
+            <h2 class="section-title">当前闹铃</h2>
+            <div id="alarmsList" class="alarms-list">
+                <!-- Alarms will be rendered here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <div id="alarmModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>闹铃响了！</h3>
+            <p id="alarmRemarkDisplay"></p>
+            <button id="closeAlarmModal">
+                关闭闹铃
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Store alarms in localStorage
+        const alarms = JSON.parse(localStorage.getItem('alarms')) || [];
+        let audioCtx;
+        let oscillator;
+        let gainNode;
+        let alarmSoundLoopInterval; // For ding-ding sound loop
+        let alarmSoundDurationTimeout; // For stopping after 9 seconds
+
+        // Helper function to show messages
+        function showMessage(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = 'message-box'; // Reset to base class
+            if (isError) {
+                element.classList.add('error');
+            } else {
+                element.classList.add('info');
+            }
+            element.classList.remove('hidden');
+        }
+
+        // Function to play "ding-ding" alarm sound
+        function playAlarmSound() {
+            // Ensure a new AudioContext for each alarm trigger or clear previous
+            if (audioCtx && audioCtx.state === 'running') {
+                audioCtx.close();
+            }
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+            let dingCount = 0;
+            const maxDingCount = 9 * 5; // ~9 seconds duration, 5 dings per second (200ms per ding)
+
+            // Function to play a single "ding"
+            function playDing() {
+                if (dingCount >= maxDingCount) {
+                    stopAlarmSound();
+                    return;
+                }
+
+                oscillator = audioCtx.createOscillator();
+                gainNode = audioCtx.createGain();
+
+                oscillator.type = 'sine'; // Pure sine wave for a pleasant ding
+                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // High pitch for ding
+                gainNode.gain.setValueAtTime(0.6, audioCtx.currentTime); // Loudness
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                // Quick fade out for ding effect
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15); // Quick decay
+                
+                oscillator.start(audioCtx.currentTime);
+                oscillator.stop(audioCtx.currentTime + 0.2); // Ding lasts 0.2 seconds
+
+                dingCount++;
+            }
+
+            // Start playing "ding-ding" every 200ms
+            alarmSoundLoopInterval = setInterval(playDing, 200);
+
+            // Set overall alarm duration
+            alarmSoundDurationTimeout = setTimeout(() => {
+                stopAlarmSound();
+            }, 9 * 1000); // Stop after 9 seconds
+        }
+
+        // Function to stop alarm sound
+        function stopAlarmSound() {
+            if (alarmSoundLoopInterval) {
+                clearInterval(alarmSoundLoopInterval);
+                alarmSoundLoopInterval = null;
+            }
+            if (alarmSoundDurationTimeout) {
+                clearTimeout(alarmSoundDurationTimeout);
+                alarmSoundDurationTimeout = null;
+            }
+            if (oscillator) {
+                oscillator.stop();
+                oscillator = null;
+            }
+            if (audioCtx) {
+                audioCtx.close(); // Close audio context to release resources
+                audioCtx = null;
+            }
+        }
+
+        // Function to show alarm modal
+        function showAlarmModal(remark) {
+            document.getElementById('alarmRemarkDisplay').textContent = remark;
+            document.getElementById('alarmModal').classList.add('visible'); // Show modal
+        }
+
+        // Function to hide alarm modal
+        function hideAlarmModal() {
+            document.getElementById('alarmModal').classList.remove('visible'); // Hide modal
+            stopAlarmSound(); // Stop sound when modal is closed
+        }
+
+        // Event listener for closing alarm modal
+        document.getElementById('closeAlarmModal').addEventListener('click', hideAlarmModal);
+
+        // Function to render alarms list
+        function renderAlarms() {
+            const alarmsListDiv = document.getElementById('alarmsList');
+            alarmsListDiv.innerHTML = ''; // Clear existing list
+
+            if (alarms.length === 0) {
+                alarmsListDiv.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 16px;">还没有设置闹铃哦！</p>';
+                return;
+            }
+
+            const now = new Date();
+            const currentTimestamp = now.getTime();
+
+            // Calculate a sortable timestamp for each alarm for display purposes
+            const alarmsWithDisplayTimestamps = alarms.map(alarm => {
+                const [alarmHour, alarmMinute] = alarm.time.split(':').map(Number);
+                let alarmDate = new Date();
+                alarmDate.setHours(alarmHour, alarmMinute, 0, 0);
+
+                // If alarm is not marked as past, and its time for today has passed, consider it for tomorrow
+                if (!alarm.isPast && alarmDate.getTime() < currentTimestamp) {
+                    alarmDate.setDate(alarmDate.getDate() + 1);
+                }
+                
+                return {
+                    ...alarm,
+                    displayTimestamp: alarmDate.getTime() // This is for sorting
+                };
+            });
+
+            // Sort alarms: Active (future) first, then past (triggered) alarms.
+            // Within active, sort by nearest time. Within past, sort by original time.
+            alarmsWithDisplayTimestamps.sort((a, b) => {
+                // Prioritize active alarms over past ones
+                if (a.isPast && !b.isPast) return 1;
+                if (!a.isPast && b.isPast) return -1;
+
+                // If both are active or both are past, sort by their displayTimestamp
+                return a.displayTimestamp - b.displayTimestamp;
+            });
+
+
+            alarmsWithDisplayTimestamps.forEach((alarm, index) => {
+                const alarmItem = document.createElement('div');
+                // Apply 'past-alarm' class if it's past
+                alarmItem.className = `alarm-item ${alarm.isPast ? 'past-alarm' : ''}`;
+                alarmItem.innerHTML = `
+                    <div class="alarm-details">
+                        <p class="alarm-time">${alarm.time}</p>
+                        <p class="alarm-remark">${alarm.remark}</p>
+                        <p class="alarm-countdown" data-alarm-time="${alarm.time}" data-is-past="${alarm.isPast}"></p>
+                    </div>
+                    <button class="delete-alarm-btn" data-original-time="${alarm.time}" data-original-remark="${alarm.remark}">删除</button>
+                `;
+                alarmsListDiv.appendChild(alarmItem);
+            });
+
+            // Attach delete event listeners to newly rendered buttons
+            document.querySelectorAll('.delete-alarm-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const originalTime = this.dataset.originalTime;
+                    const originalRemark = this.dataset.originalRemark;
+                    
+                    const indexToDelete = alarms.findIndex(a => a.time === originalTime && a.remark === originalRemark);
+
+                    if (indexToDelete > -1) {
+                        alarms.splice(indexToDelete, 1);
+                        localStorage.setItem('alarms', JSON.stringify(alarms));
+                        renderAlarms(); // Re-render the list after deletion
+                    }
+                });
+            });
+            updateCountdowns(); // Call after rendering to immediately display countdowns
+        }
+
+        // Function to add a new alarm
+        function addAlarm() {
+            const timeInput = document.getElementById('alarmTime');
+            const remarkInput = document.getElementById('alarmRemark');
+
+            const time = timeInput.value;
+            const remark = remarkInput.value.trim();
+
+            if (!time) {
+                showMessage('addAlarmMessage', '请选择闹铃时间！', true);
+                return;
+            }
+            if (!remark) {
+                showMessage('addAlarmMessage', '请输入闹铃备注！', true);
+                return;
+            }
+
+            // Check for duplicate time+remark (simple duplicate check)
+            // Also check if an identical alarm exists that is NOT past (active)
+            if (alarms.some(a => a.time === time && a.remark === remark && !a.isPast)) {
+                showMessage('addAlarmMessage', '闹铃已存在（且未过期），请勿重复添加！', true);
+                return;
+            }
+
+            alarms.push({ time, remark, isPast: false }); // New alarms are not past
+            localStorage.setItem('alarms', JSON.stringify(alarms)); // Save to localStorage
+
+            showMessage('addAlarmMessage', '闹铃添加成功！', false);
+            timeInput.value = ''; // Clear input fields
+            remarkInput.value = '';
+            renderAlarms(); // Re-render the list
+        }
+
+        // Event listener for add alarm button
+        document.getElementById('addAlarmButton').addEventListener('click', addAlarm);
+
+        // --- Real-time clock display ---
+        function updateCurrentTimeDisplay() {
+            const now = new Date();
+            const currentHour = String(now.getHours()).padStart(2, '0');
+            const currentMinute = String(now.getMinutes()).padStart(2, '0');
+            const currentSecond = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('currentTimeDisplay').textContent = `${currentHour}:${currentMinute}:${currentSecond}`;
+        }
+        
+        // Update time display every second
+        setInterval(updateCurrentTimeDisplay, 1000);
+        updateCurrentTimeDisplay(); // Call immediately to show time on load
+
+        // --- Countdown Update Function ---
+        function updateCountdowns() {
+            const now = new Date();
+            document.querySelectorAll('.alarm-countdown').forEach(countdownElement => {
+                const alarmTimeStr = countdownElement.dataset.alarmTime;
+                const isPastFlag = countdownElement.dataset.isPast === 'true'; // Get isPast flag from dataset
+
+                if (isPastFlag) {
+                    countdownElement.textContent = "已过期"; // For past alarms, just show "已过期"
+                    return;
+                }
+
+                const [alarmHour, alarmMinute] = alarmTimeStr.split(':').map(Number);
+
+                let alarmDate = new Date();
+                alarmDate.setHours(alarmHour, alarmMinute, 0, 0);
+
+                // If alarm time for today has already passed, set it for tomorrow
+                if (alarmDate.getTime() < now.getTime()) {
+                    alarmDate.setDate(alarmDate.getDate() + 1);
+                }
+
+                const diff = alarmDate.getTime() - now.getTime(); // Difference in milliseconds
+
+                if (diff <= 0) {
+                    countdownElement.textContent = "已过期"; // Should be marked as isPast by main loop shortly
+                    return;
+                }
+
+                const seconds = Math.floor((diff / 1000) % 60);
+                const minutes = Math.floor((diff / (1000 * 60)) % 60);
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+                let countdownText = "";
+                if (days > 0) {
+                    countdownText += `${days} 天 `;
+                }
+                if (hours > 0 || days > 0) {
+                    countdownText += `${hours} 小时 `;
+                }
+                if (minutes > 0 || hours > 0 || days > 0) {
+                    countdownText += `${minutes} 分钟 `;
+                }
+                countdownText += `${seconds} 秒`;
+                
+                countdownElement.textContent = `还有 ${countdownText}`;
+            });
+        }
+
+        // Alarm checking loop, runs every second
+        setInterval(() => {
+            const now = new Date();
+            const currentHour = String(now.getHours()).padStart(2, '0');
+            const currentMinute = String(now.getMinutes()).padStart(2, '0');
+            const currentTime = `${currentHour}:${currentMinute}`;
+
+            let needsRender = false; // Flag to indicate if UI needs re-rendering
+
+            alarms.forEach(alarm => {
+                // Only check for triggering if alarm is NOT already marked as past
+                if (!alarm.isPast && alarm.time === currentTime && now.getSeconds() === 0) { // Trigger only at 0 seconds to avoid multiple triggers per minute
+                    playAlarmSound();
+                    showAlarmModal(alarm.remark);
+                    alarm.isPast = true; // Mark as past/triggered
+                    needsRender = true; // UI needs update
+                }
+            });
+
+            // If any alarm triggered, update localStorage and re-render
+            if (needsRender) {
+                localStorage.setItem('alarms', JSON.stringify(alarms)); // Save modified alarms
+                renderAlarms(); // Re-render the list after marking alarms as past
+            }
+            
+            updateCountdowns(); // Always update countdowns
+        }, 1000); // Check every second
+
+        // Initial render when the page loads
+        renderAlarms();
+    </script>
+ <div align="center"><br />
+<a href="/tools/" style="font-size:12px;color:#999999;text-decoration: none;">返回工具列表</a>	<span style="font-size:12px;color:#999999;">联系站长 E651@msn.com</span>
+</div>
+</body>
+</html>
+

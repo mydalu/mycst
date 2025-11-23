@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E路无忧-搜索引擎聚合</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 5px;
+        }
+        .search-box {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        #search-input {
+            width: 65%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+        #search-button {
+            padding: 10px 20px;
+            font-size: 14px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        #search-button:hover {
+            background-color: #3367d6;
+        }
+        .results-container {
+            display: flex;
+            gap: 8px;
+            margin: 0 -4px;
+        }
+        .search-engine {
+            flex: 1;
+            min-width: 0;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 10px;
+            margin: 0 4px;
+        }
+        .engine-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .engine-logo {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+        .engine-name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .search-frame {
+            width: 100%;
+            height: calc(100vh - 150px);
+            border: none;
+            border-radius: 3px;
+        }
+        .hidden {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .results-container {
+                flex-direction: column;
+            }
+            .search-engine {
+                margin: 5px 0;
+            }
+            #search-input {
+                width: 60%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search-box">
+            <h1 style="font-size: 20px; margin-bottom: 10px;">搜索引擎聚合</h1>
+            <input type="text" id="search-input" placeholder="请输入搜索关键词...">
+            <button id="search-button">搜索</button>
+        </div>
+        
+        <div id="results" class="results-container hidden">
+            <div class="search-engine">
+                <div class="engine-header">
+                    <img src="https://www.bing.com/favicon.ico" alt="必应" class="engine-logo">
+                    <span class="engine-name">必应</span>
+                </div>
+                <iframe id="bing-frame" class="search-frame" src="about:blank"></iframe>
+            </div>
+            
+            <div class="search-engine">
+                <div class="engine-header">
+                    <img src="https://www.sogou.com/favicon.ico" alt="搜狗" class="engine-logo">
+                    <span class="engine-name">搜狗</span>
+                </div>
+                <iframe id="sogou-frame" class="search-frame" src="about:blank"></iframe>
+            </div>
+            
+            <div class="search-engine">
+                <div class="engine-header">
+                    <img src="https://www.so.com/favicon.ico" alt="360" class="engine-logo">
+                    <span class="engine-name">360搜索</span>
+                </div>
+                <iframe id="360-frame" class="search-frame" src="about:blank"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button');
+            const resultsContainer = document.getElementById('results');
+            
+            // 搜索函数
+            function performSearch() {
+                const query = searchInput.value.trim();
+                if (query === '') return;
+                
+                // 显示结果区域
+                resultsContainer.classList.remove('hidden');
+                
+                // 设置各搜索引擎的iframe
+                document.getElementById('bing-frame').src = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+                document.getElementById('sogou-frame').src = `https://www.sogou.com/web?query=${encodeURIComponent(query)}`;
+                document.getElementById('360-frame').src = `https://www.so.com/s?q=${encodeURIComponent(query)}`;
+            }
+            
+            // 点击搜索按钮
+            searchButton.addEventListener('click', performSearch);
+            
+            // 按回车键搜索
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+        });
+    </script>
+<div align="center"><br />
+<a href="/tools/" style="font-size:12px;color:#999999;text-decoration: none;">返回工具列表</a>	<span style="font-size:12px;color:#999999;">联系站长 E651@msn.com</span>
+</div>
+</body>
+</html>
+

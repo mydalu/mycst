@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>女性安全期、排卵期计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1 {
+            color: #6a4c93;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .form-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            display: flex;
+            align-items: center;
+            flex: 1 1 200px;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select {
+            padding: 8px 12px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        button {
+            background-color: #6a4c93;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+            width: 100%;
+            transition: background-color 0.3s;
+            flex: 1 1 100%;
+        }
+        button:hover {
+            background-color: #5a3d7a;
+        }
+        .calendar-container {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .month-row {
+            display: flex;
+            width: 100%;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .month-calendar {
+            flex: 1;
+            min-width: 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .month-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 8px;
+            background-color: #f5f3fa;
+            color: #6a4c93;
+            border-radius: 4px;
+        }
+        .day-names {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #6a4c93;
+            font-size: 12px;
+        }
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+        .day {
+            border: 1px solid #eee;
+            padding: 6px;
+            text-align: center;
+            min-height: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 12px;
+        }
+        /* 标准医疗配色 */
+        .day.period {
+            background-color: #ffd6e7; /* 月经期 - 粉色 */
+            border-color: #ffb3d9;
+        }
+        .day.ovulation {
+            background-color: #ff6b6b; /* 排卵期 - 红色 */
+            border-color: #ff5252;
+            color: white;
+        }
+        .day.fertile {
+            background-color: #ffb347; /* 易孕期 - 橙色 */
+            border-color: #ff9f1c;
+        }
+        .day.safe {
+            background-color: #77dd77; /* 安全期 - 绿色 */
+            border-color: #5cd65c;
+        }
+        .day.other-month {
+            color: #ccc;
+            background-color: #f9f9f9;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            margin: 25px 0;
+            flex-wrap: wrap;
+            gap: 15px;
+            background-color: #f5f3fa;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            margin-right: 6px;
+            border-radius: 3px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .today {
+            border: 2px solid #6a4c93 !important;
+            font-weight: bold;
+            position: relative;
+        }
+        .today::after {
+            content: "今";
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #6a4c93;
+            color: white;
+            font-size: 10px;
+            padding: 1px 4px;
+            border-radius: 8px;
+        }
+        .day-info {
+            font-size: 9px;
+            margin-top: 2px;
+            opacity: 0.8;
+        }
+        .disclaimer {
+            margin-top: 30px;
+            padding: 12px;
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <h1>女性安全期、排卵期计算器</h1>
+    
+    <div class="form-container">
+        <div class="form-group">
+            <label for="lastPeriodDate">上次月经日期:</label>
+            <input type="date" id="lastPeriodDate" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="cycleLength">月经周期(天):</label>
+            <input type="number" id="cycleLength" min="20" max="45" value="28" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="periodLength">经期长度(天):</label>
+            <input type="number" id="periodLength" min="2" max="10" value="5" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="monthsToShow">显示月数:</label>
+            <select id="monthsToShow">
+                <option value="3" selected>3个月</option>
+                <option value="6">6个月</option>
+                <option value="9">9个月</option>
+                <option value="12">12个月</option>
+            </select>
+        </div>
+        
+        <button id="calculateBtn">计算安全期和排卵期</button>
+    </div>
+    
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #ffd6e7; border-color: #ffb3d9;"></div>
+            <span>月经期</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #ff6b6b; border-color: #ff5252;"></div>
+            <span>排卵期</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #ffb347; border-color: #ff9f1c;"></div>
+            <span>易孕期</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #77dd77; border-color: #5cd65c;"></div>
+            <span>安全期</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="border: 2px solid #6a4c93;"></div>
+            <span>今天</span>
+        </div>
+    </div>
+    
+    <div id="calendarContainer" class="calendar-container"></div>
+    
+    <div class="disclaimer">
+        <strong>免责声明：</strong>本计算器仅基于日历法提供预测，结果仅供参考。女性的生理周期受多种因素影响，计算结果并非100%准确。如需避孕或备孕，请咨询专业医生或使用更可靠的避孕方法。
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('calculateBtn').addEventListener('click', calculateCalendar);
+            
+            // 设置默认日期为今天
+            const today = new Date();
+            document.getElementById('lastPeriodDate').valueAsDate = today;
+        });
+        
+        function calculateCalendar() {
+            const lastPeriodDate = new Date(document.getElementById('lastPeriodDate').value);
+            const cycleLength = parseInt(document.getElementById('cycleLength').value);
+            const periodLength = parseInt(document.getElementById('periodLength').value);
+            const monthsToShow = parseInt(document.getElementById('monthsToShow').value);
+            
+            if (isNaN(lastPeriodDate.getTime())) {
+                alert('请输入有效的日期');
+                return;
+            }
+            
+            if (cycleLength < 20 || cycleLength > 45) {
+                alert('月经周期天数应在20-45天之间');
+                return;
+            }
+            
+            if (periodLength < 2 || periodLength > 10) {
+                alert('月经持续时间应在2-10天之间');
+                return;
+            }
+            
+            generateCalendar(lastPeriodDate, cycleLength, periodLength, monthsToShow);
+        }
+        
+        function generateCalendar(lastPeriodDate, cycleLength, periodLength, monthsToShow) {
+            const container = document.getElementById('calendarContainer');
+            container.innerHTML = '';
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            // 计算需要多少行(每行3个月)
+            const rowsNeeded = Math.ceil(monthsToShow / 3);
+            
+            for (let row = 0; row < rowsNeeded; row++) {
+                const monthRow = document.createElement('div');
+                monthRow.className = 'month-row';
+                
+                // 每行最多3个月
+                const monthsInThisRow = Math.min(3, monthsToShow - (row * 3));
+                
+                for (let col = 0; col < monthsInThisRow; col++) {
+                    const monthIndex = row * 3 + col;
+                    const currentMonth = new Date(lastPeriodDate);
+                    currentMonth.setMonth(lastPeriodDate.getMonth() + monthIndex);
+                    
+                    const firstDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+                    const lastDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+                    
+                    // 创建月历
+                    const monthCalendar = document.createElement('div');
+                    monthCalendar.className = 'month-calendar';
+                    
+                    // 月份标题
+                    const monthTitle = document.createElement('div');
+                    monthTitle.className = 'month-title';
+                    monthTitle.textContent = `${currentMonth.getFullYear()}年 ${currentMonth.getMonth() + 1}月`;
+                    monthCalendar.appendChild(monthTitle);
+                    
+                    // 星期标题
+                    const dayNames = document.createElement('div');
+                    dayNames.className = 'day-names';
+                    const daysOfWeek = ['日', '一', '二', '三', '四', '五', '六'];
+                    daysOfWeek.forEach(day => {
+                        const dayName = document.createElement('div');
+                        dayName.textContent = day;
+                        dayNames.appendChild(dayName);
+                    });
+                    monthCalendar.appendChild(dayNames);
+                    
+                    // 日期网格
+                    const daysGrid = document.createElement('div');
+                    daysGrid.className = 'days-grid';
+                    
+                    // 计算第一天是星期几
+                    const firstDayOfWeek = firstDayOfMonth.getDay();
+                    
+                    // 填充上个月的空白
+                    for (let i = 0; i < firstDayOfWeek; i++) {
+                        const emptyDay = document.createElement('div');
+                        emptyDay.className = 'day other-month';
+                        daysGrid.appendChild(emptyDay);
+                    }
+                    
+                    // 填充本月日期
+                    for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
+                        const currentDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
+                        
+                        const dayElement = document.createElement('div');
+                        dayElement.className = 'day';
+                        dayElement.innerHTML = `<span>${day}</span>`;
+                        
+                        // 检查是否是今天
+                        if (currentDate.getTime() === today.getTime()) {
+                            dayElement.classList.add('today');
+                        }
+                        
+                        // 计算月经周期阶段
+                        const daysSinceLastPeriod = Math.floor((currentDate - lastPeriodDate) / (1000 * 60 * 60 * 24));
+                        const cycleDay = daysSinceLastPeriod % cycleLength;
+                        const dayInfo = document.createElement('div');
+                        dayInfo.className = 'day-info';
+                        
+                        // 月经期 (周期第1-periodLength天)
+                        if (cycleDay >= 0 && cycleDay < periodLength) {
+                            dayElement.classList.add('period');
+                            dayInfo.textContent = `经期`;
+                        } 
+                        // 排卵期 (假设排卵日在下次月经前14天)
+                        else if (cycleDay >= (cycleLength - 14 - 2) && cycleDay <= (cycleLength - 14 + 2)) {
+                            dayElement.classList.add('ovulation');
+                            if (cycleDay === (cycleLength - 14)) {
+                                dayInfo.textContent = '排卵';
+                            } else {
+                                dayInfo.textContent = '排卵期';
+                            }
+                        }
+                        // 易孕期 (排卵日前5天到排卵日后1天)
+                        else if (cycleDay >= (cycleLength - 14 - 5) && cycleDay <= (cycleLength - 14 + 1)) {
+                            dayElement.classList.add('fertile');
+                            dayInfo.textContent = '易孕';
+                        }
+                        // 安全期
+                        else {
+                            dayElement.classList.add('safe');
+                            dayInfo.textContent = '安全';
+                        }
+                        
+                        dayElement.appendChild(dayInfo);
+                        daysGrid.appendChild(dayElement);
+                    }
+                    
+                    monthCalendar.appendChild(daysGrid);
+                    monthRow.appendChild(monthCalendar);
+                }
+                
+                container.appendChild(monthRow);
+            }
+        }
+    </script>
+<div align="center"><br />
+<a href="/tools/" style="font-size:12px;color:#999999;text-decoration: none;">返回工具列表</a>	<span style="font-size:12px;color:#999999;">联系站长 E651@msn.com</span>
+</div>
+</body>
+</html>
+
