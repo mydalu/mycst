@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本批量提取工具</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #f5f5f5; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; margin-bottom: 20px; color: #333; }
+        .description { text-align: center; margin-bottom: 20px; color: #666; }
+        .input-group { margin-bottom: 15px; }
+        textarea { width: 100%; height: 150px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; resize: vertical; }
+        .button-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        button { flex: 1; padding: 10px; border: none; border-radius: 4px; cursor: pointer; background: #4a6ee0; color: white; }
+        button:hover { background: #3a5ecf; }
+        #clearBtn { background: #e74c3c; }
+        #clearBtn:hover { background: #c0392b; }
+        #copyBtn { background: #2ecc71; }
+        #copyBtn:hover { background: #27ae60; }
+        .results { display: flex; flex-wrap: wrap; gap: 20px; }
+        .result-box { flex: 1; min-width: 200px; }
+        .result-box h3 { margin-bottom: 10px; color: #333; }
+        .result-list { border: 1px solid #ddd; border-radius: 4px; padding: 10px; min-height: 100px; max-height: 200px; overflow-y: auto; }
+        .result-item { padding: 5px; border-bottom: 1px solid #eee; }
+        .result-item:last-child { border-bottom: none; }
+        .count { color: #666; font-size: 0.9em; }
+        @media (max-width: 600px) {
+            .results { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>文本批量提取工具</h1>
+        <p class="description">输入文本内容，自动提取其中的邮箱、网址和手机号</p>
+        
+        <div class="input-group">
+            <textarea id="textInput" placeholder="请在此处粘贴或输入文本内容..."></textarea>
+        </div>
+        
+        <div class="button-group">
+            <button id="extractBtn">提取信息</button>
+            <button id="copyBtn">复制结果</button>
+            <button id="clearBtn">清空</button>
+        </div>
+        
+        <div class="results">
+            <div class="result-box">
+                <h3>邮箱地址 <span id="emailCount" class="count">(0)</span></h3>
+                <div id="emailList" class="result-list"></div>
+            </div>
+            <div class="result-box">
+                <h3>网址 <span id="urlCount" class="count">(0)</span></h3>
+                <div id="urlList" class="result-list"></div>
+            </div>
+            <div class="result-box">
+                <h3>手机号 <span id="phoneCount" class="count">(0)</span></h3>
+                <div id="phoneList" class="result-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const textInput = document.getElementById('textInput');
+            const extractBtn = document.getElementById('extractBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            
+            const emailList = document.getElementById('emailList');
+            const urlList = document.getElementById('urlList');
+            const phoneList = document.getElementById('phoneList');
+            
+            const emailCount = document.getElementById('emailCount');
+            const urlCount = document.getElementById('urlCount');
+            const phoneCount = document.getElementById('phoneCount');
+            
+            // 正则表达式模式
+            const patterns = {
+                email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
+                url: /(https?:\/\/[^\s]+|www\.[^\s]+|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\/[^\s]*)?)/g,
+                phone: /(?:1[3-9]\d{9}|(?:\+\d{1,3}\s?)?1[3-9]\d{9}|\d{3,4}-\d{7,8})/g
+            };
+            
+            // 提取信息函数
+            function extractInfo() {
+                const text = textInput.value;
+                
+                // 提取邮箱
+                const emails = text.match(patterns.email) || [];
+                // 过滤掉明显不符合邮箱格式的结果
+                const validEmails = emails.filter(email => 
+                    email.includes('.') && 
+                    !email.startsWith('.') && 
+                    !email.endsWith('.')
+                );
+                
+                // 提取网址
+                const urls = text.match(patterns.url) || [];
+                // 过滤和优化网址结果
+                const validUrls = urls.filter(url => {
+                    // 排除明显不是网址的匹配项
+                    if (url.includes('@') || url.endsWith('.') || url.length < 4) {
+                        return false;
+                    }
+                    // 如果以www开头但没有协议，添加http://
+                    if (url.startsWith('www.')) {
+                        return true;
+                    }
+                    return url.includes('.') || url.startsWith('http');
+                }).map(url => {
+                    // 为没有协议的网址添加协议
+                    if (url.startsWith('www.')) {
+                        return 'http://' + url;
+                    }
+                    return url;
+                });
+                
+                // 提取手机号
+                const phones = text.match(patterns.phone) || [];
+                // 过滤和优化手机号结果
+                const validPhones = phones.filter(phone => {
+                    // 移除常见分隔符
+                    const cleanPhone = phone.replace(/[-\s+()]/g, '');
+                    // 检查是否为11位手机号或带国际区号的手机号
+                    return cleanPhone.length >= 11 || (cleanPhone.startsWith('1') && cleanPhone.length === 11);
+                });
+                
+                // 更新UI
+                updateResults(validEmails, emailList, emailCount);
+                updateResults(validUrls, urlList, urlCount);
+                updateResults(validPhones, phoneList, phoneCount);
+            }
+            
+            // 更新结果显示
+            function updateResults(items, container, countElement) {
+                container.innerHTML = '';
+                if (items.length === 0) {
+                    container.innerHTML = '<div class="result-item">未找到匹配项</div>';
+                } else {
+                    // 去重并显示
+                    const uniqueItems = [...new Set(items)];
+                    uniqueItems.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'result-item';
+                        div.textContent = item;
+                        container.appendChild(div);
+                    });
+                }
+                countElement.textContent = `(${items.length})`;
+            }
+            
+            // 复制结果函数
+            function copyResults() {
+                let allResults = '';
+                
+                const emailItems = emailList.querySelectorAll('.result-item');
+                if (emailItems.length > 0 && emailItems[0].textContent !== '未找到匹配项') {
+                    allResults += '邮箱地址:\n';
+                    emailItems.forEach(item => {
+                        allResults += item.textContent + '\n';
+                    });
+                    allResults += '\n';
+                }
+                
+                const urlItems = urlList.querySelectorAll('.result-item');
+                if (urlItems.length > 0 && urlItems[0].textContent !== '未找到匹配项') {
+                    allResults += '网址:\n';
+                    urlItems.forEach(item => {
+                        allResults += item.textContent + '\n';
+                    });
+                    allResults += '\n';
+                }
+                
+                const phoneItems = phoneList.querySelectorAll('.result-item');
+                if (phoneItems.length > 0 && phoneItems[0].textContent !== '未找到匹配项') {
+                    allResults += '手机号:\n';
+                    phoneItems.forEach(item => {
+                        allResults += item.textContent + '\n';
+                    });
+                }
+                
+                if (allResults) {
+                    navigator.clipboard.writeText(allResults)
+                        .then(() => {
+                            alert('结果已复制到剪贴板');
+                        })
+                        .catch(err => {
+                            console.error('复制失败: ', err);
+                            alert('复制失败，请手动复制');
+                        });
+                } else {
+                    alert('没有可复制的内容');
+                }
+            }
+            
+            // 清空函数
+            function clearAll() {
+                textInput.value = '';
+                emailList.innerHTML = '<div class="result-item">未找到匹配项</div>';
+                urlList.innerHTML = '<div class="result-item">未找到匹配项</div>';
+                phoneList.innerHTML = '<div class="result-item">未找到匹配项</div>';
+                emailCount.textContent = '(0)';
+                urlCount.textContent = '(0)';
+                phoneCount.textContent = '(0)';
+            }
+            
+            // 事件监听
+            extractBtn.addEventListener('click', extractInfo);
+            copyBtn.addEventListener('click', copyResults);
+            clearBtn.addEventListener('click', clearAll);
+            
+            // 初始化显示
+            clearAll();
+        });
+    </script>
+	<div align="center"><br />
+<a href="/tools/" style="font-size:12px;color:#999999;text-decoration: none;">返回工具列表</a>	<span style="font-size:12px;color:#999999;">联系站长 E651@msn.com</span>
+</div>
+</body>
+</html>

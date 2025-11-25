@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML转贴工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 10px; /* 减少上下边距 */
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px; /* 减少元素间距 */
+        }
+        textarea {
+            width: 100%;
+            height: 150px; /* 进一步减小高度 */
+            padding: 8px; /* 减小内边距 */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .editor {
+            width: 100%;
+            min-height: 300px; /* 设置固定高度为300px */
+            max-height: 300px; /* 最大高度也为300px */
+            padding: 8px; /* 减小内边距 */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            overflow-y: auto; /* 添加垂直滚动条 */
+        }
+        .buttons-top {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 6px 12px; /* 减小按钮大小 */
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .preview {
+            border: 1px solid #ccc;
+            padding: 8px; /* 减小内边距 */
+            height: 300px; /* 设置固定高度 */
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            overflow-y: auto; /* 右侧显示滚动条 */
+        }
+        .settings {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .settings div {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        label {
+            margin-right: 5px;
+        }
+        .info {
+            color: #666;
+            font-size: 14px;
+        }
+        .html-view {
+            display: none;
+            width: 100%;
+            height: 300px; /* 设置固定高度 */
+            padding: 8px; /* 减小内边距 */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f0f0f0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            margin-top: 10px;
+            overflow-y: auto; /* 右侧显示滚动条 */
+        }
+        .toggle-html {
+            background-color: #2196F3;
+        }
+        .toggle-html:hover {
+            background-color: #0b7dda;
+        }
+        /* 设置过滤标签和属性输入框宽度为100% */
+        #filterTags, #filterAttrs {
+            width: 85%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HTML转贴工具</h1>
+        <p>从网页复制图文内容，粘贴到下方输入区域，点击转换生成新内容</p>
+        <p class="info">提示：直接粘贴会保留图文格式和图片</p>
+        
+        <div id="editor" class="editor" contenteditable="true"></div>
+        
+        <div class="buttons-top">
+            <button id="convert">转换</button>
+        </div>
+        
+        <h3>设置</h3>
+        <div class="settings">
+            <div>
+                <label for="filterTags">过滤标签(逗号分隔):</label>
+                <input type="text" id="filterTags" value="script,style,iframe,noscript">
+            </div>
+            <div>
+                <label for="filterAttrs">过滤属性(逗号分隔):</label>
+                <input type="text" id="filterAttrs" value="onclick,onload,onerror,style,class">
+            </div>
+        </div>
+        
+        <h3>转换结果</h3>
+        <div id="preview" class="preview"></div>
+        <button id="toggleHtml" class="toggle-html">显示HTML代码</button>
+        <div id="htmlView" class="html-view"></div>
+        
+        <!-- 复制结果按钮移到页面最底部 -->
+        <div class="buttons-bottom">
+            <button id="copy">复制结果</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const editor = document.getElementById('editor');
+            const convertBtn = document.getElementById('convert');
+            const copyBtn = document.getElementById('copy');
+            const preview = document.getElementById('preview');
+            const htmlView = document.getElementById('htmlView');
+            const toggleHtmlBtn = document.getElementById('toggleHtml');
+            const filterTagsInput = document.getElementById('filterTags');
+            const filterAttrsInput = document.getElementById('filterAttrs');
+
+            // 监听粘贴事件，保留原始HTML
+            editor.addEventListener('paste', function(e) {
+                // 阻止默认粘贴行为
+                e.preventDefault();
+                
+                // 获取剪贴板数据
+                const clipboardData = e.clipboardData || window.clipboardData;
+                let html = '';
+                
+                if (clipboardData.getData) {
+                    // 尝试获取HTML格式的内容
+                    if (clipboardData.types && clipboardData.types.indexOf('text/html') !== -1) {
+                        html = clipboardData.getData('text/html');
+                    } else {
+                        // 如果没有HTML格式，获取纯文本
+                        html = clipboardData.getData('text/plain');
+                    }
+                }
+                
+                // 创建临时div来解析HTML
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                
+                // 将解析后的内容插入到编辑器中
+                // 使用documentFragment来提高性能
+                const fragment = document.createDocumentFragment();
+                while (tempDiv.firstChild) {
+                    fragment.appendChild(tempDiv.firstChild);
+                }
+                editor.appendChild(fragment);
+            });
+
+            // 转换按钮点击事件
+            convertBtn.addEventListener('click', function() {
+                // 获取编辑器中的HTML内容
+                let content = editor.innerHTML;
+                
+                if (!content.trim()) {
+                    alert('请先粘贴内容');
+                    return;
+                }
+
+                // 获取过滤设置
+                const filterTags = filterTagsInput.value.split(',').map(tag => tag.trim().toLowerCase());
+                const filterAttrs = filterAttrsInput.value.split(',').map(attr => attr.trim().toLowerCase());
+
+                // 将HTML内容转换为DOM元素以便处理
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = content;
+
+                // 处理DOM，过滤标签和属性
+                processNode(tempDiv, filterTags, filterAttrs);
+
+                // 去除空白行
+                removeEmptyLines(tempDiv);
+
+                // 显示结果
+                preview.innerHTML = tempDiv.innerHTML;
+                
+                // 同时更新HTML视图
+                htmlView.textContent = tempDiv.innerHTML;
+            });
+
+            // 复制按钮点击事件
+            copyBtn.addEventListener('click', function() {
+                const result = preview.innerHTML;
+                if (!result.trim()) {
+                    alert('没有可复制的内容');
+                    return;
+                }
+
+                // 创建临时元素用于复制
+                const tempTextarea = document.createElement('textarea');
+                tempTextarea.value = result;
+                document.body.appendChild(tempTextarea);
+                tempTextarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempTextarea);
+
+                alert('结果已复制到剪贴板');
+            });
+
+            // 切换显示HTML代码
+            toggleHtmlBtn.addEventListener('click', function() {
+                if (htmlView.style.display === 'block') {
+                    htmlView.style.display = 'none';
+                    toggleHtmlBtn.textContent = '显示HTML代码';
+                } else {
+                    htmlView.style.display = 'block';
+                    toggleHtmlBtn.textContent = '隐藏HTML代码';
+                }
+            });
+
+            // 处理DOM节点，过滤标签和属性
+            function processNode(node, filterTags, filterAttrs) {
+                // 如果是元素节点
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    const tagName = node.tagName.toLowerCase();
+
+                    // 如果是需要过滤的标签，则移除该节点及其子节点
+                    if (filterTags.includes(tagName)) {
+                        node.parentNode.removeChild(node);
+                        return;
+                    }
+
+                    // 过滤属性
+                    const attributes = Array.from(node.attributes);
+                    for (const attr of attributes) {
+                        if (filterAttrs.includes(attr.name.toLowerCase())) {
+                            node.removeAttribute(attr.name);
+                        }
+                        
+                        // 特别处理图片的alt属性，删除所有alt属性
+                        if (tagName === 'img' && attr.name.toLowerCase() === 'alt') {
+                            node.removeAttribute('alt');
+                        }
+                    }
+
+                    // 处理子节点
+                    const childNodes = Array.from(node.childNodes);
+                    for (let i = childNodes.length - 1; i >= 0; i--) {
+                        processNode(childNodes[i], filterTags, filterAttrs);
+                    }
+                }
+                // 如果是文本节点，保留内容
+                else if (node.nodeType === Node.TEXT_NODE) {
+                    // 去除文本节点前后的空白
+                    node.nodeValue = node.nodeValue.replace(/(^\s+|\s+$)/g, '');
+                    
+                    // 如果文本节点只包含空白字符，则移除
+                    if (node.nodeValue.match(/^\s*$/)) {
+                        node.parentNode.removeChild(node);
+                    }
+                }
+            }
+
+            // 去除空白行
+            function removeEmptyLines(element) {
+                const childNodes = Array.from(element.childNodes);
+                for (let i = childNodes.length - 1; i >= 0; i--) {
+                    const node = childNodes[i];
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        // 去除文本节点前后的空白
+                        node.nodeValue = node.nodeValue.replace(/(^\s+|\s+$)/g, '');
+                        
+                        // 如果文本节点只包含空白字符，则移除
+                        if (node.nodeValue.match(/^\s*$/)) {
+                            node.parentNode.removeChild(node);
+                        }
+                    } else if (node.nodeType === Node.ELEMENT_NODE) {
+                        // 递归处理子元素
+                        removeEmptyLines(node);
+                        
+                        // 检查元素是否只包含空白文本节点
+                        const textNodes = Array.from(node.childNodes).filter(n => n.nodeType === Node.TEXT_NODE);
+                        if (textNodes.length > 0 && textNodes.every(t => t.nodeValue.match(/^\s*$/))) {
+                            // 如果元素只包含空白文本节点，则移除该元素
+                            node.parentNode.removeChild(node);
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+	<div align="center"><br />
+<a href="/tools/" style="font-size:12px;color:#999999;text-decoration: none;">返回工具列表</a>	<span style="font-size:12px;color:#999999;">联系站长 E651@msn.com</span>
+</div>
+</body>
+</html>
