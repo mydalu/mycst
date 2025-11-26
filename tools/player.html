@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E路无忧-媒体播放器</title>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-light: rgba(79, 70, 229, 0.05);
+            --secondary: #10B981;
+            --neutral: #6B7280;
+            --light: #F3F4F6;
+            --dark: #1F2937;
+            --white: #FFFFFF;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --red-500: #EF4444;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--gray-50);
+            min-height: 100vh;
+            color: var(--dark);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* 工具类 */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .list-item-active {
+            background-color: var(--primary-light);
+            border-left: 4px solid var(--primary);
+        }
+
+        .list-item-disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .player-shadow {
+            box-shadow: var(--shadow);
+        }
+
+        .aspect-video {
+            aspect-ratio: 16 / 9;
+        }
+
+        .truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+        }
+
+        .text-lg {
+            font-size: 1.125rem;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .text-primary {
+            color: var(--primary);
+        }
+
+        .text-secondary {
+            color: var(--secondary);
+        }
+
+        .text-neutral {
+            color: var(--neutral);
+        }
+
+        .text-dark {
+            color: var(--dark);
+        }
+
+        .text-white {
+            color: white;
+        }
+
+        .text-red-500 {
+            color: var(--red-500);
+        }
+
+        .bg-primary {
+            background-color: var(--primary);
+        }
+
+        .bg-primary\/90 {
+            background-color: rgba(79, 70, 229, 0.9);
+        }
+
+        .bg-primary\/5 {
+            background-color: rgba(79, 70, 229, 0.05);
+        }
+
+        .bg-white {
+            background-color: var(--white);
+        }
+
+        .bg-light {
+            background-color: var(--light);
+        }
+
+        .bg-gray-900 {
+            background-color: #111827;
+        }
+
+        .bg-black\/50 {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .hover\\:bg-primary\/90:hover {
+            background-color: rgba(79, 70, 229, 0.9);
+        }
+
+        .hover\\:text-red-500:hover {
+            color: var(--red-500);
+        }
+
+        .rounded {
+            border-radius: 0.25rem;
+        }
+
+        .rounded-lg {
+            border-radius: 0.5rem;
+        }
+
+        .rounded-xl {
+            border-radius: 0.75rem;
+        }
+
+        .p-2 {
+            padding: 0.5rem;
+        }
+
+        .p-3 {
+            padding: 0.75rem;
+        }
+
+        .p-4 {
+            padding: 1rem;
+        }
+
+        .px-2 {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        .px-3 {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .px-4 {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .py-2 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .py-3 {
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+        }
+
+        .py-6 {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mr-1 {
+            margin-right: 0.25rem;
+        }
+
+        .mr-2 {
+            margin-right: 0.5rem;
+        }
+
+        .gap-2 {
+            gap: 0.5rem;
+        }
+
+        .gap-3 {
+            gap: 0.75rem;
+        }
+
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        .gap-6 {
+            gap: 1.5rem;
+        }
+
+        .top-4 {
+            top: 1rem;
+        }
+
+        .right-4 {
+            right: 1rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-col {
+            flex-direction: column;
+        }
+
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+
+        .flex-1 {
+            flex: 1;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .justify-center {
+            justify-content: center;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .relative {
+            position: relative;
+        }
+
+        .absolute {
+            position: absolute;
+        }
+
+        .overflow-hidden {
+            overflow: hidden;
+        }
+
+        .overflow-y-auto {
+            overflow-y: auto;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .h-full {
+            height: 100%;
+        }
+
+        .border-0 {
+            border: 0;
+        }
+
+        .border-b {
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .border-t {
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .divide-y > * + * {
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .object-contain {
+            object-fit: contain;
+        }
+
+        .transition-all {
+            transition: all 0.2s ease;
+        }
+
+        /* 自定义拖拽样式 */
+        .sortable-ghost {
+            background-color: var(--gray-100);
+            opacity: 0.8;
+        }
+
+        /* 响应式布局 */
+        @media (min-width: 1024px) {
+            .grid {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 1.5rem;
+            }
+        }
+
+        /* 按钮样式 */
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            font: inherit;
+            color: inherit;
+        }
+
+        #addFilesBtn {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        #reloadFilesBtn {
+            background-color: var(--secondary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease;
+            margin-left: 1rem;
+        }
+
+        #addFilesBtn:hover, #reloadFilesBtn:hover {
+            opacity: 0.9;
+        }
+
+        /* 选择框样式 */
+        select {
+            background-color: var(--light);
+            border: none;
+            border-radius: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 0 1px var(--primary);
+        }
+
+        /* 播放列表项样式 */
+        #playlist li {
+            list-style: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        #playlist li:not(.list-item-disabled):hover {
+            background-color: var(--gray-100);
+        }
+
+        /* 图标样式 */
+        .icon {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            stroke-width: 0;
+            stroke: currentColor;
+            fill: currentColor;
+            vertical-align: middle;
+        }
+
+        /* 提示信息 */
+        .info-toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--dark);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .info-toast.show {
+            opacity: 1;
+        }
+
+        /* 重新加载提示 */
+        .reload-prompt {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .reload-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            margin-top: 1rem;
+            cursor: pointer;
+        }
+
+        .reload-btn:hover {
+            background-color: var(--primary)/90;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部标题栏 -->
+        <header class="mb-6">
+            <div class="flex items-center justify-between flex-wrap">
+                <h1 class="font-bold text-dark" style="font-size: clamp(1.5rem, 3vw, 2.5rem);">
+                    <span class="icon text-primary mr-2">▶</span>E路无忧-播放器
+                </h1>
+                <div class="flex">
+                    <button id="addFilesBtn" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg flex items-center transition-all">
+                        <span class="icon mr-2">+</span>添加文件
+                    </button>
+                    <button id="reloadFilesBtn" class="hidden bg-secondary text-white px-4 py-2 rounded-lg flex items-center transition-all">
+                        <span class="icon mr-2">↻</span>重新加载文件
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid">
+            <!-- 播放器区域 -->
+            <div>
+                <div class="bg-white rounded-xl overflow-hidden player-shadow">
+                    <!-- 媒体播放容器 -->
+                    <div class="relative aspect-video bg-gray-900">
+                        <video id="videoPlayer" class="w-full h-full object-contain" controls></video>
+                        <audio id="audioPlayer" class="w-full h-full hidden" controls>
+                        <div id="mediaTypeIndicator" class="absolute top-4 right-4 bg-black/50 text-white px-2 py-1 rounded text-sm">
+                            <span class="icon">📹</span> 视频
+                        </div>
+                        <div id="reloadPrompt" class="reload-prompt hidden">
+                            <p>文件需要重新加载才能播放</p>
+                            <button class="reload-btn" onclick="document.getElementById('reloadFileInput').click()">重新选择文件</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 播放控制区 -->
+                    <div class="p-4">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div>
+                                <h2 id="currentMediaTitle" class="text-lg font-semibold text-dark truncate">未选择文件</h2>
+                                <p id="currentMediaInfo" class="text-sm text-neutral">添加文件开始播放</p>
+                            </div>
+                            
+                            <div class="flex items-center gap-3">
+                                <!-- 循环控制 -->
+                                <div class="flex items-center">
+                                    <select id="repeatMode" class="bg-light border-0 rounded px-2 py-1 text-sm">
+                                        <option value="none" selected>播放一次</option>
+                                        <option value="single">单曲循环</option>
+                                        <option value="all">列表循环</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- 播放速度 -->
+                                <div class="flex items-center">
+                                    <select id="playbackRate" class="bg-light border-0 rounded px-2 py-1 text-sm">
+                                        <option value="0.5">0.5x</option>
+                                        <option value="0.75">0.75x</option>
+                                        <option value="1" selected>1x</option>
+                                        <option value="1.25">1.25x</option>
+                                        <option value="1.5">1.5x</option>
+                                        <option value="2">2x</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 播放列表区域 -->
+            <div>
+                <div class="bg-white rounded-xl overflow-hidden player-shadow h-full flex flex-col">
+                    <div class="p-4 border-b flex justify-between items-center">
+                        <h3 class="font-semibold text-dark">播放列表</h3>
+                        <button id="clearPlaylist" class="text-neutral hover:text-red-500 text-sm">
+                            <span class="icon">🗑</span> 清空
+                        </button>
+                    </div>
+                    
+                    <div id="playlistContainer" class="flex-1 overflow-y-auto scrollbar-hide p-2">
+                        <ul id="playlist" class="divide-y">
+                            <li class="py-3 px-2 text-center text-neutral">
+                                拖拽文件到此处或点击添加文件
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="p-3 border-t bg-light">
+                        <p class="text-sm text-neutral">
+                            <span class="icon">ℹ</span> 
+                            支持拖拽排序 | 列表自动保存（需重新加载文件）
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 文件选择器 -->
+        <input type="file" id="fileInput" accept="video/*,audio/*" multiple class="hidden">
+        <input type="file" id="reloadFileInput" accept="video/*,audio/*" multiple class="hidden">
+        
+        <!-- 提示信息 -->
+        <div id="toast" class="info-toast">操作提示</div>
+    </div>
+
+    <script>
+        // DOM元素
+        const fileInput = document.getElementById('fileInput');
+        const reloadFileInput = document.getElementById('reloadFileInput');
+        const addFilesBtn = document.getElementById('addFilesBtn');
+        const reloadFilesBtn = document.getElementById('reloadFilesBtn');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const playlist = document.getElementById('playlist');
+        const currentMediaTitle = document.getElementById('currentMediaTitle');
+        const currentMediaInfo = document.getElementById('currentMediaInfo');
+        const mediaTypeIndicator = document.getElementById('mediaTypeIndicator');
+        const repeatMode = document.getElementById('repeatMode');
+        const playbackRate = document.getElementById('playbackRate');
+        const clearPlaylistBtn = document.getElementById('clearPlaylist');
+        const playlistContainer = document.getElementById('playlistContainer');
+        const reloadPrompt = document.getElementById('reloadPrompt');
+        const toast = document.getElementById('toast');
+        
+        // 播放器状态
+        let playlistItems = [];
+        let currentIndex = -1;
+        let currentPlayer = videoPlayer;
+        let isAudio = false;
+        let dragIndex = -1;
+        let isReloadMode = false; // 是否处于重新加载模式
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPlaylistFromStorage();
+            setupEventListeners();
+            setupDragAndDrop();
+            
+            // 检查是否有需要重新加载的文件
+            if (playlistItems.length > 0 && (!playlistItems[0].fileURL || playlistItems[0].fileURL === '')) {
+                reloadFilesBtn.classList.remove('hidden');
+                showToast('播放列表已恢复，需要重新加载文件');
+            }
+        });
+        
+        // 设置事件监听
+        function setupEventListeners() {
+            // 添加文件按钮
+            addFilesBtn.addEventListener('click', () => {
+                isReloadMode = false;
+                fileInput.click();
+            });
+            
+            // 重新加载文件按钮
+            reloadFilesBtn.addEventListener('click', () => {
+                isReloadMode = true;
+                fileInput.click();
+            });
+            
+            // 文件选择
+            fileInput.addEventListener('change', handleFileSelect);
+            reloadFileInput.addEventListener('change', handleReloadFileSelect);
+            
+            // 播放速度改变
+            playbackRate.addEventListener('change', () => {
+                if (currentPlayer) {
+                    currentPlayer.playbackRate = playbackRate.value;
+                }
+            });
+            
+            // 清空播放列表
+            clearPlaylistBtn.addEventListener('click', clearPlaylist);
+            
+            // 视频/音频播放结束事件
+            videoPlayer.addEventListener('ended', handleMediaEnded);
+            audioPlayer.addEventListener('ended', handleMediaEnded);
+        }
+        
+        // 设置拖拽功能
+        function setupDragAndDrop() {
+            const playlistArea = document.getElementById('playlistContainer');
+            
+            // 拖拽样式
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                playlistArea.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            // 高亮拖拽区域
+            ['dragenter', 'dragover'].forEach(eventName => {
+                playlistArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                playlistArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            // 处理文件放置
+            playlistArea.addEventListener('drop', handleDrop, false);
+            
+            // 播放列表项拖拽排序
+            setupPlaylistDrag();
+        }
+        
+        // 设置播放列表拖拽
+        function setupPlaylistDrag() {
+            const items = playlist.querySelectorAll('li[data-index]');
+            
+            items.forEach(item => {
+                if (!item.classList.contains('list-item-disabled')) {
+                    item.setAttribute('draggable', true);
+                }
+                
+                item.addEventListener('dragstart', (e) => {
+                    dragIndex = parseInt(item.dataset.index);
+                    e.dataTransfer.setData('text/plain', dragIndex);
+                    item.classList.add('sortable-ghost');
+                    setTimeout(() => {
+                        item.style.opacity = '0.5';
+                    }, 0);
+                });
+                
+                item.addEventListener('dragend', () => {
+                    item.classList.remove('sortable-ghost');
+                    item.style.opacity = '1';
+                    dragIndex = -1;
+                });
+                
+                item.addEventListener('dragover', preventDefaults);
+                
+                item.addEventListener('dragenter', (e) => {
+                    if (dragIndex !== -1) {
+                        e.preventDefault();
+                        const targetIndex = parseInt(item.dataset.index);
+                        if (dragIndex !== targetIndex) {
+                            // 视觉反馈
+                            item.style.backgroundColor = 'var(--primary-light)';
+                        }
+                    }
+                });
+                
+                item.addEventListener('dragleave', () => {
+                    if (dragIndex !== -1) {
+                        item.style.backgroundColor = '';
+                    }
+                });
+                
+                item.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const targetIndex = parseInt(item.dataset.index);
+                    if (dragIndex !== -1 && dragIndex !== targetIndex) {
+                        moveItem(dragIndex, targetIndex);
+                    }
+                    item.style.backgroundColor = '';
+                });
+            });
+        }
+        
+        // 移动列表项
+        function moveItem(fromIndex, toIndex) {
+            if (fromIndex < 0 || toIndex < 0 || fromIndex >= playlistItems.length || toIndex >= playlistItems.length) {
+                return;
+            }
+            
+            // 调整数组顺序
+            const item = playlistItems.splice(fromIndex, 1)[0];
+            playlistItems.splice(toIndex, 0, item);
+            
+            // 如果移动的是当前播放项，更新索引
+            if (currentIndex === fromIndex) {
+                currentIndex = toIndex;
+            } else if (currentIndex > fromIndex && currentIndex <= toIndex) {
+                currentIndex--;
+            } else if (currentIndex < fromIndex && currentIndex >= toIndex) {
+                currentIndex++;
+            }
+            
+            // 重新渲染
+            renderPlaylist();
+            
+            // 保存播放列表
+            savePlaylistToStorage();
+        }
+        
+        // 阻止默认行为
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        // 高亮拖拽区域
+        function highlight() {
+            playlistContainer.classList.add('bg-primary/5');
+        }
+        
+        // 取消高亮
+        function unhighlight() {
+            playlistContainer.classList.remove('bg-primary/5');
+        }
+        
+        // 处理文件放置
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length) {
+                isReloadMode = false;
+                handleFiles(files);
+            }
+        }
+        
+        // 处理文件选择
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            if (files.length) {
+                if (isReloadMode) {
+                    // 重新加载模式，替换现有文件
+                    replacePlaylistFiles(files);
+                } else {
+                    // 添加模式，追加文件
+                    handleFiles(files);
+                }
+            }
+        }
+        
+        // 处理重新加载文件
+        function handleReloadFileSelect(e) {
+            const files = e.target.files;
+            if (files.length && currentIndex >= 0 && currentIndex < playlistItems.length) {
+                const file = files[0];
+                const fileURL = URL.createObjectURL(file);
+                
+                // 更新当前项目的文件URL
+                playlistItems[currentIndex].fileURL = fileURL;
+                playlistItems[currentIndex].size = formatFileSize(file.size);
+                
+                // 隐藏重新加载提示
+                reloadPrompt.classList.add('hidden');
+                
+                // 重新播放
+                playMedia(currentIndex);
+                
+                // 保存播放列表
+                savePlaylistToStorage();
+                
+                showToast('文件已重新加载');
+            }
+        }
+        
+        // 替换播放列表文件
+        function replacePlaylistFiles(files) {
+            const newFiles = Array.from(files).filter(file => {
+                return file.type.startsWith('video/') || file.type.startsWith('audio/');
+            });
+            
+            if (newFiles.length === 0) {
+                alert('请选择视频或音频文件！');
+                return;
+            }
+            
+            // 匹配文件名替换
+            let replacedCount = 0;
+            
+            newFiles.forEach(file => {
+                const fileURL = URL.createObjectURL(file);
+                const mediaType = file.type.startsWith('audio/') ? 'audio' : 'video';
+                
+                // 尝试匹配同名文件
+                const matchIndex = playlistItems.findIndex(item => 
+                    item.name === file.name && item.type === mediaType
+                );
+                
+                if (matchIndex !== -1) {
+                    // 更新现有项目
+                    playlistItems[matchIndex].fileURL = fileURL;
+                    playlistItems[matchIndex].size = formatFileSize(file.size);
+                    replacedCount++;
+                } else if (playlistItems.length < newFiles.length) {
+                    // 添加新项目（如果文件数量超过原有列表）
+                    playlistItems.push({
+                        id: Date.now() + Math.random(),
+                        name: file.name,
+                        size: formatFileSize(file.size),
+                        type: mediaType,
+                        fileURL: fileURL,
+                        duration: '00:00'
+                    });
+                    replacedCount++;
+                }
+            });
+            
+            if (replacedCount > 0) {
+                renderPlaylist();
+                savePlaylistToStorage();
+                showToast(`已重新加载 ${replacedCount} 个文件`);
+                
+                // 如果当前有选中的项目且已加载，尝试播放
+                if (currentIndex >= 0 && playlistItems[currentIndex].fileURL) {
+                    playMedia(currentIndex);
+                }
+            } else {
+                showToast('未找到匹配的文件');
+            }
+        }
+        
+        // 处理文件
+        function handleFiles(files) {
+            const newFiles = Array.from(files).filter(file => {
+                return file.type.startsWith('video/') || file.type.startsWith('audio/');
+            });
+            
+            if (newFiles.length === 0) {
+                alert('请选择视频或音频文件！');
+                return;
+            }
+            
+            // 添加到播放列表
+            newFiles.forEach(file => {
+                addToPlaylist(file);
+            });
+            
+            // 如果当前没有播放的媒体，播放第一个
+            if (currentIndex === -1 && playlistItems.length > 0) {
+                playMedia(0);
+            }
+            
+            // 保存播放列表
+            savePlaylistToStorage();
+            
+            // 隐藏重新加载按钮（如果有）
+            reloadFilesBtn.classList.add('hidden');
+        }
+        
+        // 添加文件到播放列表
+        function addToPlaylist(file) {
+            const fileURL = URL.createObjectURL(file);
+            const isAudioFile = file.type.startsWith('audio/');
+            const mediaType = isAudioFile ? 'audio' : 'video';
+            
+            const item = {
+                id: Date.now() + Math.random(),
+                name: file.name,
+                size: formatFileSize(file.size),
+                type: mediaType,
+                fileURL: fileURL,
+                duration: '00:00'
+            };
+            
+            playlistItems.push(item);
+            renderPlaylist();
+        }
+        
+        // 渲染播放列表
+        function renderPlaylist() {
+            if (playlistItems.length === 0) {
+                playlist.innerHTML = `
+                    <li class="py-3 px-2 text-center text-neutral">
+                        拖拽文件到此处或点击添加文件
+                    </li>
+                `;
+                return;
+            }
+            
+            playlist.innerHTML = playlistItems.map((item, index) => {
+                const isDisabled = !item.fileURL || item.fileURL === '';
+                return `
+                    <li class="py-2 px-3 hover:bg-gray-50 rounded ${index === currentIndex ? 'list-item-active' : ''} ${isDisabled ? 'list-item-disabled' : ''}" 
+                        data-index="${index}" ${isDisabled ? 'title="需要重新加载文件"' : ''}>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2 truncate">
+                                <span class="icon ${item.type === 'audio' ? 'text-primary' : 'text-secondary'}">
+                                    ${item.type === 'audio' ? '🔊' : '📹'}
+                                </span>
+                                <span class="truncate">${item.name}</span>
+                                ${isDisabled ? '<span class="text-xs text-red-500 ml-2">(已失效)</span>' : ''}
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-neutral">${item.size}</span>
+                                <button class="text-neutral hover:text-red-500" onclick="removeFromPlaylist(${index})">
+                                    <span class="icon">✕</span>
+                                </button>
+                            </div>
+                        </div>
+                    </li>
+                `;
+            }).join('');
+            
+            // 添加播放列表项点击事件
+            document.querySelectorAll('#playlist li[data-index]').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    if (!e.target.closest('button') && !e.target.classList.contains('icon')) {
+                        const index = parseInt(item.dataset.index);
+                        if (playlistItems[index].fileURL && playlistItems[index].fileURL !== '') {
+                            playMedia(index);
+                        } else {
+                            // 需要重新加载文件
+                            currentIndex = index;
+                            reloadPrompt.classList.remove('hidden');
+                        }
+                    }
+                });
+                
+                // 重新绑定拖拽事件
+                setupPlaylistDrag();
+            });
+        }
+        
+        // 播放媒体
+        function playMedia(index) {
+            if (index < 0 || index >= playlistItems.length) return;
+            
+            const item = playlistItems[index];
+            
+            // 检查文件URL是否有效
+            if (!item.fileURL || item.fileURL === '') {
+                currentIndex = index;
+                reloadPrompt.classList.remove('hidden');
+                return;
+            }
+            
+            // 更新当前索引
+            currentIndex = index;
+            
+            // 停止当前播放的媒体
+            if (currentPlayer) {
+                currentPlayer.pause();
+            }
+            
+            // 隐藏重新加载提示
+            reloadPrompt.classList.add('hidden');
+            
+            // 判断媒体类型
+            isAudio = item.type === 'audio';
+            
+            // 更新播放器
+            if (isAudio) {
+                currentPlayer = audioPlayer;
+                videoPlayer.classList.add('hidden');
+                audioPlayer.classList.remove('hidden');
+                mediaTypeIndicator.innerHTML = `<span class="icon">🔊</span> 音频`;
+            } else {
+                currentPlayer = videoPlayer;
+                audioPlayer.classList.add('hidden');
+                videoPlayer.classList.remove('hidden');
+                mediaTypeIndicator.innerHTML = `<span class="icon">📹</span> 视频`;
+            }
+            
+            // 设置媒体源
+            currentPlayer.src = item.fileURL;
+            currentPlayer.playbackRate = playbackRate.value;
+            
+            // 更新信息显示
+            currentMediaTitle.textContent = item.name;
+            currentMediaInfo.textContent = `${item.size} · ${item.type} · ${item.duration}`;
+            
+            // 播放媒体
+            currentPlayer.play();
+            
+            // 更新播放列表UI
+            renderPlaylist();
+            
+            // 监听元数据加载完成事件，获取时长
+            currentPlayer.addEventListener('loadedmetadata', function updateDuration() {
+                const duration = formatTime(currentPlayer.duration);
+                playlistItems[index].duration = duration;
+                
+                // 更新当前媒体信息
+                currentMediaInfo.textContent = `${item.size} · ${item.type} · ${duration}`;
+                
+                // 移除事件监听，避免重复触发
+                currentPlayer.removeEventListener('loadedmetadata', updateDuration);
+                
+                // 保存播放列表
+                savePlaylistToStorage();
+            });
+        }
+        
+        // 处理媒体播放结束
+        function handleMediaEnded() {
+            const mode = repeatMode.value;
+            
+            // 根据不同的播放模式处理
+            switch(mode) {
+                case 'single':
+                    // 单曲循环 - 重新播放当前文件
+                    currentPlayer.currentTime = 0;
+                    currentPlayer.play();
+                    break;
+                    
+                case 'all':
+                    // 列表循环 - 播放下一个文件
+                    if (playlistItems.length > 1) {
+                        let nextIndex = (currentIndex + 1) % playlistItems.length;
+                        
+                        // 检查下一个文件是否有效，如果无效则继续找下一个
+                        let attempts = 0;
+                        while (attempts < playlistItems.length && (!playlistItems[nextIndex].fileURL || playlistItems[nextIndex].fileURL === '')) {
+                            nextIndex = (nextIndex + 1) % playlistItems.length;
+                            attempts++;
+                        }
+                        
+                        if (attempts < playlistItems.length) {
+                            playMedia(nextIndex);
+                        } else {
+                            showToast('没有可播放的有效文件');
+                        }
+                    }
+                    break;
+                    
+                case 'none':
+                    // 播放一次 - 停止播放，不自动播放下一个
+                    // 这里什么都不做，播放结束后就停止
+                    break;
+            }
+        }
+        
+        // 从播放列表移除项目
+        function removeFromPlaylist(index) {
+            if (index < 0 || index >= playlistItems.length) return;
+            
+            // 如果移除的是当前播放的项目，停止播放
+            if (index === currentIndex) {
+                currentPlayer.pause();
+                currentIndex = -1;
+                currentMediaTitle.textContent = '未选择文件';
+                currentMediaInfo.textContent = '添加文件开始播放';
+                
+                // 隐藏重新加载提示
+                reloadPrompt.classList.add('hidden');
+                
+                // 如果还有其他项目，播放下一个
+                if (playlistItems.length > 1) {
+                    const nextIndex = index === playlistItems.length - 1 ? index - 1 : index;
+                    setTimeout(() => {
+                        if (playlistItems[nextIndex]?.fileURL) {
+                            playMedia(nextIndex);
+                        }
+                    }, 100);
+                }
+            } else if (index < currentIndex) {
+                // 如果移除的是当前项目之前的项目，更新索引
+                currentIndex--;
+            }
+            
+            // 释放URL对象
+            if (playlistItems[index].fileURL) {
+                try {
+                    URL.revokeObjectURL(playlistItems[index].fileURL);
+                } catch (e) {
+                    // 忽略已失效的URL
+                }
+            }
+            
+            // 从数组中移除
+            playlistItems.splice(index, 1);
+            
+            // 更新UI
+            renderPlaylist();
+            
+            // 保存播放列表
+            savePlaylistToStorage();
+            
+            // 如果列表为空，隐藏重新加载按钮
+            if (playlistItems.length === 0) {
+                reloadFilesBtn.classList.add('hidden');
+            }
+        }
+        
+        // 清空播放列表
+        function clearPlaylist() {
+            if (playlistItems.length === 0) return;
+            
+            if (confirm('确定要清空播放列表吗？')) {
+                // 释放所有URL对象
+                playlistItems.forEach(item => {
+                    if (item.fileURL) {
+                        try {
+                            URL.revokeObjectURL(item.fileURL);
+                        } catch (e) {
+                            // 忽略已失效的URL
+                        }
+                    }
+                });
+                
+                // 重置状态
+                playlistItems = [];
+                currentIndex = -1;
+                
+                // 停止播放
+                if (currentPlayer) {
+                    currentPlayer.pause();
+                }
+                
+                // 隐藏重新加载提示和按钮
+                reloadPrompt.classList.add('hidden');
+                reloadFilesBtn.classList.add('hidden');
+                
+                // 更新UI
+                currentMediaTitle.textContent = '未选择文件';
+                currentMediaInfo.textContent = '添加文件开始播放';
+                renderPlaylist();
+                
+                // 清除存储
+                localStorage.removeItem('mediaPlayerPlaylist');
+            }
+        }
+        
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // 格式化时间
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return '00:00';
+            
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            
+            return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+        
+        // 保存播放列表到本地存储
+        function savePlaylistToStorage() {
+            // 保存时移除文件URL，只保存元数据
+            const playlistData = playlistItems.map(item => ({
+                id: item.id,
+                name: item.name,
+                size: item.size,
+                type: item.type,
+                duration: item.duration,
+                fileURL: '' // 清空URL，避免存储失效的Blob URL
+            }));
+            
+            localStorage.setItem('mediaPlayerPlaylist', JSON.stringify({
+                items: playlistData,
+                currentIndex: currentIndex
+            }));
+        }
+        
+        // 从本地存储加载播放列表
+        function loadPlaylistFromStorage() {
+            const savedData = localStorage.getItem('mediaPlayerPlaylist');
+            
+            if (savedData) {
+                try {
+                    const { items, currentIndex: savedIndex } = JSON.parse(savedData);
+                    
+                    if (items && items.length) {
+                        playlistItems = items.map(item => ({
+                            ...item,
+                            fileURL: '' // 初始化为空，需要重新加载
+                        }));
+                        
+                        currentIndex = savedIndex;
+                        renderPlaylist();
+                    }
+                } catch (e) {
+                    console.error('加载播放列表失败:', e);
+                }
+            }
+        }
+        
+        // 显示提示信息
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 全局函数
+        window.removeFromPlaylist = removeFromPlaylist;
+    </script>
+	<div align="center"><br />
+<a href="/tools/" style="font-size:12px;color:#999999;text-decoration: none;">返回工具列表</a>	<span style="font-size:12px;color:#999999;">联系站长 E651@msn.com</span>
+</div>
+</body>
+</html>
