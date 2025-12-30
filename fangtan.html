@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="description" content="时光访谈录-专业人物访谈服务，记录人生故事，传承珍贵记忆" />
+<meta name="keywords" content="人物访谈,口述历史,传记,视频访谈,文字记录" />
+<title>时光访谈录-人物访谈服务</title>
+<style type="text/css">
+/* 金色怀旧色调 */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "宋体", Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #333;
+    background-color: #F5F0E6;
+    background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAMzMzAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==');
+    background-repeat: repeat;
+    padding: 20px 0;
+    min-width: 800px;
+}
+
+#wrapper {
+    width: 720px;
+    margin: 0 auto;
+    background-color: #FFF;
+    border: 1px solid #D4B483;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+/* 顶部区域 */
+#header {
+    background-color: #8B7355;
+    background: linear-gradient(to bottom, #A68B5E, #8B7355);
+    padding: 15px 20px 10px;
+    border-bottom: 3px double #D4B483;
+    color: #FFF;
+    position: relative;
+}
+
+#header h1 {
+    font-size: 32px;
+    font-weight: bold;
+    font-family: "黑体", "Microsoft YaHei", sans-serif;
+    text-align: center;
+    margin-bottom: 5px;
+    text-shadow: 2px 2px 3px rgba(0,0,0,0.5);
+    letter-spacing: 2px;
+}
+
+#header h2 {
+    font-size: 14px;
+    font-weight: normal;
+    text-align: center;
+    color: #F5E6C8;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+/* 导航菜单 */
+#navigation {
+    background-color: #D4B483;
+    border-top: 1px solid #F5E6C8;
+    border-bottom: 2px solid #8B7355;
+    padding: 8px 0;
+}
+
+#navigation ul {
+    list-style: none;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+#navigation li {
+    display: inline;
+    margin: 0 15px;
+}
+
+#navigation a {
+    color: #5C4629;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 13px;
+    padding: 5px 12px;
+    border-radius: 3px;
+    transition: all 0.3s;
+}
+
+#navigation a:hover {
+    background-color: #8B7355;
+    color: #FFF;
+    text-decoration: none;
+}
+
+/* 主要内容区域 */
+#main-content {
+    padding: 20px;
+    overflow: hidden;
+}
+
+.section {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed #D4B483;
+}
+
+.section h3 {
+    font-size: 16px;
+    color: #8B7355;
+    background-color: #F9F5ED;
+    padding: 8px 12px;
+    border-left: 5px solid #D4B483;
+    margin-bottom: 15px;
+    font-family: "黑体", "Microsoft YaHei", sans-serif;
+}
+
+/* 服务项目样式 - 修复版两列布局 */
+.services-container {
+    overflow: hidden;
+    width: 100%;
+}
+
+.service-row {
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.service-box {
+    width: 48%;
+    float: left;
+    background-color: #F9F5ED;
+    border: 1px solid #E8D9BC;
+    padding: 12px;
+    border-radius: 5px;
+    transition: all 0.3s;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    min-height: 140px;
+}
+
+.service-box:nth-child(odd) {
+    margin-right: 4%;
+}
+
+.service-box h4 {
+    color: #8B7355;
+    font-size: 14px;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 1px dotted #D4B483;
+}
+
+/* 最后一个服务项目单独一行 */
+.service-box.wide {
+    width: 100%;
+    float: none;
+    clear: both;
+    margin-right: 0;
+}
+
+/* 价格表格 */
+.price-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 12px;
+}
+
+.price-table th {
+    background-color: #8B7355;
+    color: #FFF;
+    font-weight: bold;
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #A68B5E;
+}
+
+.price-table td {
+    padding: 10px;
+    border: 1px solid #E8D9BC;
+}
+
+.price-table tr:nth-child(even) {
+    background-color: #F9F5ED;
+}
+
+.price-table tr:hover {
+    background-color: #F5E6C8;
+}
+
+/* 课堂信息 */
+.class-info {
+    background-color: #F9F5ED;
+    padding: 15px;
+    border: 1px solid #E8D9BC;
+    border-radius: 5px;
+}
+
+.class-list {
+    list-style-type: none;
+    margin-left: 20px;
+}
+
+.class-list li {
+    margin-bottom: 10px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.class-list li:before {
+    content: "▶";
+    color: #8B7355;
+    position: absolute;
+    left: 0;
+}
+
+/* 联系方式 */
+.contact-container {
+    background-color: #F9F5ED;
+    padding: 20px;
+    border: 2px ridge #D4B483;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.contact-item {
+    margin-bottom: 15px;
+    padding-left: 30px;
+    min-height: 24px;
+    line-height: 24px;
+}
+
+.contact-button {
+    display: inline-block;
+    background-color: #8B7355;
+    color: #FFF;
+    padding: 8px 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: all 0.3s;
+    border: 1px solid #5C4629;
+}
+
+.contact-button:hover {
+    background-color: #A68B5E;
+    text-decoration: none;
+}
+
+/* 底部区域 */
+#footer {
+    background-color: #8B7355;
+    color: #F5E6C8;
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 11px;
+    border-top: 3px double #D4B483;
+    line-height: 1.8;
+}
+
+#footer a {
+    color: #F5E6C8;
+    text-decoration: none;
+}
+
+#footer a:hover {
+    text-decoration: underline;
+    color: #FFF;
+}
+
+/* 经典元素 */
+.status-bar {
+    background-color: #F9F5ED;
+    border-top: 1px solid #E8D9BC;
+    border-bottom: 1px solid #E8D9BC;
+    padding: 6px 20px;
+    font-size: 11px;
+    color: #8B7355;
+    text-align: center;
+}
+
+.counter {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    color: #F5E6C8;
+    background-color: rgba(0,0,0,0.2);
+    padding: 3px 8px;
+    border-radius: 3px;
+}
+
+/* 分割线 */
+.divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, #D4B483, transparent);
+    margin: 20px 0;
+}
+
+/* 提示框 */
+.tip-box {
+    background-color: #FFF8E1;
+    border: 1px solid #FFD54F;
+    padding: 10px 15px;
+    margin: 15px 0;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #5D4037;
+    clear: both;
+}
+</style>
+</head>
+
+<body>
+<div id="wrapper">
+    <!-- 顶部标题区域 -->
+    <div id="header">
+        <div class="counter">客服: <span id="visit-count">19903777114</span></div>
+        <h1>时光访谈录</h1>
+        <h2>人物访谈服务 - 记录人生故事，传承珍贵记忆</h2>
+    </div>
+    
+    <!-- 导航菜单 -->
+    <div id="navigation">
+        <ul>
+        <li><a href="#about">关于我们</a></li>
+            <li><a href="#services">服务项目</a></li>
+            <li><a href="#pricing">服务价格</a></li>
+            <li><a href="#class">整理课堂</a></li>
+            <li><a href="#contact">联系方式</a></li>
+        </ul>
+    </div>
+    
+    <!-- 状态栏 -->
+    <div class="status-bar">
+        <marquee behavior="scroll" direction="left" scrollamount="3">
+        ★ 专业人物访谈服务 ★ 文字/语音/视频多种形式 ★ 二十年访谈经验 ★ 已为300+客户记录人生故事 ★
+        </marquee>
+    </div>
+    
+    <!-- 主要内容 -->
+    <div id="main-content">
+     <!-- 关于我们 -->
+        <div id="about" class="section">
+            <h3>关于我们</h3>
+            <p>时光访谈录——是我们人生档案馆下的另一档数字服务。人物的专访的流程，是我们提前针对客户，针对受访者进行简单的前采，然后给出访谈大纲，双方再讨论访谈细节，
+            然后再带上设备去受访者生活或工作的场景中去录制，
+            不再有外拍，或者是很少的外拍穿插，这样人物的故事性就会比较强，因为有前期对访谈大纲的思考与沉淀，人物能够更完整更系统的表达自己的经历与感想，
+            这就是一个真实的人物，通过音容笑貌，通过音视频的方式丰富的并且集中的展现出来了。 如果你有这方面的感动或需求，可以跟我联系，但要抓紧时间，
+            人会一天比一天衰老，头脑会一天比一天糊涂，所以赶紧预约，我们的时间安排也很有限。           </p>
+        </div>
+
+        <!-- 服务项目 -->
+        <div id="services" class="section">
+            <h3>服务项目</h3>
+            <div class="services-container">
+                <!-- 第一行：两列 -->
+                <div class="service-row">
+                    <div class="service-box">
+                        <h4>文字访谈</h4>
+                        <p>专业访谈员进行深度访谈，整理成生动文字稿。包含采访提纲设计、现场访谈、文字整理和稿件润色。适合出版传记、企业历史记录、网页展示等。</p>
+                    </div>
+                    
+                    <div class="service-box">
+                        <h4>语音访谈</h4>
+                        <p>高保真录音设备录制，专业音频后期处理，也可选择在线语音聊天方式录制。提供完整音频文件和精选片段。适合制作有声回忆录、播客素材、家庭纪念音频等。</p>
+                    </div>
+                </div>
+                
+                <!-- 第二行：两列 -->
+                <div class="service-row">
+                    <div class="service-box">
+                        <h4>视频访谈</h4>
+                        <p>专业摄像团队拍摄，多机位录制，后期剪辑制作。提供完整纪录片和精彩片段。适合制作个人传记影片、企业历史纪录片等。</p>
+                    </div>
+                    
+                    <div class="service-box">
+                        <h4>内容发布</h4>
+                        <p>将访谈内容整理成适合不同平台发布的格式，包括文章、音频节目、视频等。协助在网站、社交媒体、音频平台发布推广。</p>
+                    </div>
+                </div>
+                
+                <!-- 第三行：单独一列 -->
+                <div class="service-box wide">
+                    <h4>内容存档</h4>
+                    <p>提供数字档案存储服务，将访谈内容安全存储于专业服务器，定期备份。提供多种格式文件，确保长期可访问性。包含物理备份光盘制作。</p>
+                </div>
+            </div>
+            
+            <div class="tip-box">
+                <strong>温馨提示：</strong> 所有访谈服务均可根据客户需求定制，提供从前期策划到后期制作的全流程服务。
+            </div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <!-- 服务价格 -->
+        <div id="pricing" class="section">
+            <h3>服务价格</h3>
+            <table class="price-table">
+                <thead>
+                    <tr>
+                        <th width="25%">服务项目</th>
+                        <th width="35%">服务内容</th>
+                        <th width="15%">基础价格</th>
+                        <th width="25%">备注说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>文字访谈</td>
+                        <td>2小时访谈 + 1万字文字稿</td>
+                        <td>2,800元</td>
+                        <td>每增加1小时 + 800元</td>
+                    </tr>
+                    <tr>
+                        <td>语音访谈</td>
+                        <td>2小时录音 + 音频处理</td>
+                        <td>3,200元</td>
+                        <td>专业设备录制，提供WAV/MP3格式</td>
+                    </tr>
+                    <tr>
+                        <td>视频访谈</td>
+                        <td>2小时拍摄 + 30分钟精剪视频</td>
+                        <td>5,800元</td>
+                        <td>双机位拍摄，含简单场景布置</td>
+                    </tr>
+                    <tr>
+                        <td>内容发布</td>
+                        <td>10个平台内容编辑与发布</td>
+                        <td>1,000元</td>
+                        <td>每增加1个平台 + 100元</td>
+                    </tr>
+                    <tr>
+                        <td>内容存档</td>
+                        <td>10年数字档案存储服务</td>
+                        <td>500元/年</td>
+                        <td>每年数据检查与格式更新</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="tip-box">
+                <strong>优惠说明：</strong> 同时选择两项服务享9折优惠，三项及以上服务享8.5折优惠。老客户介绍新客户可获赠1小时免费咨询。
+            </div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <!-- 整理课堂 -->
+        <div id="class" class="section">
+            <h3>整理课堂</h3>
+            <div class="class-info">
+                <p>我们定期举办线下线上课程，帮助您学习如何整理个人和家族资料，记录人生故事：</p>
+                
+                <ul class="class-list">
+                    <li><strong>每月第一周周六：</strong> 口述历史采集方法与技巧（线下）</li>
+                    <li><strong>每月第二周周日：</strong> 家庭照片整理与数字化（线上直播）</li>
+                    <li><strong>每月第三周周六：</strong> 个人日记与书信的保存方法（线下）</li>
+                    <li><strong>每月第四周周日：</strong> 数字遗产管理与传承规划（线上直播）</li>
+                </ul>
+                <p><strong>线上参与：</strong> 通过邮件预约获取直播链接，课程结束后提供录播回放</p>
+                
+                <div class="tip-box">
+                    <strong>课堂特色：</strong> 小班教学，每期限额10人。
+                </div>
+            </div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <!-- 联系方式 -->
+        <div id="contact" class="section">
+            <h3>联系方式</h3>
+            <div class="contact-container">
+                <p>欢迎您通过以下方式联系我们，预约咨询或报名课堂：</p>
+                
+                <div class="contact-item">
+                    <strong>联系电话：</strong> 19903777114（工作日 9:00-17:00，周末可预约）
+                </div>
+                
+                <div class="contact-item">
+                    <strong>电子邮箱：</strong> <a href="mailto:e651@msn.com">E651@msn.com</a>（24小时内回复）
+                </div>
+                
+                <p><strong>办公地址：</strong> 南阳市宛城区***号时光访谈录（邮编：473000）</p>
+                <p><strong>服务时间：</strong> 周一至周五 9:00-17:00，周六日需提前预约</p>
+                
+                <p style="margin-top: 20px;">
+                    <a href="javascript:void(0);" onclick="showConsultForm()" class="contact-button">立即预约咨询</a>
+                    &nbsp;&nbsp;
+                    <a href="javascript:void(0);" onclick="showClassForm()" class="contact-button">报名整理课堂</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部信息 -->
+    <div id="footer">
+        <p>版权所有 © 1995-2019 时光访谈录-人物访谈服务 | 豫ICP备05012345号</p>
+        <p>本页面采用XHTML 1.0 Transitional标准制作，兼容IE6+、Firefox、Chrome等浏览器</p>
+        <p>
+            <a href="#top">返回顶部</a> | 
+            <a href="javascript:window.external.AddFavorite(location.href, document.title)">加入收藏</a> | 
+            <a href="javascript:window.print()">打印本页</a> | 
+            <a href="mailto:e651@msn.com">邮件联系</a>
+        </p>
+        <p id="page-info">页面加载时间: <span id="load-time">0</span>秒</p>
+    </div>
+</div>
+
+<!-- 简单的JavaScript效果 -->
+<script type="text/javascript">
+// 页面加载时间计算
+window.onload = function() {
+    var loadTime = window.performance.timing.domContentLoadedEventEnd - window.performance.timing.navigationStart;
+    document.getElementById('load-time').innerHTML = (loadTime / 1000).toFixed(2);
+ 
+   };
+
+// 状态栏文字
+window.defaultStatus = "时光访谈录-专业人物访谈服务，记录人生故事，传承珍贵记忆";
+</script>
+
+ 
+
+</body>
+</html>

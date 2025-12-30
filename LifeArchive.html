@@ -1,0 +1,480 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>人生档案馆-百年传承计划-记录生命轨迹，传承家族记忆</title>
+<style type="text/css">
+body {
+    font-family: "宋体", Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #333333;
+    background-color: #F5F5DC;
+    margin: 0;
+    padding: 20px 0;
+    background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAMzMzAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='); /* 透明1px GIF模拟纹理 */
+    background-repeat: repeat;
+}
+
+#container {
+    width: 720px;
+    margin: 0 auto;
+    background-color: #FFFFFF;
+    border: 1px solid #CC9933;
+    padding: 0;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 顶部标题区域 */
+#header {
+    background-color: #8B6508;
+    color: #FFD700;
+    padding: 10px 20px;
+    border-bottom: 3px double #FFD700;
+}
+
+#header h1 {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 10px 0;
+    text-align: center;
+    font-family: "黑体", "Microsoft YaHei", sans-serif;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 0px #000000;
+}
+
+#header h2 {
+    font-size: 14px;
+    font-weight: normal;
+    margin: 5px 0 15px 0;
+    text-align: center;
+    color: #FFEC8B;
+    font-style: italic;
+}
+
+/* 导航菜单 */
+#navbar {
+    background-color: #DAA520;
+    border-top: 1px solid #FFD700;
+    border-bottom: 1px solid #8B6508;
+    padding: 5px 20px;
+}
+
+#navbar ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    text-align: center;
+}
+
+#navbar li {
+    display: inline;
+    margin: 0 10px;
+}
+
+#navbar a {
+    color: #8B0000;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 2px 8px;
+}
+
+#navbar a:hover {
+    color: #FFFFFF;
+    background-color: #8B0000;
+    text-decoration: underline;
+}
+
+/* 主要内容区域 */
+#content {
+    padding: 20px;
+    min-height: 400px;
+}
+
+.section {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px dotted #DAA520;
+}
+
+.section h3 {
+    font-size: 16px;
+    color: #8B6508;
+    background-color: #FFFAF0;
+    padding: 5px 10px;
+    border-left: 5px solid #DAA520;
+    margin-top: 0;
+    font-family: "黑体", "Microsoft YaHei", sans-serif;
+}
+
+.service-item {
+    background-color: #FFF8DC;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px dashed #DAA520;
+}
+
+.service-item:hover {
+    background-color: #FFFAF0;
+    border-style: solid;
+}
+
+.price-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.price-table th, .price-table td {
+    border: 1px solid #DAA520;
+    padding: 8px;
+    text-align: left;
+}
+
+.price-table th {
+    background-color: #8B6508;
+    color: #FFD700;
+    font-weight: bold;
+}
+
+.price-table tr:nth-child(even) {
+    background-color: #FFF8DC;
+}
+
+ /* --- 服务列表 (已优化) --- */
+        .services-grid {
+            list-style-type: none;
+            padding: 0;
+            margin: 20px 0;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 创建3列等宽布局 */
+            gap: 15px; /* 卡片之间的间距 */
+        }
+
+        .service-card {
+            background-color: #FFFAF0; /* 极浅的天蓝色背景，增加清新感 */
+            border: 1px solid #DAA520; /* 边框颜色 */
+            padding: 15px;
+            text-align: center;
+            transition: background-color 0.2s ease; /* 悬停时背景色变化 */
+        }
+
+        .service-card:hover {
+            background-color: #DAA520; /* 悬停时背景色加深 */
+        }
+
+        .service-title {
+            font-size: 18px; /* 大号项目名称 */
+            font-weight: bold;
+            color: #00008B; /* 深蓝色标题 */
+            margin-bottom: 8px;
+        }
+
+        .service-desc {
+            font-size: 12px; /* 小号项目描述 */
+            color: #555555; /* 灰色文字，与标题区分 */
+            line-height: 1.5;
+        }
+
+
+/* 联系信息 */
+.contact-info {
+    background-color: #FFF8DC;
+    padding: 15px;
+    border: 2px ridge #DAA520;
+    margin-top: 10px;
+}
+
+.contact-item {
+    margin: 8px 0;
+    padding-left: 25px;
+    background-position: left center;
+    background-repeat: no-repeat;
+}
+
+/* 底部区域 */
+#footer {
+    background-color: #8B6508;
+    color: #FFD700;
+    text-align: center;
+    padding: 10px;
+    font-size: 11px;
+    border-top: 3px double #FFD700;
+    clear: both;
+}
+
+#footer a {
+    color: #FFEC8B;
+    text-decoration: none;
+}
+
+#footer a:hover {
+    text-decoration: underline;
+}
+
+/* 经典元素 */
+.marquee-container {
+    background-color: #fff;
+    color: #666666;
+    padding: 5px;
+    margin: 15px 0;
+    border: 1px solid #cccccc;
+    font-size: 11px;
+}
+/*滚动*/
+.marquee {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.marquee span {
+  display: inline-block;
+  animation: scroll 30s linear infinite;
+}
+@keyframes scroll {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+
+.blink {
+    text-decoration: blink;
+}
+
+.counter {
+    text-align: right;
+    font-family: "Courier New", monospace;
+    color: #8B6508;
+    padding: 5px;
+}
+
+/* 分隔线样式 */
+hr {
+    border: 0;
+    height: 1px;
+    background-color: #DAA520;
+    margin: 15px 0;
+}
+</style>
+</head>
+
+<body>
+ 
+<div class="counter">您是第 <span id="count">8888</span> 位访客</div>
+
+<div id="container">
+    <!-- 顶部标题 -->
+    <div id="header">
+        <h1>人生档案馆</h1>
+        <h2>记录生命轨迹 · 传承家族记忆 · 铭刻时代印记</h2>
+    </div>
+    
+    <!-- 导航菜单 -->
+    <div id="navbar">
+        <ul>
+        <li><a href="#about">关于我们</a></li>
+            <li><a href="#services">服务项目</a></li>
+            <li><a href="#news">最新动态</a></li>
+            <li><a href="#prices">服务价格</a></li>
+            <li><a href="#classes">记录课堂</a></li>
+            <li><a href="#contact">联系方式</a></li>
+        </ul>
+    </div>
+    
+    <!-- 跑马灯公告 -->
+    <div class="marquee-container">
+        <div class="marquee">
+  <span>★ 温馨提示：人生档案馆2015年度优惠活动进行中，传记代写服务享8.5折优惠！详情请致电 19903777114 咨询 ★</span>
+</div>
+
+    </div>
+    
+    <!-- 主要内容 -->
+    <div id="content">
+    <!-- 关于我们 -->
+        <div id="services" class="section">
+            <h3>关于我们</h3>
+<p>人生档案馆的前身是难忘时光网nwidt.com，建立于1995年，开设有《最后一封信》，《年轮》，《个人史记》，《百姓档案》等栏目。不知不觉已运行二十年，
+虽然网站调试升级了很多次，栏目也改动了很多次，但我们的数据一直都在，同时在记录与保存人生档案这一块有着极具专业的经验。</p>
+            <p> 
+             宝贵的事物往往并不能被人重视，等许多年过去才会醒悟却又来不及了；时间是缓慢的，一个孩子从呱呱坠地到读完初中，中间经历了有许多难忘的事，也才十几年；
+             可时间又是极速的，眨眼五十岁、六十岁、七十岁了，而这些年里仿佛又没做什么事。在这中间往往又伴随着意外，战争、瘟疫等等随时随地的发生，所以我们不断地提醒人们，
+             即刻！当下！现在！马上！！赶紧去审视自己与自己的来路，赶紧留下你的信息，否则许多年过后，真的还不如一行雁过时的回声更能使人回味。            </p>
+
+</div>
+
+<!-- 服务项目 -->
+<div id="services" class="section">
+            <h3>服务项目</h3>
+            <p>我们提供全方位的网络服务，满足您的多样化需求：</p>
+            <ul class="services-grid">
+                <li class="service-card">
+                    <div class="service-title">传记代写</div>
+                    <div class="service-desc">专业作家团队采访、整理、撰写，为您或家人朋友创作一本完整的人生传记。</div>
+                </li>
+                <li class="service-card">
+                    <div class="service-title">笔迹字体</div>
+                    <div class="service-desc">将您的手写笔迹转化为TrueType字体，让您的字迹永远保留在数字世界。</div>
+                </li>
+                <li class="service-card">
+                    <div class="service-title">人物访谈</div>
+                    <div class="service-desc">专业记者团队进行深度访谈，挖掘人生故事，记录时代记忆。</div>
+                </li>
+                <li class="service-card">
+                    <div class="service-title">遗物整理</div>
+                    <div class="service-desc">代子女整理已故亲友的实物资料与信息挖掘。</div>
+                </li>
+                <li class="service-card">
+                    <div class="service-title">网页制作</div>
+                    <div class="service-desc">为您的人生故事制作专属网页，包含图文、视频等多种媒体形式，打造个人数字博物馆。</div>
+                </li>
+                <li class="service-card">
+                    <div class="service-title">存储传承</div>
+                    <div class="service-desc">陶瓷人像和二维码制作，VCD刻录及书籍印刷服务。</div>
+                </li>
+            </ul>
+
+</div>
+
+        <!-- 服务项目 -->
+        <div id="news" class="section">
+            <h3>最新动态</h3>
+            <div class="service-item">
+                <strong>旁采见证：</strong>将对你同学战友等人生重要人物进行采访，以第三方视角见证你的人生。
+            </div>
+
+            <div class="service-item">
+                <strong>日记整理：</strong>将你的日记手稿等纸质内容整理为电子文字并支持分类检索，或实现历史上的今天。
+            </div>
+            <div class="service-item">
+                <strong>全景记录：</strong>将你的住所，院落等环境进行360全景记录。
+            </div>
+            <div class="service-item">
+                <strong>影像修复：</strong>从磁带，VCD,DVD中导出影像。
+            </div>
+            <div class="service-item">
+                <strong>照片修复：</strong>黑白或残缺照片进行手工修复。
+            </div>
+            <div class="service-item">
+                <strong>胶片洗印：</strong>将你的底片冲洗出照片并数字化。
+            </div>
+        </div>
+        
+        
+        
+        <!-- 服务价格 -->
+        <div id="prices" class="section">
+            <h3>服务价格</h3>
+            <table class="price-table">
+                <tr>
+                    <th>服务项目</th>
+                    <th>服务内容</th>
+                    <th>价格(元)</th>
+                    <th>备注</th>
+                </tr>
+                <tr>
+                    <td>网页制作</td>
+                    <td>个人专属网页，图文视频等，10年</td>
+                    <td>3,600</td>
+                    <td>续页每页+200元</td>
+                </tr>
+                <tr>
+                    <td>传记代写</td>
+                    <td>10万字个人传记(含采访、撰写)</td>
+                    <td>15,000</td>
+                    <td>每增加1万字+1,200元</td>
+                </tr>
+                <tr>
+                    <td>笔迹字体</td>
+                    <td>TrueType字体制作(含3000常用字)</td>
+                    <td>4,500</td>
+                    <td>每增加1000字+800元</td>
+                </tr>
+                <tr>
+                    <td>人物访谈</td>
+                    <td>3小时深度访谈(含文字整理及后期剪辑)</td>
+                    <td>6,800</td>
+                    <td>每增加1小时+800元</td>
+                </tr>
+                <tr>
+                    <td>旁采见证</td>
+                    <td>实地采访相关人员，挖掘丰富故事(含后期处理)</td>
+                    <td>3,000</td>
+                    <td>每增加1人+3,000元</td>
+                </tr>
+                <tr>
+                    <td>视频剪辑</td>
+                    <td>将磁带或VCD中的影像剪辑成人生记录片，播音员配音</td>
+                    <td>3,000</td>
+                    <td>每增加1小时+3,000元</td>
+                </tr>
+            </table>
+            <p><span class="blink">★</span> 注：以上为单项服务价格，组合套餐享受更多优惠，详情请咨询。</p>
+        </div>
+        
+         
+        
+        <!-- 整理课堂 -->
+        <div id="classes" class="section">
+            <h3>记录课堂</h3>
+            <p>我们定期举办线下和线上课程，帮助您学习如何整理个人和家族资料，对来参加学员每人赠送本平台撰写的《个人传记写作指南》、《村志编写指南——村史馆搭建指导》书籍两本，以及《家庭纪实摄影指南》电子书一套：</p>
+            <ul>
+                <li><strong>每月第一周周六：</strong> 家族照片整理与数字化工作坊</li>
+                <li><strong>每月第二周周日：</strong> 个人日记与书信整理技巧</li>
+                <li><strong>每月第三周周六：</strong> 口述历史采集方法与技巧</li>
+                <li><strong>每月第四周周日：</strong> 数字遗产管理与传承规划</li>
+            </ul>
+            <p>课堂地点：南阳市宛城区南都路市民服务中心众创空间</p>
+            <p>线上课程可通过邮件预约获取参与链接。</p>
+        </div>
+        
+       
+        
+        <!-- 联系方式 -->
+        <div id="contact" class="section">
+            <h3>联系方式</h3>
+            <div class="contact-info">
+                <p>欢迎您通过以下方式联系我们，我们将竭诚为您服务：</p>
+                <div class="contact-item">
+                    <strong>联系电话：</strong> 19903777114 (工作日 9:00-17:00)
+                </div>
+                <div class="contact-item">
+                    <strong>电子邮箱：</strong> <a href="mailto:e651@msn.com">
+					E651@msn.com</a> (24小时内回复)
+                </div>
+                <p>办公地址：南阳市宛城区***号人生档案馆 (邮编：473000)</p>
+                <p>来访前请提前预约，以确保我们有足够的时间为您提供优质服务。</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部信息 -->
+    <div id="footer">
+        <p>版权所有 © 1995-2019 人生档案馆-百年传承计划 | 京ICP备05012345号</p>
+        <p>本页面采用HTML 4.01 Transitional标准制作，最佳浏览分辨率：1024×768</p>
+        <p>
+            <a href="#top">返回顶部</a> | 
+            <a href="javascript:window.external.AddFavorite(location.href, document.title)">
+			加入收藏</a> | 
+            <a href="javascript:window.print()">打印本页</a>
+        </p>
+    </div>
+</div>
+
+<!-- 经典特效 -->
+<script type="text/javascript">
+
+// 状态栏文字效果 )
+window.defaultStatus = "人生档案馆-百年传承计划 - 记录生命轨迹，传承家族记忆";
+
+// 简单的鼠标跟随效果 
+if (document.all) {
+    document.onmousemove = function(e) {
+        if (!e) e = window.event;
+        // 这里可以添加流行的鼠标跟随效果代码
+    };
+}
+
+</script>
+
+</body>
+</html>
