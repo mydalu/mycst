@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大路的档案馆</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="大路">
+    <style>
+        @media (min-width:641px) { body { width:640px; margin:auto; } }
+        a { text-decoration:none; color:#036; } a:hover { text-decoration:underline; }
+        body { background:#6CC; font-size:14px; margin:auto; }
+        
+        /* 统一表格样式 */
+        .section { width:100%; border-collapse:separate; border-spacing:0; background:#eedeb0; margin-top:10px; }
+        .section th, .section td { padding:8px 12px; }
+        .section th { background:#eedeb0; font-weight:normal; text-align:left; }
+        .section td { background:#fff; }
+        
+        /* 导航与页头 */
+        .header { 
+    background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNzcwMzMyNzcxNTUyIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjEzNTU3IiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48cGF0aCBkPSJNOTMxLjQxMTkwNSA4MDguMDcxNzNzODAuNjk2NTU0LTguMDE5ODc3IDgxLjgwMjc0My00NC45MTEzMTEtOTIuMTQ1NjItNTQuMDkyNjg3LTExNC4wNDgxNzktNjMuMzg0NjgyYy0yMS44NDcyNTEtOS4yMzY2ODYtMjcuNjU0NzQ4LTEzLjc3MjA2NC0yNy42NTQ3NDgtMTMuNzcyMDY0czEuMTA2MTktMTMuODI3Mzc0LTUuNzUyMTg4LTIzLjA2NDA2Yy03LjAyNDMwNi05LjIzNjY4Ni01Ljc1MjE4OC0zNS43Mjk5MzQtNS43NTIxODctMzUuNzI5OTM0czguMDc1MTg2LTIuMzc4MzA4IDMyLjE5MDEyNi0xNC45ODg4NzNjMjQuMjI1NTU5LTEyLjY2NTg3NCA0OC4zOTU4MDktMjMuMDY0MDYgNDkuNjEyNjE4LTQ5LjU1NzMwOCAxLjEwNjE5LTI2LjQ5MzI0OC0zOS4yMTQ0MzItNTIuOTg2NDk3LTg3LjYxMDI0MS02Ni44MTM4NzEtNDguMzk1ODA5LTEzLjgyNzM3NC0xMDIuNTQzODA1LTI1LjM4NzA1OC0xMDIuNTQzODA1LTI1LjM4NzA1OHMtMTYuMTUwMzczLTEyLjYxMDU2NS0xMy44MjczNzQtMjQuMTcwMjVjMi4zMjI5OTktMTEuNTA0Mzc1IDQuNTkwNjg4LTIxLjkwMjU2IDQuNTkwNjg4LTIxLjkwMjU2czgyLjkwODkzNC0yNi40OTMyNDggODQuMTI1NzQzLTgxLjkxMzM2M2MxLjE2MTQ5OS01NS4xOTg4NzctNTQuMjAzMzA2LTY1LjY1MjM3MS0xMTIuOTk3Mjk5LTg1LjEyMTMxMy01OC43OTM5OTQtMTkuNjM0ODcxLTgxLjgwMjc0NC0zMy41MTc1NTQtMTEwLjYxODk5MS01NC4yMDMzMDYtMjguNzYwOTM4LTIwLjY4NTc1MS00Ny4yMzQzMDktNDEuNDgyMTIyLTQ3LjIzNDMxLTQxLjQ4MjEyMnM0LjY0NTk5OC0yMy4xMTkzNjktMS4xNjE0OTktMzYuODM2MTI0Yy01LjY5Njg3OC0xMy44ODI2ODMtMTkuNTc5NTYxLTIwLjg1MTY4LTE5LjU3OTU2MS0yMC44NTE2NzlsLTEuMTA2MTktMTguMzA3NDQzczkuMjM2Njg2LTMuMzczODc5IDUuNzUyMTg3LTkuMjM2Njg2Yy0wLjM4NzE2Ni0wLjU1MzA5NS0wLjYwODQwNC0xLjEwNjE5LTAuODI5NjQyLTEuNjU5Mjg1QTQxLjE1MDI2NSA0MS4xNTAyNjUgMCAwIDAgNTE1LjMxODU3IDBhNDEuMDk0OTU1IDQxLjA5NDk1NSAwIDAgMC0yOC45MjY4NjYgNzAuMjQzMDU5Yy0xLjE2MTQ5OSAyLjY1NDg1Ni0xLjY1OTI4NSA1LjkxODExNiAxLjQzODA0NiA4LjQwNzA0NCA1LjY0MTU2OSA0LjcwMTMwNyA1LjY0MTU2OSAyNC4yMjU1NTkgNS42NDE1NjkgMjQuMjI1NTU5cy0yMS43OTE5NDEgOC4xODU4MDUtMjIuODk4MTMxIDI4Ljg3MTU1NmMtMS4yMTY4MDkgMjAuNzQxMDYxIDEuMTA2MTkgMjkuOTc3NzQ3IDEuMTA2MTkgMjkuOTc3NzQ3cy01Ni41MjYzMDQgNjkuMTM2ODY5LTEyNy45MzA4NjMgOTQuNDEzMzA5Yy03MS40NTk4NjggMjUuMzg3MDU4LTEyMS4wMTcxNzYgMzEuMTk0NTU1LTEzNy4wNTY5MyA3MC4yOTgzNjktMTYuMjA1NjgyIDM5LjE1OTEyMyAxOC4zNjI3NTMgNjMuNDk1MzAxIDMzLjM1MTYyNiA3Mi42NzY2NzcgMTUuMDQ0MTgzIDkuMTgxMzc2IDQ0LjkxMTMxIDI4LjgxNjI0NyA0NC45MTEzMSAyOC44MTYyNDdsLTIuMzIyOTk5IDMzLjQ2MjI0NXMtMTIuNjEwNTY1IDkuMTI2MDY3LTI0LjE3MDI0OSAxMy43MTY3NTRjLTExLjUwNDM3NSA0LjU5MDY4OC0xMTguNjk0MTc3IDI2LjQ5MzI0OC0xNTMuMjYyNjEzIDU1LjMwOTQ5Ni0zNC41MTMxMjUgMjguODcxNTU3LTE4LjMwNzQ0MyA1Ni4xOTQ0NDcgMS4xNjE1IDY5LjEzNjg2OSAxOS41MjQyNTIgMTIuOTk3NzMxIDY0LjQ5MDg3MiAzMy40NjIyNDUgNjYuODY5MTggMzguMDUyOTMzIDIuMjY3Njg5IDQuNzAxMzA3LTIuMzc4MzA4IDM5LjE1OTEyMy0yLjM3ODMwOCAzOS4xNTkxMjNzLTYzLjI3NDA2MyAyNC4xNzAyNS0xMDEuMzI2OTk2IDM4LjA1MjkzM2MtMzcuOTk3NjIzIDEzLjgyNzM3NC01OC43Mzg2ODQgMjQuMTcwMjUtNTguNzM4Njg0IDUwLjU1Mjg3OSAwIDI2LjYwMzg2NyA0MC4zMjA2MjIgMzYuOTQ2NzQzIDU1LjMwOTQ5NSA0MC40ODY1NTEgMTQuOTg4ODczIDMuNDI5MTg5IDI3LjY1NDc0OCAzLjQyOTE4OSAyNy42NTQ3NDggMy40MjkxODh2MTM2LjY2OTc2NGgtNzEuOTAyMzQ0djc4LjA0MTY5OGg5ODcuODI3NTl2LTc4LjA0MTY5OGgtNzguMzE4MjQ2bDAuMDU1MzEtMTM3Ljg4NjU3MnogbS0zNTcuNDA5OTYxLTQzOC40MzgzNzFjNzMuMjI5NzcyIDcuNzk4NjM5IDEyMi4yODkyOTUgMjkuNjQ1ODkgMTQzLjUyODE0MSA0MC45MjkwMjZ2MzUuNTY0MDA2Yy0yMS45MDI1Ni04LjA3NTE4Ni03Mi42MjEzNjgtMjQuMjgwODY5LTE0My41MjgxNDEtMzEuMDgzOTM3di00NS40MDkwOTV6TTQ4OC44ODA2MzEgNDIuOTc1NDc4YTE2Ljc1ODc3NyAxNi43NTg3NzcgMCAxIDEgMzMuNTE3NTU0IDAuMTEwNjE5IDE2Ljc1ODc3NyAxNi43NTg3NzcgMCAwIDEtMzMuNTE3NTU0LTAuMTEwNjE5ek0zMDIuODE5NDg4IDQxNy4xNDQyMTVjMjIuMDY4NDg5LTEzLjY2MTQ0NSA3OC41OTQ3OTMtNDIuMDM1MjE3IDE3Mi4yODkwNzgtNDkuMDA0MjEzdjQ0LjU3OTQ1NGMtNzkuNDI0NDM2IDUuNTMwOTUtMTQ3LjIzMzg3NyAzMC4zMDk2MDQtMTcyLjI4OTA3OCA0MC41NDE4NnYtMzYuMTE3MTAxek0xOTMuNjM4NTQ0IDYxNy4yNTM5N2MyOS42NDU4OS0xNS4yMTAxMTEgMTQ2LjQwNDIzNS02Ni40ODIwMTQgMzYwLjg5NDQ1OC02Mi42NjU2NTggMTU1LjUzMDMwMSAyLjgyMDc4NCAyNTQuNjQ0OTE3IDQ2LjQ1OTk3NiAyODUuNjE4MjM1IDYyLjMzMzgwMXY0Ny45NTMzMzNjLTM1LjM5ODA3Ny0xNi4wOTUwNjMtMTYwLjEyMDk5LTY2LjI2MDc3Ni0zMzYuMzM3MDQyLTY1LjMyMDUxNS0xNDYuOTAyMDIgMC45NDAyNjEtMjc3Ljc2NDI4NiA0OS41NTczMDgtMzEwLjIzMDk2MSA2Mi40NDQ0MjFsMC4wNTUzMS00NC43NDUzODJ6IG0tNjUuMTU0NTg2IDE4Ni4xMTY0NTJzMTQzLjkxNTMwNy05MS41MzcyMTUgMzk1LjQwNzU4NC04Ni45NDY1MjdjMjI4LjQ4MzUyNiA0LjIwMzUyMiAzNzkuMjU3MjExIDg2Ljk0NjUyNyAzNzkuMjU3MjEgODYuOTQ2NTI3djE0MS43MDI5MjhoLTI1Mi44NzUwMTN2LTEzNC42MjMzMTJoLTU2LjQ3MDk5NXYxMzQuNjIzMzEyaC0zMC41ODYxNTF2LTEzNC42MjMzMTJINDgxLjQ2OTE1OHYxMzQuNjIzMzEyaC0zMC41ODYxNTF2LTEzNC42MjMzMTJoLTU2LjQxNTY4NXYxMzQuNjIzMzEyaC0yNjguMjUxMDUzbDIuMjY3Njg5LTE0MS43MDI5Mjh6IiBwLWlkPSIxMzU1OCIgZmlsbD0iI2VhOTUxOCI+PC9wYXRoPjwvc3ZnPg==') 
+                no-repeat right 55px center;
+    background-size: 70px 70px;
+    height: 108px; 
+    padding: 8px; 
+}
+        .nav { background:#00a6a6; color:#fff; padding:8px 12px; }
+        .breadcrumb { background:#F8F0DA; padding:8px 12px; }
+        
+        /* 画廊 */
+        .gallery { display:flex; flex-wrap:wrap; justify-content:space-around; padding:5px; }
+        .gallery-item { margin:5px; text-align:center; }
+        .gallery-item img { width:96px; height:70px; display:block; margin:5px; }
+        
+        /* 返回顶部 */
+        .back-top { position:fixed; bottom:20px; right:20px; display:none; width:40px; height:40px; 
+                   background:#00a6a6; color:#fff; border-radius:50%; text-align:center; line-height:40px; 
+                   font-size:24px; cursor:pointer; z-index:1000; }
+        .back-top:hover { background:#2980b9; }
+        
+        /* 弹窗 */
+        .popup, .overlay { display:none; }
+        .popup { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); 
+                background:#fff; padding:20px; border:1px solid #ccc; box-shadow:0 0 10px rgba(0,0,0,0.5); z-index:1000; }
+        .overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; }
+    </style>
+</head>
+<body>
+    <!-- 页头 -->
+    <div class="header">
+		<h1 style="font-size:24px; color:#fff; margin:40px 0 0 1%; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">大路的档案馆</h1>
+
+    </div>
+    
+    <!-- 导航 -->
+    <div class="nav">
+        <a href="#top" style="color:#fff;">主页</a> &nbsp;&nbsp;
+        <a href="#a1" style="color:#fff;">文字</a> &nbsp;&nbsp;
+        <a href="#a2" style="color:#fff;">留声</a> &nbsp;&nbsp;
+        <a href="#a3" style="color:#fff;">画报</a> &nbsp;&nbsp;
+        <a href="#a4" style="color:#fff;">影像</a> &nbsp;&nbsp;
+        <a href="#a5" style="color:#fff;">见证</a>
+    </div>
+    <div class="breadcrumb">位置 &gt; 首页</div>
+    
+    <!-- 内容区块函数 -->
+        
+    <!-- 个人简介 -->
+    <table class="section">
+        <tr><th>个人简介</th></tr>
+        <tr><td>
+            <img src="//file.e651.com/3/1005/p/touxiang.jpg" width="120" height="120" 
+                 style="border:2px solid #F2E2D5;float:left;margin:0 10px 5px 0;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;生于一九八三年的时代上升期，见过土墙草房子，也饿过肚子，又较早接触了网络技术，并以此为职业；生性头脑愚钝，却又情感敏锐；喜欢读书静思，偶尔写写心得感悟，随年纪加添，逐渐于外部和好，既无法改变别人，就只专注内心的营造，常思生死之事，故提前写下墓志铭：我是一个幸运者，一直在悬崖边游荡却得蒙保守，如今得享宝贵安息，只剩赞美......  <br>           
+            <span style="color:#00a6a6;">⚘</span>
+                      <a href="about.html">我的生平</a> <span style="color:#00a6a6;">❦</span>
+                      <a href="//file.e651.com/3/1005/p/FamilyTree.jpg" target="_blank">家庭树</a>  <span style="color:#00a6a6;">&#11015; </span> <a href="about.html#down">下载本站</a>     </td></tr>
+    </table>
+    
+    <!-- 视频 -->
+    <table class="section">
+        <tr><th>拾光留声</th></tr>
+        <tr><td align="center">
+            <video src=""  controls style="width:100%;height:250px;background:#f5e6c8;display:block;" poster="data:image/svg+xml;charset=utf-8,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%23f5e6c8'/%3E%3Ctext x='50%25' y='50%25' font-family='system-ui, sans-serif' font-size='18' fill='%238a7a63' opacity='0.6' text-anchor='middle' dominant-baseline='middle'%3E人生档案馆·拾光留声%3C/text%3E%3C/svg%3E"></video>
+        </td></tr>
+    </table>
+    
+    <!-- 动态加载各栏目 -->
+    <table class="section"><tr><th id="a1">文字</th></tr><tr><td>
+	        <span style="color:#CCCCCC;"> &nbsp;&#x26A0;我有写日记，记录感想的习惯，也整理过几本书，有一些太过于幼稚的就不再展示了...</span>
+	             <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+	            <div><span style="color:#CCCCCC;">▤</span> <a href="book-wangerleng.html">作品集《王二愣文集》</a></div>
+	            <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+			    <div><span style="color:#CCCCCC;">▤</span> <a href="book-homephoto.html">工具书《家庭纪实摄影》</a></div>
+	            <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+				<div><span style="color:#CCCCCC;">▤</span> <a href="book-cat.html">工具书《新手养猫宝典》</a></div>
+	            <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+			    <div><span style="color:#CCCCCC;">▤</span> <a href="book-villageAnnals.html">工具书《村志编写指南》</a></div>
+	            <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+			    <div><span style="color:#CCCCCC;">▤</span> <a href="book-lifeWriting.html">工具书《传记写作指南》</a></div>
+                      <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+					  <div><span style="color:#CCCCCC;">▤</span> <a href="book-sisixiaoyu.html">作品集《私私小语》</a></div>
+                      <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+					  <div><span style="color:#CCCCCC;">▤</span> <a href="book-hezhikeyi.html">作品集《忏悔日记》</a></div>
+                      <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+					  <div><span style="color:#CCCCCC;">▤</span> <a href="book-hezhikeyi.html">作品集《何枝可依》</a></div>
+					  <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+					  <div><span style="color:#CCCCCC;">▤</span> <a href="book-zaju.html">博客集《杂句随笔》</a></div>
+					  <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+					  <div><span style="color:#CCCCCC;">▤</span> <a href="book-rizi.html">博客集《日子年轮》</a></div>
+                      <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+					  <div><span style="color:#CCCCCC;">▤</span> <a href="book-luluzhisheng.html">博客集《噜噜之声》</a></div>
+                      <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+					  </td></tr></table>
+					  
+	<table class="section"><tr><th id="a2">留声</th></tr><tr><td>
+	<span style="color:#CCCCCC;"> &nbsp;&#x26A0;部分音频是从视频中转码出来的，视频太占空间了...</span>
+	             <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+	                  <div><span style="color:#CCCCCC;">♪</span> <a href="sound-baby.html">讲给孩子们的话</a></div>
+                      <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+					  <div><span style="color:#CCCCCC;">♪</span> <a href="sound-ganxiang.html">一些感想感悟的录音</a></div>
+                      <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+					  <div><span style="color:#CCCCCC;">♪</span> <a href="sound-ai.html">用于将来训练AI数字人的素材录音</a></div>
+                      <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+					  </td></tr></table>
+					  
+	<table class="section"><tr><th id="a3">画报</th></tr><tr><td>
+	                  <div class="gallery">
+					  <div class="gallery-item">
+                        <a href="photo-1.html" target="_blank">
+                            <img src="/skin/default/images/logo.gif" style="border:2px solid #F2E2D5;">
+                        </a>
+                        <div><span style="color:#CCCCCC;">&#9618;</span> 小时侯老照片</div></div>
+						<div class="gallery-item">
+                        <a href="photo-2.html" target="_blank">
+                            <img src="//file.e651.com/3/1005/p/life/20071110-08.jpg"  style="border:2px solid #F2E2D5;">
+                        </a>
+                        <div><span style="color:#CCCCCC;">&#9618;</span> 未婚青年时期</div></div>
+					  <div class="gallery-item">
+                        <a href="photo-3.html" target="_blank">
+                            <img src="//file.e651.com/3/1005/p/life/20071110-08.jpg" style="border:2px solid #F2E2D5;">
+                        </a>
+                        <div><span style="color:#CCCCCC;">&#9618;</span> 婚姻家庭时期</div></div>
+					  <div class="gallery-item">
+                        <a href="photo-4.html" target="_blank">
+                            <img src="//file.e651.com/3/1005/p/life/20071110-08.jpg" style="border:2px solid #F2E2D5;">
+                        </a>
+                        <div><span style="color:#CCCCCC;">&#9618;</span> 中年时期照片</div></div>
+						<div class="gallery-item">
+                        <a href="photo-5.html" target="_blank">
+                            <img src="//file.e651.com/3/1005/p/life/20071110-08.jpg" style="border:2px solid #F2E2D5;">
+                        </a>
+                        <div><span style="color:#CCCCCC;">&#9618;</span> 手稿书法其他</div></div>
+					  </td></tr></table>
+					  
+	<table class="section"><tr><th id="a4">影像</th></tr><tr><td>
+	                  
+					  <div><span style="color:#CCCCCC;">☢</span> <a href="video-3.html">我的忍耐与等候</a></div>
+                      <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+					  <div><span style="color:#CCCCCC;">☢</span> <a href="video-2.html">2020年前后的几个短视频</a></div>
+                      <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+					  <div><span style="color:#CCCCCC;">☢</span> <a href="video-1.html">2005年前后的视频片段</a></div>
+                      <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+					  
+					  </td></tr></table>
+					  
+	<table class="section"><tr><th id="a5">见证</th></tr><tr><td>
+	                   <div><span style="color:#CCCCCC;">☀</span> <a href="">暂未整理</a></div>
+                      <hr style="border:none;border-top:1px dashed #ccc;margin:10px 0;">
+					  </td></tr></table>  
+
+<table class="section"><tr><th id="a6">认知</th></tr><tr><td>
+	                   <span style="color:#CCCCCC;"> &#9670;<b>自我评价：</b><br>&nbsp;&nbsp;<em style="font-size:12px;">称不上是个好人或善人，也是一个常会犯错的普通人，自私与虚伪都存在；但在求真的意识与寻求真知的路上我应该属于少数人；我内心里在持续对抗自己的骄傲，但骄傲根深蒂固，直到我艰难地放下，情况才有所好转。我的后半生会持续品尝与回味验证我所见到的规律。</em></span><br><br>
+					   <span style="color:#CCCCCC;"> &#9670;<b>能力兴趣：</b><br>&nbsp;&nbsp;<em style="font-size:12px;">持续长久地思考并用文字写下来；很笨但却有很强自学的能力，包括各种电脑与网络相关的技能；喜欢摄影，这是让时间停留的魔法，也是我所关注的事物与审美的证明；喜欢写短诗，虽然不入流，但却是一种很好的情绪表达的方式；喜欢在山野间过俗世生活，与庄稼共同生长，与畜禽为伴，不参与任何派别与竞争。</em></span><br><br>
+					   <span style="color:#CCCCCC;"> &#9670;<b>核心认知：</b><br>&nbsp;&nbsp;<em style="font-size:12px;">人在寻求真实的路上一刻都不应当停止，面对事物时应当尽可能地严肃地全面地求证，并且直到找到问题的根源；这根源也是医治人内心由烦躁不安转向安宁的东西。人应该做到喜欢这个世界，却不受制于这个世界，因为这是自信的真正证明，但真正的自信却来源于不自信之后的信实的见证，这是艰难却值得去做的事。</em></span><br><br>
+					   <span style="color:#CCCCCC;"> &#9670;<b>寄语访客：</b><br>&nbsp;&nbsp;<em style="font-size:12px;">这是我的数字博物馆，我尽可能把人生相关的资料真实地放在这里，未来若有人碰巧看到，并碰巧感兴趣而有了共鸣，那么我要恭喜你，你也要谢谢我。因为我想了许多方法，花费了很大精力，才确保在几十年后预料会有许多路径会失效的情况下，仍旧把这些信息和资料推送到了你面前。</em></span><br><br>
+					   
+					  </td></tr></table> 
+					  
+    <!-- 返回顶部 -->
+    <div class="back-top" id="backTop"><a href="#top" style="color:#fff;">&#8679;</a></div>
+    
+    <!-- 页脚 -->
+    <div style="text-align:center; font-size:12px; color:#666; padding:20px 0;">
+        创建人:大路 联系TA:1005@mycst.com 联系平台:us@mycst.com<br>
+        主馆址:mycst.com/3/1005/ 创建于:2009-09-09 更新于:2026-02-05<br>
+        Copyright &copy; 1995-2019
+        <script src="//cp.eecms.com/e/public/ViewClick?classid=3&id=1005&addclick=1"></script><br>
+        <a onclick="zh_tran('t')">繁体</a> | <a onclick="zh_tran('s')">简体</a> | 
+        <a href="//cp.eecms.com/e/member/cp">管理</a> | <a href="#" id="downBtn">下载</a>
+        <div class="popup" id="popup">
+            <b>本馆数据资料下载链接</b><br>
+            <pre></pre>
+        </div>
+        <div class="overlay" id="overlay"></div><br>
+        人生博物馆
+    </div>
+    
+    <!-- 脚本 -->
+    <script src="//cp.eecms.com/skin/dalu/js/tw2cn.js"></script>
+    <script>
+    // 返回顶部
+    window.onscroll = () => {
+        document.getElementById('backTop').style.display = 
+            (document.documentElement.scrollTop > 200) ? 'block' : 'none';
+    };
+    
+    // 弹窗控制
+    document.getElementById('downBtn').addEventListener('click', e => {
+        e.preventDefault();
+        document.getElementById('popup').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+    });
+    
+    document.getElementById('overlay').addEventListener('click', () => {
+        document.getElementById('popup').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+    });
+    </script>
+</body>
+</html>
