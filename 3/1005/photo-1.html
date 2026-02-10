@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>大路的档案馆 - 小时侯</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="小时侯">
+    <style>
+        @media (min-width:641px) { body { width:640px; margin:auto; } }
+        a { text-decoration:none; color:#036; } a:hover { text-decoration:underline; }
+        body { background:#6CC; font-size:16px; margin:auto; }
+        
+        /* 统一头部样式 */
+        .header { background:url(//cp.eecms.com/skin/dalu/img/head_bg.gif); height:108px; padding:8px; }
+        .nav { background:#00a6a6; color:#fff; padding:8px; }
+        .breadcrumb { background:#F8F0DA; padding:8px; display:flex; justify-content:space-between; }
+        
+        /* 功能组件 */
+        .back-top { 
+            position:fixed; bottom:20px; right:20px; width:50px; height:50px; 
+            background:#00a6a6; color:#fff; border-radius:50%; text-align:center; 
+            line-height:50px; font-size:36px; cursor:pointer; z-index:1000; 
+            display:none; 
+        }
+        .back-top:hover { background:#2980b9; }
+        .highlight { background:yellow; }
+        #toc { padding:5px; background:linear-gradient(to bottom,#EEE,#FFF); }
+        
+        /* 播放器样式 */
+        .player { width:100%; background:#f5e6c8; aspect-ratio:16/9; position:relative; }
+        .player video { width:100%; height:100%; display:none; }
+        .cover { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
+        .cover svg { width:60px; height:60px; opacity:.3; }
+        .cover-text { margin-top:10px; font-size:14px; color:#8a7a63; }
+        .playlist { padding:10px; }
+        .playlist-item { 
+            display:flex; justify-content:space-between; padding:10px; 
+            border-bottom:1px solid #eee; cursor:pointer; 
+        }
+        .playlist-item:hover { background:#f5f5f5; }
+        .playlist-item.active { background:#f5f0e6; border-left:3px solid #d4b483; }
+        .player-controls { padding:10px; display:flex; justify-content:space-between; }
+        .toggle-control { display:flex; align-items:center; cursor:pointer; }
+        .toggle-control span { margin-right:8px; color:#666; }
+        .toggle-switch { 
+            width:36px; height:18px; background:#ddd; border-radius:9px; 
+            position:relative; transition:background .3s; 
+        }
+        .toggle-switch.active { background:#d4b483; }
+        .toggle-switch::after { 
+            content:''; position:absolute; width:14px; height:14px; 
+            background:#fff; border-radius:50%; top:2px; left:2px; 
+            transition:transform .3s; 
+        }
+        .toggle-switch.active::after { transform:translateX(18px); }
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <div class="header">
+        <h1 style="font-size:24px;color:#fff;margin:40px 0;">大路的档案馆</h1>
+    </div>
+    
+    <!-- 导航 -->
+    <div class="nav">
+        <a href="/3/1005/#top" style="color:#fff;">主页</a> &nbsp;&nbsp;
+        <a href="/3/1005/#a1" style="color:#fff;">文字</a> &nbsp;&nbsp;<a href="/3/1005/#a2" style="color:#fff;">留声</a> &nbsp;&nbsp;<a href="/3/1005/#a3" style="color:#fff;">画报</a> &nbsp;&nbsp;<a href="/3/1005/#a4" style="color:#fff;">影像</a> &nbsp;&nbsp;<a href="/3/1005/#a5" style="color:#fff;">见证</a> &nbsp;&nbsp;    </div>
+    
+    <!-- 面包屑和搜索 -->
+    <div class="breadcrumb">
+        <span>位置 &gt; 内容详情</span>
+        <span>
+            <input type="text" size="9" id="searchInput" placeholder="页内查找">
+            <button onclick="performSearch()">搜索</button>
+        </span>
+    </div>
+    
+    <!-- 文章标题 -->
+    <div style="background:#fff; text-align:center; padding:15px;">
+        <h2 style="font-size:16px;">小时侯</h2>
+    </div>
+    
+    <!-- 媒体内容区域 -->
+    <div style="background:#fff; padding:10px;">
+        <div style="text-align:center;"><div>
+                        <a href="http://file.e651.com/3/1005/p/aa6199764b6cd40760cdceda01bd3989.jpg" target="_blank">
+                            <img class="lazy" data-src="http://file.e651.com/3/1005/p/aa6199764b6cd40760cdceda01bd3989.jpg" 
+                                 width="98%" alt="百天" 
+                                 style="border:3px solid #DFC5A4;">
+                        </a>
+                        <p><span style="font-size:18px;color:#CCC;">⤷</span>百天</p>
+                      </div><div>
+                        <a href="http://file.e651.com/3/1005/p/ae08e6475bf52fa33661c23e6f83adab.jpg" target="_blank">
+                            <img class="lazy" data-src="http://file.e651.com/3/1005/p/ae08e6475bf52fa33661c23e6f83adab.jpg" 
+                                 width="98%" alt="
+三月" 
+                                 style="border:3px solid #DFC5A4;">
+                        </a>
+                        <p><span style="font-size:18px;color:#CCC;">⤷</span>
+三月</p>
+                      </div><div>
+                        <a href="http://file.e651.com/3/1005/p/ccefd8a5cf9189ec44eb981574eb203f.jpeg" target="_blank">
+                            <img class="lazy" data-src="http://file.e651.com/3/1005/p/ccefd8a5cf9189ec44eb981574eb203f.jpeg" 
+                                 width="98%" alt="
+周岁" 
+                                 style="border:3px solid #DFC5A4;">
+                        </a>
+                        <p><span style="font-size:18px;color:#CCC;">⤷</span>
+周岁</p>
+                      </div><div>
+                        <a href="http://file.e651.com/3/1005/p/61400b3bebdf25bcf3a21ac7cd9fa967.jpg" target="_blank">
+                            <img class="lazy" data-src="http://file.e651.com/3/1005/p/61400b3bebdf25bcf3a21ac7cd9fa967.jpg" 
+                                 width="98%" alt="
+3岁在学校" 
+                                 style="border:3px solid #DFC5A4;">
+                        </a>
+                        <p><span style="font-size:18px;color:#CCC;">⤷</span>
+3岁在学校</p>
+                      </div><div>
+                        <a href="http://file.e651.com/3/1005/p/4f7367b476e08574b520fb6d54453c6d.jpg" target="_blank">
+                            <img class="lazy" data-src="http://file.e651.com/3/1005/p/4f7367b476e08574b520fb6d54453c6d.jpg" 
+                                 width="98%" alt="
+6岁在山陕会馆" 
+                                 style="border:3px solid #DFC5A4;">
+                        </a>
+                        <p><span style="font-size:18px;color:#CCC;">⤷</span>
+6岁在山陕会馆</p>
+                      </div><div>
+                        <a href="http://file.e651.com/3/1005/p/f6d96ae9f17aa0270c36cffea85eca2d.jpg" target="_blank">
+                            <img class="lazy" data-src="http://file.e651.com/3/1005/p/f6d96ae9f17aa0270c36cffea85eca2d.jpg" 
+                                 width="98%" alt="
+八岁" 
+                                 style="border:3px solid #DFC5A4;">
+                        </a>
+                        <p><span style="font-size:18px;color:#CCC;">⤷</span>
+八岁</p>
+                      </div><div>
+                        <a href="http://file.e651.com/3/1005/p/a0650ab76a5995b75bcd0bdc4b474072.jpeg" target="_blank">
+                            <img class="lazy" data-src="http://file.e651.com/3/1005/p/a0650ab76a5995b75bcd0bdc4b474072.jpeg" 
+                                 width="98%" alt="
+11岁" 
+                                 style="border:3px solid #DFC5A4;">
+                        </a>
+                        <p><span style="font-size:18px;color:#CCC;">⤷</span>
+11岁</p>
+                      </div><div>
+                        <a href="http://file.e651.com/3/1005/p/3c47d9552d9ae786c783d14b4f07a37f.jpg" target="_blank">
+                            <img class="lazy" data-src="http://file.e651.com/3/1005/p/3c47d9552d9ae786c783d14b4f07a37f.jpg" 
+                                 width="98%" alt="
+11岁在院子里" 
+                                 style="border:3px solid #DFC5A4;">
+                        </a>
+                        <p><span style="font-size:18px;color:#CCC;">⤷</span>
+11岁在院子里</p>
+                      </div><div>
+                        <a href="http://file.e651.com/3/1005/p/1236c4979c95d6b446f936f6f32b01b8.jpg" target="_blank">
+                            <img class="lazy" data-src="http://file.e651.com/3/1005/p/1236c4979c95d6b446f936f6f32b01b8.jpg" 
+                                 width="98%" alt="
+12岁五年级合影" 
+                                 style="border:3px solid #DFC5A4;">
+                        </a>
+                        <p><span style="font-size:18px;color:#CCC;">⤷</span>
+12岁五年级合影</p>
+                      </div><div>
+                        <a href="http://file.e651.com/3/1005/p/8a9ae6604e2742511e109d8c83e682f4.jpeg" target="_blank">
+                            <img class="lazy" data-src="http://file.e651.com/3/1005/p/8a9ae6604e2742511e109d8c83e682f4.jpeg" 
+                                 width="98%" alt="
+12岁同学合影" 
+                                 style="border:3px solid #DFC5A4;">
+                        </a>
+                        <p><span style="font-size:18px;color:#CCC;">⤷</span>
+12岁同学合影</p>
+                      </div><div>
+                        <a href="http://file.e651.com/3/1005/p/b1e4f697f3f318751f5c45cdd7b7b947.jpeg" target="_blank">
+                            <img class="lazy" data-src="http://file.e651.com/3/1005/p/b1e4f697f3f318751f5c45cdd7b7b947.jpeg" 
+                                 width="98%" alt="
+13岁可能留了一级" 
+                                 style="border:3px solid #DFC5A4;">
+                        </a>
+                        <p><span style="font-size:18px;color:#CCC;">⤷</span>
+13岁可能留了一级</p>
+                      </div>
+					  <div>
+                        <a href="http://file.e651.com/3/1005/p/zxzj-1.jpg" target="_blank">
+                            <img class="lazy" data-src="http://file.e651.com/3/1005/p/zxzj-1.jpg" 
+                                 width="98%" alt="
+补充学生证照" 
+                                 style="border:3px solid #DFC5A4;">
+                        </a>
+                        <p><span style="font-size:18px;color:#CCC;">⤷</span>
+补充学生证照</p>
+                      </div><div>
+                        <a href="http://file.e651.com/3/1005/p/zxzj-2.jpg" target="_blank">
+                            <img class="lazy" data-src="http://file.e651.com/3/1005/p/zxzj-2.jpg" 
+                                 width="98%" alt="
+学生证照2" 
+                                 style="border:3px solid #DFC5A4;">
+                        </a>
+                        <p><span style="font-size:18px;color:#CCC;">⤷</span>
+学生证照2</p>
+                      </div><div>
+                        <a href="http://file.e651.com/3/1005/p/zxzj-3.jpg" target="_blank">
+                            <img class="lazy" data-src="http://file.e651.com/3/1005/p/zxzj-3.jpg" 
+                                 width="98%" alt="
+学生证照3" 
+                                 style="border:3px solid #DFC5A4;">
+                        </a>
+                        <p><span style="font-size:18px;color:#CCC;">⤷</span>
+学生证照3</p>
+                      </div><div>
+                        <a href="http://file.e651.com/3/1005/p/1997.jpg" target="_blank">
+                            <img class="lazy" data-src="http://file.e651.com/3/1005/p/1997.jpg" 
+                                 width="98%" alt="
+1997" 
+                                 style="border:3px solid #DFC5A4;">
+                        </a>
+                        <p><span style="font-size:18px;color:#CCC;">⤷</span>
+1997</p>
+                      </div><div>
+                        <a href="http://file.e651.com/3/1005/p/1998.jpg" target="_blank">
+                            <img class="lazy" data-src="http://file.e651.com/3/1005/p/1998.jpg" 
+                                 width="98%" alt="
+1998" 
+                                 style="border:3px solid #DFC5A4;">
+                        </a>
+                        <p><span style="font-size:18px;color:#CCC;">⤷</span>
+1998</p>
+                      </div>
+					  <div>
+                        <a href="http://file.e651.com/3/1005/p/1998-2.jpg" target="_blank">
+                            <img class="lazy" data-src="http://file.e651.com/3/1005/p/1998-2.jpg" 
+                                 width="98%" alt="
+1998" 
+                                 style="border:3px solid #DFC5A4;">
+                        </a>
+                        <p><span style="font-size:18px;color:#CCC;">⤷</span>
+1998</p>
+                      </div></div>    </div>
+    
+    <!-- 目录和内容 -->
+    <div id="toc"></div>
+    <div style="padding:10px; background:#fff; line-height:2;"></div>
+    
+    <div style="padding:10px; background:#fff; font-size:12px;color:#ccc;">
+        发布日期：2013-08-22 <br>
+        最近更新：2026-02-03<br>
+        访问人次：<script src="//cp.eecms.com/e/public/ViewClick?classid=4&id=100003&addclick=1"></script>
+    </div>
+    
+    <!-- 返回顶部 -->
+    <div class="back-top" id="backTop"><span style="color:#fff;">⇪</span></div>
+    
+    <!-- 页脚 -->
+    <div style="text-align:center; font-size:12px; color:#666; padding:20px;">
+        创建人:大路 联系TA:1005@mycst.com 联系平台:us@mycst.com<br>
+        主馆址:mycst.com/3/1005 本页创建:2013-08-22 本页更新:2026-02-03<br>
+        Copyright &copy; 1995-2019<br>
+        <a onclick="zh_tran('t')">繁体</a> | <a onclick="zh_tran('s')">简体</a> | <a href="//cp.eecms.com/e/member/cp">管理</a><br>
+        人生博物馆
+    </div>
+    
+    <!-- 通用脚本 -->
+    <script src="//cp.eecms.com/skin/dalu/js/tw2cn.js"></script>
+    <script>
+    // 懒加载
+    document.addEventListener('DOMContentLoaded', () => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    observer.unobserve(img);
+                }
+            });
+        });
+        
+        document.querySelectorAll('img.lazy').forEach(img => observer.observe(img));
+    });
+    
+    // 目录生成
+    const toc = document.getElementById('toc');
+    if (toc) {
+        const h3s = document.querySelectorAll('h3');
+        if (h3s.length) {
+            const ol = document.createElement('ol');
+            h3s.forEach((h3, i) => {
+                h3.id = `section-${i+1}`;
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="#${h3.id}">${h3.textContent}</a>`;
+                ol.appendChild(li);
+            });
+            toc.appendChild(ol);
+        }
+    }
+    
+    // 返回顶部
+    const backTop = document.getElementById('backTop');
+    window.addEventListener('scroll', () => {
+        backTop.style.display = window.scrollY > 200 ? 'block' : 'none';
+    });
+    backTop.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+    
+    // 页内搜索
+    function performSearch() {
+        const text = document.getElementById('searchInput').value.trim();
+        if (!text) return;
+        
+        // 清除之前的高亮
+        document.querySelectorAll('.highlight').forEach(el => {
+            el.replaceWith(...el.childNodes);
+        });
+        
+        // 搜索并高亮
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        const regex = new RegExp(`(${text})`, 'gi');
+        const ranges = [];
+        let node;
+        
+        while (node = walker.nextNode()) {
+            const matches = node.textContent.match(regex);
+            if (matches) {
+                let offset = 0;
+                matches.forEach(match => {
+                    const idx = node.textContent.indexOf(match, offset);
+                    const range = document.createRange();
+                    range.setStart(node, idx);
+                    range.setEnd(node, idx + match.length);
+                    ranges.push(range);
+                    offset = idx + match.length;
+                });
+            }
+        }
+        
+        ranges.forEach(range => {
+            const span = document.createElement('span');
+            span.className = 'highlight';
+            span.textContent = range.toString();
+            range.deleteContents();
+            range.insertNode(span);
+        });
+    }
+    </script>
+</body>
+</html>

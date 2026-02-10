@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>大路的档案馆 - 2005年前后的视频片段</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="2005年前后的视频片段">
+    <style>
+        @media (min-width:641px) { body { width:640px; margin:auto; } }
+        a { text-decoration:none; color:#036; } a:hover { text-decoration:underline; }
+        body { background:#6CC; font-size:16px; margin:auto; }
+        
+        /* 统一头部样式 */
+        .header { background:url(//cp.eecms.com/skin/dalu/img/head_bg.gif); height:108px; padding:8px; }
+        .nav { background:#00a6a6; color:#fff; padding:8px; }
+        .breadcrumb { background:#F8F0DA; padding:8px; display:flex; justify-content:space-between; }
+        
+        /* 功能组件 */
+        .back-top { 
+            position:fixed; bottom:20px; right:20px; width:50px; height:50px; 
+            background:#00a6a6; color:#fff; border-radius:50%; text-align:center; 
+            line-height:50px; font-size:36px; cursor:pointer; z-index:1000; 
+            display:none; 
+        }
+        .back-top:hover { background:#2980b9; }
+        .highlight { background:yellow; }
+        #toc { padding:5px; background:linear-gradient(to bottom,#EEE,#FFF); }
+        
+        /* 播放器样式 */
+        .player { width:100%; background:#f5e6c8; aspect-ratio:16/9; position:relative; }
+        .player video { width:100%; height:100%; display:none; }
+        .cover { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
+        .cover svg { width:60px; height:60px; opacity:.3; }
+        .cover-text { margin-top:10px; font-size:14px; color:#8a7a63; }
+        .playlist { padding:10px; }
+        .playlist-item { 
+            display:flex; justify-content:space-between; padding:10px; 
+            border-bottom:1px solid #eee; cursor:pointer; 
+        }
+        .playlist-item:hover { background:#f5f5f5; }
+        .playlist-item.active { background:#f5f0e6; border-left:3px solid #d4b483; }
+        .player-controls { padding:10px; display:flex; justify-content:space-between; }
+        .toggle-control { display:flex; align-items:center; cursor:pointer; }
+        .toggle-control span { margin-right:8px; color:#666; }
+        .toggle-switch { 
+            width:36px; height:18px; background:#ddd; border-radius:9px; 
+            position:relative; transition:background .3s; 
+        }
+        .toggle-switch.active { background:#d4b483; }
+        .toggle-switch::after { 
+            content:''; position:absolute; width:14px; height:14px; 
+            background:#fff; border-radius:50%; top:2px; left:2px; 
+            transition:transform .3s; 
+        }
+        .toggle-switch.active::after { transform:translateX(18px); }
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <div class="header">
+        <h1 style="font-size:24px;color:#fff;margin:40px 0;">大路的档案馆</h1>
+    </div>
+    
+    <!-- 导航 -->
+    <div class="nav">
+        <a href="/3/1005/#top" style="color:#fff;">主页</a> &nbsp;&nbsp;
+        <a href="/3/1005/#a1" style="color:#fff;">文字</a> &nbsp;&nbsp;<a href="/3/1005/#a2" style="color:#fff;">留声</a> &nbsp;&nbsp;<a href="/3/1005/#a3" style="color:#fff;">画报</a> &nbsp;&nbsp;<a href="/3/1005/#a4" style="color:#fff;">影像</a> &nbsp;&nbsp;<a href="/3/1005/#a5" style="color:#fff;">见证</a> &nbsp;&nbsp;    </div>
+    
+    <!-- 面包屑和搜索 -->
+    <div class="breadcrumb">
+        <span>位置 &gt; 内容详情</span>
+        <span>
+            <input type="text" size="9" id="searchInput" placeholder="页内查找">
+            <button onclick="performSearch()">搜索</button>
+        </span>
+    </div>
+    
+    <!-- 文章标题 -->
+    <div style="background:#fff; text-align:center; padding:15px;">
+        <h2 style="font-size:16px;">2006年前后的视频片段</h2>
+    </div>
+    
+    <!-- 媒体内容区域 -->
+    <div style="background:#fff; padding:10px;">
+                    <!-- 播放器 -->
+            <div class="player">
+                <div class="cover">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="4" y="4" width="16" height="16" fill="none" stroke="#8a7a63" stroke-width="1"/>
+                        <path d="M10 8v8l6-4z" fill="#8a7a63" opacity=".4"/>
+                    </svg>
+                    <div class="cover-text">点击下方标题播放</div>
+                </div>
+                <video id="mainVideo" controls></video>
+            </div>
+            
+            <div id="playlist" class="playlist"></div>
+            
+            <div class="player-controls">
+                <div class="toggle-control" id="autoToggle">
+                    <span>自动下一集</span>
+                    <div class="toggle-switch active" id="toggleBtn"></div>
+                </div>
+                <div id="currentVideo">当前未选择</div>
+            </div>
+            
+            <div id="video-data" data-items='[
+			{"id":"v1","t":"2006游武侯祠-自拍-同事小聚","s":"http://file.e651.com/3/1005/v/v-2006.webm","d":"02:17"},
+			{"id":"v2","t":"游武侯祠2","s":"http://file.e651.com/3/1005/v/200609wuhouci.mp4","d":"222"},
+			{"id":"v3","t":"游武侯祠3","s":"http://file.e651.com/3/1005/v/200609wuhouci.mp4","d":"222"}
+			]'></div>
+            
+            <script>
+            (function() {
+                const videoData = JSON.parse(document.getElementById('video-data').dataset.items || '[]');
+                let currentIdx = 0;
+                let autoPlay = true;
+                
+                // 初始化播放列表
+                videoData.forEach((video, idx) => {
+                    const item = document.createElement('div');
+                    item.className = 'playlist-item';
+                    item.innerHTML = `<span>${video.id}.${video.t}</span><span>${video.d}</span>`;
+                    item.onclick = () => playVideo(idx);
+                    document.getElementById('playlist').appendChild(item);
+                });
+                
+                // 检查URL锚点
+                const hash = location.hash.substring(1);
+                const hashIdx = videoData.findIndex(v => v.id === hash);
+                if (hashIdx !== -1) playVideo(hashIdx);
+                
+                // 视频结束自动播放下一集
+                document.getElementById('mainVideo').onended = () => {
+                    if (autoPlay) playVideo((currentIdx + 1) % videoData.length);
+                };
+                
+                // 自动播放切换
+                document.getElementById('autoToggle').onclick = () => {
+                    autoPlay = !autoPlay;
+                    document.getElementById('toggleBtn').classList.toggle('active', autoPlay);
+                };
+                
+                // 播放视频
+                function playVideo(idx) {
+                    if (idx < 0 || idx >= videoData.length) return;
+                    
+                    const video = videoData[idx];
+                    const videoEl = document.getElementById('mainVideo');
+                    
+                    videoEl.src = video.s;
+                    videoEl.style.display = 'block';
+                    document.querySelector('.cover').style.display = 'none';
+                    
+                    currentIdx = idx;
+                    document.getElementById('currentVideo').textContent = video.t;
+                    
+                    // 更新播放列表高亮
+                    document.querySelectorAll('.playlist-item').forEach((item, i) => {
+                        item.classList.toggle('active', i === idx);
+                    });
+                    
+                    location.hash = video.id;
+                    videoEl.play().catch(e => console.log('需要用户交互'));
+                }
+                
+                window.playVideo = playVideo; // 暴露给全局，方便调试
+            })();
+            </script>
+            </div>
+    
+    <!-- 目录和内容 -->
+    <div id="toc"></div>
+    <div style="padding:10px; background:#fff; line-height:2;">123<p><video controls="controls" src="//file.e651.com/3/1005/v/200609wuhouci.mp4" width="100%" height="240"></video></p></div>
+    
+    <div style="padding:10px; background:#fff; font-size:12px;color:#ccc;">
+        发布日期：2006-09-04 <br>
+        最近更新：2026-02-05<br>
+        访问人次：<script src="//cp.eecms.com/e/public/ViewClick?classid=4&id=100117&addclick=1"></script>
+    </div>
+    
+    <!-- 返回顶部 -->
+    <div class="back-top" id="backTop"><span style="color:#fff;">⇪</span></div>
+    
+    <!-- 页脚 -->
+    <div style="text-align:center; font-size:12px; color:#666; padding:20px;">
+        创建人:大路 联系TA:1005@mycst.com 联系平台:us@mycst.com<br>
+        主馆址:mycst.com/3/1005 本页创建:2006-09-04 本页更新:2026-02-05<br>
+        Copyright &copy; 1995-2019<br>
+        <a onclick="zh_tran('t')">繁体</a> | <a onclick="zh_tran('s')">简体</a> | <a href="//cp.eecms.com/e/member/cp">管理</a><br>
+        人生博物馆
+    </div>
+    
+    <!-- 通用脚本 -->
+    <script src="//cp.eecms.com/skin/dalu/js/tw2cn.js"></script>
+    <script>
+    // 懒加载
+    document.addEventListener('DOMContentLoaded', () => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    observer.unobserve(img);
+                }
+            });
+        });
+        
+        document.querySelectorAll('img.lazy').forEach(img => observer.observe(img));
+    });
+    
+    // 目录生成
+    const toc = document.getElementById('toc');
+    if (toc) {
+        const h3s = document.querySelectorAll('h3');
+        if (h3s.length) {
+            const ol = document.createElement('ol');
+            h3s.forEach((h3, i) => {
+                h3.id = `section-${i+1}`;
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="#${h3.id}">${h3.textContent}</a>`;
+                ol.appendChild(li);
+            });
+            toc.appendChild(ol);
+        }
+    }
+    
+    // 返回顶部
+    const backTop = document.getElementById('backTop');
+    window.addEventListener('scroll', () => {
+        backTop.style.display = window.scrollY > 200 ? 'block' : 'none';
+    });
+    backTop.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+    
+    // 页内搜索
+    function performSearch() {
+        const text = document.getElementById('searchInput').value.trim();
+        if (!text) return;
+        
+        // 清除之前的高亮
+        document.querySelectorAll('.highlight').forEach(el => {
+            el.replaceWith(...el.childNodes);
+        });
+        
+        // 搜索并高亮
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        const regex = new RegExp(`(${text})`, 'gi');
+        const ranges = [];
+        let node;
+        
+        while (node = walker.nextNode()) {
+            const matches = node.textContent.match(regex);
+            if (matches) {
+                let offset = 0;
+                matches.forEach(match => {
+                    const idx = node.textContent.indexOf(match, offset);
+                    const range = document.createRange();
+                    range.setStart(node, idx);
+                    range.setEnd(node, idx + match.length);
+                    ranges.push(range);
+                    offset = idx + match.length;
+                });
+            }
+        }
+        
+        ranges.forEach(range => {
+            const span = document.createElement('span');
+            span.className = 'highlight';
+            span.textContent = range.toString();
+            range.deleteContents();
+            range.insertNode(span);
+        });
+    }
+    </script>
+</body>
+</html>

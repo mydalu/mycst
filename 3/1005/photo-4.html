@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>大路的档案馆 - 婚姻家庭时期</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="婚姻家庭时期">
+    <style>
+        @media (min-width:641px) { body { width:640px; margin:auto; } }
+        a { text-decoration:none; color:#036; } a:hover { text-decoration:underline; }
+        body { background:#6CC; font-size:16px; margin:auto; }
+        
+        /* 统一头部样式 */
+        .header { background:url(//cp.eecms.com/skin/dalu/img/head_bg.gif); height:108px; padding:8px; }
+        .nav { background:#00a6a6; color:#fff; padding:8px; }
+        .breadcrumb { background:#F8F0DA; padding:8px; display:flex; justify-content:space-between; }
+        
+        /* 功能组件 */
+        .back-top { 
+            position:fixed; bottom:20px; right:20px; width:50px; height:50px; 
+            background:#00a6a6; color:#fff; border-radius:50%; text-align:center; 
+            line-height:50px; font-size:36px; cursor:pointer; z-index:1000; 
+            display:none; 
+        }
+        .back-top:hover { background:#2980b9; }
+        .highlight { background:yellow; }
+        #toc { padding:5px; background:linear-gradient(to bottom,#EEE,#FFF); }
+        
+        /* 播放器样式 */
+        .player { width:100%; background:#f5e6c8; aspect-ratio:16/9; position:relative; }
+        .player video { width:100%; height:100%; display:none; }
+        .cover { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
+        .cover svg { width:60px; height:60px; opacity:.3; }
+        .cover-text { margin-top:10px; font-size:14px; color:#8a7a63; }
+        .playlist { padding:10px; }
+        .playlist-item { 
+            display:flex; justify-content:space-between; padding:10px; 
+            border-bottom:1px solid #eee; cursor:pointer; 
+        }
+        .playlist-item:hover { background:#f5f5f5; }
+        .playlist-item.active { background:#f5f0e6; border-left:3px solid #d4b483; }
+        .player-controls { padding:10px; display:flex; justify-content:space-between; }
+        .toggle-control { display:flex; align-items:center; cursor:pointer; }
+        .toggle-control span { margin-right:8px; color:#666; }
+        .toggle-switch { 
+            width:36px; height:18px; background:#ddd; border-radius:9px; 
+            position:relative; transition:background .3s; 
+        }
+        .toggle-switch.active { background:#d4b483; }
+        .toggle-switch::after { 
+            content:''; position:absolute; width:14px; height:14px; 
+            background:#fff; border-radius:50%; top:2px; left:2px; 
+            transition:transform .3s; 
+        }
+        .toggle-switch.active::after { transform:translateX(18px); }
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <div class="header">
+        <h1 style="font-size:24px;color:#fff;margin:40px 0;">大路的档案馆</h1>
+    </div>
+    
+    <!-- 导航 -->
+    <div class="nav">
+        <a href="/3/1005/#top" style="color:#fff;">主页</a> &nbsp;&nbsp;
+        <a href="/3/1005/#a1" style="color:#fff;">文字</a> &nbsp;&nbsp;<a href="/3/1005/#a2" style="color:#fff;">留声</a> &nbsp;&nbsp;<a href="/3/1005/#a3" style="color:#fff;">画报</a> &nbsp;&nbsp;<a href="/3/1005/#a4" style="color:#fff;">影像</a> &nbsp;&nbsp;<a href="/3/1005/#a5" style="color:#fff;">见证</a> &nbsp;&nbsp;    </div>
+    
+    <!-- 面包屑和搜索 -->
+    <div class="breadcrumb">
+        <span>位置 &gt; 内容详情</span>
+        <span>
+            <input type="text" size="9" id="searchInput" placeholder="页内查找">
+            <button onclick="performSearch()">搜索</button>
+        </span>
+    </div>
+    
+    <!-- 文章标题 -->
+    <div style="background:#fff; text-align:center; padding:15px;">
+        <h2 style="font-size:16px;">婚姻家庭时期</h2>
+    </div>
+    
+    <!-- 媒体内容区域 -->
+    <div style="background:#fff; padding:10px;">
+	<noscript>
+    <div style="background:yellow;padding:10px;text-align:center;">
+        请启用JavaScript
+    </div>
+</noscript>
+        <style>
+        /* 图片列表容器 - 固定每行三张 */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 固定3列，每行三张 */
+            gap: 10px;
+            max-width: 700px; /* 可根据需要调整总宽度 */
+            margin: 0 auto;
+        }
+        
+        /* 单个图片卡片样式 */
+        .image-card {
+            background: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .image-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            /* 懒加载占位背景 */
+            background: #f0f0f0;
+        }
+        
+        .card-title {
+            padding: 12px;
+            font-size: 14px;
+            color: #333;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* 图片预览浮层 */
+        .preview-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            touch-action: manipulation;
+        }
+        
+        .preview-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            touch-action: none;
+        }
+        
+        .preview-img {
+            max-width: 100%;
+            max-height: 100%;
+            transition: transform 0.2s ease;
+            transform-origin: center center;
+        }
+        
+        /* 切换按钮 */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.3);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        .prev-btn {
+            left: 20px;
+        }
+        
+        .next-btn {
+            right: 20px;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.5);
+        }
+    </style>
+ 
+    <!-- 图片列表容器 -->
+    <div class="image-grid" id="imageGrid"></div>
+
+    <!-- 图片预览浮层 -->
+    <div class="preview-modal" id="previewModal">
+        <button class="nav-btn prev-btn" id="prevBtn">◀</button>
+        <div class="preview-content" id="previewContent">
+            <img src="" alt="预览图片" class="preview-img" id="previewImg">
+        </div>
+        <button class="nav-btn next-btn" id="nextBtn">▶</button>
+    </div>
+
+    <script>
+        // 1. 数据源调整（整体用模板字符串包裹，无需每行加引号）
+        const dataStr = `
+20160130方城参与纪录片@http://file.e651.com/3/1005/p/20160130-1.webp|||
+20160130方城@http://file.e651.com/3/1005/p/20160130-10.webp|||
+20160130方城@http://file.e651.com/3/1005/p/20160130-12.webp|||
+20160130方城@http://file.e651.com/3/1005/p/20160130-2.webp|||
+20160130方城@http://file.e651.com/3/1005/p/20160130-3.webp|||
+20160130方城@http://file.e651.com/3/1005/p/20160130-4.webp|||
+20160130方城@http://file.e651.com/3/1005/p/20160130-5.webp|||
+20160130方城@http://file.e651.com/3/1005/p/20160130-8.webp|||
+20160130方城@http://file.e651.com/3/1005/p/20160130-9.webp|||
+20170314如意湖@http://file.e651.com/3/1005/p/20170314.webp|||
+20170402王村@http://file.e651.com/3/1005/p/20170402.webp|||
+20170506塔子山@http://file.e651.com/3/1005/p/20170506.webp|||
+20170411-1北京@http://file.e651.com/3/1005/p/20170411-1.webp|||
+20170411-2北京@http://file.e651.com/3/1005/p/20170411-2.webp|||
+20170411-3北京@http://file.e651.com/3/1005/p/20170411-3.webp|||
+20170512-1哈尔滨@http://file.e651.com/3/1005/p/20170512-1.webp|||
+20170512-2哈尔滨@http://file.e651.com/3/1005/p/20170512-2.webp|||
+20170512-3哈尔滨@http://file.e651.com/3/1005/p/20170512-3.webp|||
+20170512-4哈尔滨@http://file.e651.com/3/1005/p/20170512-4.webp|||
+20170512-5哈尔滨@http://file.e651.com/3/1005/p/20170512-5.webp|||
+20170512-6哈尔滨@http://file.e651.com/3/1005/p/20170512-6.webp|||
+20170512-7哈尔滨@http://file.e651.com/3/1005/p/20170512-7.webp|||
+20170512-8哈尔滨@http://file.e651.com/3/1005/p/20170512-8.webp|||
+20170512-9哈尔滨@http://file.e651.com/3/1005/p/20170512-9.webp|||
+20170519-1丹东鸭绿江@http://file.e651.com/3/1005/p/20170519-1.webp|||
+20170519-2丹东鸭绿江@http://file.e651.com/3/1005/p/20170519-2.webp|||
+20170519-3丹东鸭绿江@http://file.e651.com/3/1005/p/20170519-3.webp|||
+20170519-4丹东鸭绿江@http://file.e651.com/3/1005/p/20170519-4.webp|||
+20170520@http://file.e651.com/3/1005/p/20170520.webp|||
+20170601-1南宁@http://file.e651.com/3/1005/p/20170601-1.webp|||
+20170601-2南宁@http://file.e651.com/3/1005/p/20170601-2.webp|||
+20170601-3南宁@http://file.e651.com/3/1005/p/20170601-3.webp|||
+20170601-4南宁@http://file.e651.com/3/1005/p/20170601-4.webp|||
+20170728@http://file.e651.com/3/1005/p/20170728.webp|||
+20180320塔子山@http://file.e651.com/3/1005/p/20180320.webp|||
+20180612-1如意湖@http://file.e651.com/3/1005/p/20180612-1.webp|||
+20180612-2如意湖@http://file.e651.com/3/1005/p/20180612-2.webp|||
+20180612-3如意湖@http://file.e651.com/3/1005/p/20180612-3.webp|||
+20180612-4如意湖@http://file.e651.com/3/1005/p/20180612-4.webp|||
+20180612-5如意湖@http://file.e651.com/3/1005/p/20180612-5.webp|||
+20180612-7如意湖@http://file.e651.com/3/1005/p/20180612-7.webp|||
+20180612-8如意湖@http://file.e651.com/3/1005/p/20180612-8.webp|||
+20180612-9如意湖@http://file.e651.com/3/1005/p/20180612-9.webp|||
+20191221南阳直播@http://file.e651.com/3/1005/p/20191221.webp|||
+20200104@http://file.e651.com/3/1005/p/20200104.webp|||
+20200119新电视台儿童舞蹈@http://file.e651.com/3/1005/p/20200119.webp|||
+20200124@http://file.e651.com/3/1005/p/20200124.webp|||
+20200127陪孩子@http://file.e651.com/3/1005/p/20200127.webp|||
+20200302陪孩子@http://file.e651.com/3/1005/p/20200302.webp|||
+20210127逛老街@http://file.e651.com/3/1005/p/20210127.webp|||
+20210130塔子山@http://file.e651.com/3/1005/p/20210130.webp|||
+20220811凯旋广场电梯@http://file.e651.com/3/1005/p/20220811.webp|||
+20220822新野@http://file.e651.com/3/1005/p/20220822.webp|||
+20220824@http://file.e651.com/3/1005/p/20220824.webp|||
+20220825@http://file.e651.com/3/1005/p/20220825.webp|||
+        `;
+
+        // 解析数据源（去除空白、分割行、过滤空行）
+        const dataList = dataStr
+            .trim() // 去掉首尾空白
+            .split('\n') // 按换行分割每行
+            .map(line => line.trim()) // 去掉每行的首尾空格
+            .filter(line => line); // 过滤空行
+
+        // 2. 解析数据并存储
+        const parsedData = dataList.map(item => {
+            const [content] = item.split('|||'); // 分割每行结尾的标识
+            const [title, imgUrl] = content.split('@'); // 分割标题和图片URL
+            return { 
+                title: title || '无标题', 
+                imgUrl: imgUrl || '',
+                anchor: `img-${Date.now()}-${Math.floor(Math.random() * 1000)}` // 生成唯一锚点标识
+            };
+        }).filter(item => item.imgUrl); // 过滤掉无效的图片URL
+
+        // 3. DOM元素获取
+        const imageGrid = document.getElementById('imageGrid');
+        const previewModal = document.getElementById('previewModal');
+        const previewImg = document.getElementById('previewImg');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        
+        let currentIndex = 0; // 当前预览图片索引
+        let scale = 1; // 图片缩放比例
+        let startX = 0; // 触摸起始X坐标
+        let startY = 0; // 触摸起始Y坐标
+        let isDragging = false; // 是否正在拖拽
+
+        // 4. 渲染图片列表（增加懒加载+锚点）
+        function renderImageList() {
+            // 使用文档片段减少DOM重绘，提升效率
+            const fragment = document.createDocumentFragment();
+            
+            parsedData.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'image-card';
+                card.dataset.index = index; // 存储图片索引
+                card.id = item.anchor; // 给卡片添加锚点ID
+                
+                const img = document.createElement('img');
+                img.className = 'card-img';
+                // 懒加载核心：设置data-src存储真实URL，src用占位图（也可留空）
+                img.dataset.src = item.imgUrl; 
+                img.alt = item.title;
+                img.loading = 'lazy'; // 启用原生懒加载
+                
+                const title = document.createElement('div');
+                title.className = 'card-title';
+                title.textContent = item.title;
+                
+                card.appendChild(img);
+                card.appendChild(title);
+                fragment.appendChild(card);
+                
+                // 绑定点击事件
+                card.addEventListener('click', () => openPreview(index));
+            });
+            
+            imageGrid.appendChild(fragment);
+
+            // 初始化懒加载（兼容不支持原生loading="lazy"的浏览器）
+            initLazyLoad();
+            
+            // 解析URL锚点并打开对应图片
+            parseUrlAnchor();
+        }
+
+        // 5. 懒加载实现（增强版，兼容所有现代浏览器）
+        function initLazyLoad() {
+            const lazyImages = document.querySelectorAll('.card-img[data-src]');
+            
+            // 观察器配置
+            const observerOptions = {
+                root: null, // 视口作为根
+                rootMargin: '200px 0px', // 提前200px加载
+                threshold: 0.1
+            };
+
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src; // 加载真实图片
+                        img.removeAttribute('data-src'); // 移除临时属性
+                        observer.unobserve(img); // 停止观察已加载的图片
+                    }
+                });
+            }, observerOptions);
+
+            // 为所有懒加载图片添加观察
+            lazyImages.forEach(img => {
+                imageObserver.observe(img);
+            });
+        }
+
+        // 6. 解析URL锚点并打开对应图片
+        function parseUrlAnchor() {
+            // 获取URL中的锚点（#后面的内容）
+            const hash = window.location.hash.slice(1);
+            if (!hash) return;
+            
+            // 根据锚点查找对应的图片索引
+            const targetIndex = parsedData.findIndex(item => item.anchor === hash);
+            if (targetIndex !== -1) {
+                // 页面加载完成后打开对应图片预览
+                setTimeout(() => {
+                    openPreview(targetIndex);
+                    // 滚动到对应图片位置（可选）
+                    document.getElementById(hash)?.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }, 100);
+            }
+        }
+
+        // 7. 打开预览浮层（更新URL锚点）
+        function openPreview(index) {
+            currentIndex = index;
+            scale = 1; // 重置缩放比例
+            previewImg.src = parsedData[index].imgUrl;
+            previewImg.alt = parsedData[index].title;
+            previewImg.style.transform = `scale(${scale})`;
+            previewModal.style.display = 'flex';
+            
+            // 更新URL锚点，不刷新页面
+            const anchor = parsedData[index].anchor;
+            window.history.replaceState({}, '', `#${anchor}`);
+        }
+
+        // 8. 关闭预览浮层（清空锚点）
+        function closePreview() {
+            previewModal.style.display = 'none';
+            // 清空URL锚点
+            window.history.replaceState({}, '', window.location.pathname);
+        }
+
+        // 9. 切换图片（同步更新锚点）
+        function switchImage(direction) {
+            currentIndex += direction;
+            // 循环切换
+            if (currentIndex < 0) currentIndex = parsedData.length - 1;
+            if (currentIndex >= parsedData.length) currentIndex = 0;
+            
+            scale = 1; // 切换时重置缩放
+            previewImg.src = parsedData[currentIndex].imgUrl;
+            previewImg.alt = parsedData[currentIndex].title;
+            previewImg.style.transform = `scale(${scale})`;
+            
+            // 更新URL锚点
+            const anchor = parsedData[currentIndex].anchor;
+            window.history.replaceState({}, '', `#${anchor}`);
+        }
+
+        // 10. 图片缩放功能
+        function handleScale(e) {
+            // 鼠标滚轮缩放
+            if (e.type === 'wheel') {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? -0.1 : 0.1;
+                scale = Math.max(0.5, Math.min(scale + delta, 3)); // 限制缩放范围0.5-3倍
+                previewImg.style.transform = `scale(${scale})`;
+            }
+            
+            // 触摸缩放（简单实现单指缩放，如需双指缩放可扩展）
+            if (e.type === 'touchstart') {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                isDragging = true;
+            }
+            
+            if (e.type === 'touchmove' && isDragging) {
+                e.preventDefault();
+                const moveX = e.touches[0].clientX - startX;
+                const moveY = e.touches[0].clientY - startY;
+                
+                // 简单的滑动缩放逻辑（也可改为拖拽平移）
+                if (Math.abs(moveY) > 10) {
+                    scale = Math.max(0.5, Math.min(scale + (moveY > 0 ? -0.01 : 0.01), 3));
+                    previewImg.style.transform = `scale(${scale})`;
+                    startY = e.touches[0].clientY;
+                }
+                
+                // 左右滑动切换图片
+                if (Math.abs(moveX) > 50 && Math.abs(moveY) < 50) {
+                    switchImage(moveX > 0 ? -1 : 1);
+                    isDragging = false;
+                }
+            }
+            
+            if (e.type === 'touchend') {
+                isDragging = false;
+            }
+        }
+
+        // 11. 监听锚点变化（手动修改URL时触发）
+        window.addEventListener('hashchange', parseUrlAnchor);
+
+        // 12. 绑定事件
+        function bindEvents() {
+            // 关闭浮层（点击浮层背景或图片）
+            previewModal.addEventListener('click', (e) => {
+                if (e.target === previewModal || e.target === previewImg) {
+                    closePreview();
+                }
+            });
+            
+            // 切换按钮事件
+            prevBtn.addEventListener('click', () => switchImage(-1));
+            nextBtn.addEventListener('click', () => switchImage(1));
+            
+            // 键盘控制
+            document.addEventListener('keydown', (e) => {
+                if (previewModal.style.display === 'flex') {
+                    if (e.key === 'Escape') closePreview();
+                    if (e.key === 'ArrowLeft') switchImage(-1);
+                    if (e.key === 'ArrowRight') switchImage(1);
+                }
+            });
+            
+            // 缩放事件
+            previewImg.addEventListener('wheel', handleScale);
+            previewImg.addEventListener('touchstart', handleScale);
+            previewImg.addEventListener('touchmove', handleScale);
+            previewImg.addEventListener('touchend', handleScale);
+        }
+
+        // 初始化
+        function init() {
+            renderImageList();
+            bindEvents();
+        }
+
+        // 执行初始化
+        init();
+    </script>
+ 
+	  </div>
+    
+    <!-- 目录和内容 -->
+    <div id="toc"></div>
+    <div style="padding:10px; background:#fff; line-height:2;"></div>
+    
+    <div style="padding:10px; background:#fff; font-size:12px;color:#ccc;">
+        发布日期：2013-08-22 <br>
+        最近更新：2026-02-03<br>
+        访问人次：<script src="//cp.eecms.com/e/public/ViewClick?classid=4&id=100003&addclick=1"></script>
+    </div>
+    
+    <!-- 返回顶部 -->
+    <div class="back-top" id="backTop"><span style="color:#fff;">⇪</span></div>
+    
+    <!-- 页脚 -->
+    <div style="text-align:center; font-size:12px; color:#666; padding:20px;">
+        创建人:大路 联系TA:1005@mycst.com 联系平台:us@mycst.com<br>
+        主馆址:mycst.com/3/1005 本页创建:2013-08-22 本页更新:2026-02-03<br>
+        Copyright &copy; 1995-2019<br>
+        <a onclick="zh_tran('t')">繁体</a> | <a onclick="zh_tran('s')">简体</a> | <a href="//cp.eecms.com/e/member/cp">管理</a><br>
+        人生博物馆
+    </div>
+    
+    <!-- 通用脚本 -->
+    <script src="//cp.eecms.com/skin/dalu/js/tw2cn.js"></script>
+    <script>
+    // 懒加载
+    document.addEventListener('DOMContentLoaded', () => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    observer.unobserve(img);
+                }
+            });
+        });
+        
+        document.querySelectorAll('img.lazy').forEach(img => observer.observe(img));
+    });
+    
+    // 目录生成
+    const toc = document.getElementById('toc');
+    if (toc) {
+        const h3s = document.querySelectorAll('h3');
+        if (h3s.length) {
+            const ol = document.createElement('ol');
+            h3s.forEach((h3, i) => {
+                h3.id = `section-${i+1}`;
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="#${h3.id}">${h3.textContent}</a>`;
+                ol.appendChild(li);
+            });
+            toc.appendChild(ol);
+        }
+    }
+    
+    // 返回顶部
+    const backTop = document.getElementById('backTop');
+    window.addEventListener('scroll', () => {
+        backTop.style.display = window.scrollY > 200 ? 'block' : 'none';
+    });
+    backTop.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+    
+    // 页内搜索
+    function performSearch() {
+        const text = document.getElementById('searchInput').value.trim();
+        if (!text) return;
+        
+        // 清除之前的高亮
+        document.querySelectorAll('.highlight').forEach(el => {
+            el.replaceWith(...el.childNodes);
+        });
+        
+        // 搜索并高亮
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        const regex = new RegExp(`(${text})`, 'gi');
+        const ranges = [];
+        let node;
+        
+        while (node = walker.nextNode()) {
+            const matches = node.textContent.match(regex);
+            if (matches) {
+                let offset = 0;
+                matches.forEach(match => {
+                    const idx = node.textContent.indexOf(match, offset);
+                    const range = document.createRange();
+                    range.setStart(node, idx);
+                    range.setEnd(node, idx + match.length);
+                    ranges.push(range);
+                    offset = idx + match.length;
+                });
+            }
+        }
+        
+        ranges.forEach(range => {
+            const span = document.createElement('span');
+            span.className = 'highlight';
+            span.textContent = range.toString();
+            range.deleteContents();
+            range.insertNode(span);
+        });
+    }
+    </script>
+</body>
+</html>
