@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>南阳访谈录 | 记录平凡人的不平凡人生</title>
+    <style>
+        :root {
+            --primary-color: #b89765; /* 高级金 */
+            --dark-bg: #1a1a1a;
+            --text-light: #f4f4f4;
+        }
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://file.e651.com/dalu/imgs/ftwebbg.webp');
+            background-size: cover;
+            background-position: center;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+        }
+        .hero h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        .hero p {
+            font-size: 1.0rem;
+            color: #ccc;
+            max-width: 600px;
+        }
+        .cta-button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 40px;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            margin-top: 30px;
+            transition: transform 0.3s;
+        }
+        .cta-button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Services Section */
+        .section {
+            padding: 60px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 40px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        .card {
+            background: #252525;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #333;
+        }
+        .card h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        /* Question Guide */
+        .questions {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .questions ul {
+            list-style: none;
+            padding: 0;
+        }
+        .questions li {
+            margin-bottom: 15px;
+            padding-left: 10px;
+            position: relative;
+        }
+        .questions li::before {
+            content: "“";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-size: 24px;
+        }
+/* Pricing Table */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .price-card {
+            background: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .price-card.featured {
+            border: 2px solid var(--primary-color);
+            transform: scale(1.03);
+            background: #2a2a2a;
+        }
+        .badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-color);
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .price-tag { font-size: 2.5rem; color: var(--accent-gold); margin: 20px 0; font-weight: bold; }
+        .price-tag span { font-size: 1rem; color: #888; }
+        
+        .plan-name { font-size: 1.5rem; margin-bottom: 10px; }
+        .target-user { font-size: 0.9rem; color: var(--primary-color); margin-bottom: 20px; font-style: italic; }
+        
+        .feature-list { list-style: none; padding: 0; text-align: left; margin-bottom: 30px; }
+        .feature-list li { margin-bottom: 12px; font-size: 0.95rem; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .feature-list li::before { content: "✓ "; color: var(--primary-color); font-weight: bold; }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .cta-button:hover { background-color: #9a7d51; }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid #333;
+            font-size: 0.9rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <section class="hero">
+        <h1>每一代人，都值得被铭记</h1>
+        <p>为您和长辈定制专属“人生深度访谈视频”<br>在影像中找回家族的根与魂</p>
+        <a href="#contact" class="cta-button">咨询定制方案</a>
+    </section>
+
+    <section class="section">
+        <h2>我们为您记录什么？</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>口述历史</h3>
+                <p>面对面访谈，记录长辈经历过的时代巨变与人生之路，保留最真实的乡音与情感。</p>
+            </div>
+            <div class="card">
+                <h3>三观传承</h3>
+                <p>深度引导，聊聊关于勤俭、奋斗与家庭的智慧，留给子孙最宝贵的精神财富。</p>
+            </div>
+            <div class="card">
+                <h3>影像档案</h3>
+                <p>整合老照片、书信、荣誉、旧物，制作成电影级质感的短视频，永久存储。</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="questions">
+            <h2>访谈预设：这些问题，您问过吗？</h2>
+            <ul>
+                <li>“这辈子最让您骄傲的一件事是什么？”</li>
+                <li>“您当年的爱情故事，是怎么开始的？”</li>
+                <li>“若人生重来，您最想改变哪个瞬间？”</li>
+                <li>“您最希望后辈记住的一句话是什么？”</li>
+            </ul>
+        </div>
+    </section>
+	
+
+<section class="section" id="pricing">
+        <h2>定制服务方案</h2>
+        <div class="pricing-grid">
+            
+            <div class="price-card">
+                <div class="plan-name">口述实录版</div>
+                <div class="target-user">适合：退休纪念、寿辰留念</div>
+                <div class="price-tag">￥599 <span>/起</span></div>
+                <ul class="feature-list">
+                    <li>1小时深度访谈录制</li>
+                    <li>专业摄像机高清拍摄</li>
+                    <li>剪辑 5-8 分钟精华浓缩片</li>
+                    <li>交付访谈完整长视频素材</li>
+                    <li>南阳市内上门服务</li>
+					<li>赠送发布到3个网络平台</li>
+                </ul>
+                <a href="#contact" class="cta-button">立即预约</a>
+            </div>
+
+            <div class="price-card featured">
+                <div class="badge">最受欢迎</div>
+                <div class="plan-name">人生微电影</div>
+                <div class="target-user">适合：金婚纪念、家族传承</div>
+                <div class="price-tag">￥2999 <span>/起</span></div>
+                <ul class="feature-list">
+                    <li>多次沟通，深度访谈大纲定制</li>
+                    <li>专业灯光、双机位拍摄</li>
+                    <li>整合老照片/旧视频素材（20张内）</li>
+                    <li>10-15分钟质感调色与配乐处理</li>
+					<li>专属个人网页/10年</li>
+                    <li>赠送专属纪念VCD光盘</li>
+					<li>赠送发布到5个网络平台</li>
+                </ul>
+                <a href="#contact" class="cta-button" style="background-color: #d4af37;">联系定制</a>
+            </div>
+
+            <div class="price-card">
+                <div class="plan-name">家族传记版</div>
+                <div class="target-user">适合：成功企业家、名望家庭</div>
+                <div class="price-tag">￥6999 <span>/起</span></div>
+                <ul class="feature-list">
+                    <li>主讲人+亲友多维度深度采访</li>
+                    <li>人生足迹实地取景拍摄</li>
+                    <li>专业文案撰写开篇与旁白</li>
+                    <li>30-60分钟纪录片级成品</li>
+					<li>专属个人网页/10年</li>
+                    <li>精美实体DVD纪念光盘3套</li>
+					<li>赠送发布到10个国内外网络平台</li>
+                </ul>
+                <a href="#contact" class="cta-button">咨询详情</a>
+            </div>
+
+        </div>
+    </section>
+	
+    <section id="contact" class="section" style="text-align: center;">
+        <h2>开启记录之旅</h2>
+        <p>本地专业访谈服务 | 1对1深度策划</p>
+        <div style="margin-top: 20px; font-size: 1.5rem; color: var(--primary-color);">
+            <img src="https://file.e651.com/dalu/imgs/qr_code.png" width="180px" alt="" />
+        </div>
+         <p style="color: #666; margin-top: 15px;">* 拍摄需提前 3-9 天预约，以便准备大纲和前采</p><p style="color: #888;">预约电话：19903777114</p>
+    </section>
+
+    <footer>
+        &copy; 2026 人生档案馆 · 时光访谈录
+    </footer>
+
+</body>
+</html>
