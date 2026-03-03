@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>清清</title>
-    <meta name="description" content="清清">
+    <title>清清的秘密花园</title>
+    <meta name="description" content="清清的秘密花园">
     <style>
-        /* ===== 全局重置与变量 ===== */
         * {
             margin: 0;
             padding: 0;
@@ -479,6 +478,152 @@
     </style>
 </head>
 <body>
+<!-- 整页密码保护 -->
+<style>
+    .page-protect-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, #BFEBFF, white);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: opacity 0.5s;
+    }
+    .page-password-box {
+        background: white;
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        text-align: center;
+        width: 320px;
+    }
+    .page-password-box h2 {
+        color: #0080C0;
+        margin-bottom: 10px;
+    }
+    .page-password-box .cat-icon {
+        font-size: 48px;
+        margin: 10px 0;
+        color: #e91;
+    }
+    .page-password-box input {
+        width: 100%;
+        padding: 12px;
+        margin: 20px 0;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+    }
+    .page-password-box input:focus {
+        border-color: #0080C0;
+        outline: none;
+    }
+    .page-password-box button {
+        background: #0080C0;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        width: 100%;
+        transition: background 0.3s;
+    }
+    .page-password-box button:hover {
+        background: #005a8c;
+    }
+    .remember-check {
+        margin: 15px 0;
+        text-align: left;
+        color: #666;
+        font-size: 14px;
+    }
+    .remember-check input {
+        width: auto;
+        margin-right: 5px;
+    }
+    .fade-out {
+        opacity: 0;
+        pointer-events: none;
+    }
+</style>
+
+<div class="page-protect-overlay" id="pageProtectOverlay">
+    <div class="page-password-box">
+        <div class="cat-icon">👸</div>
+        <h2>清清的秘密花园</h2>
+        <p style="color:#666; margin-bottom:20px;">请输入密码继续</p>
+        <input type="password" id="pagePassword" placeholder="密码" autofocus>
+        <div class="remember-check">
+            <label>
+                <input type="checkbox" id="rememberMe" checked> 记住我1小时
+            </label>
+        </div>
+        <button onclick="checkPagePassword()">进入</button>
+        <p style="color:#999; font-size:12px; margin-top:15px;">提示：输入正确密码才可查看</p>
+    </div>
+</div>
+
+<script>
+const PAGE_PASSWORD = "2007";
+const PAGE_AUTH_KEY = "cat_page_auth";
+const EXPIRY_HOURS = 1;
+
+// 检查是否已认证
+function checkPageAuth() {
+    const stored = localStorage.getItem(PAGE_AUTH_KEY);
+    if (stored) {
+        try {
+            const auth = JSON.parse(stored);
+            const now = new Date().getTime();
+            if (now < auth.expiry) {
+                // 已认证，隐藏遮罩
+                document.getElementById('pageProtectOverlay').classList.add('fade-out');
+                setTimeout(() => {
+                    document.getElementById('pageProtectOverlay').style.display = 'none';
+                }, 500);
+                return true;
+            }
+        } catch (e) {}
+    }
+    return false;
+}
+
+// 验证密码
+function checkPagePassword() {
+    const input = document.getElementById('pagePassword');
+    const remember = document.getElementById('rememberMe').checked;
+    
+    if (input.value === PAGE_PASSWORD) {
+        if (remember) {
+            const auth = {
+                expiry: new Date().getTime() + (EXPIRY_HOURS * 60 * 60 * 1000)
+            };
+            localStorage.setItem(PAGE_AUTH_KEY, JSON.stringify(auth));
+        }
+        
+        // 淡出效果
+        const overlay = document.getElementById('pageProtectOverlay');
+        overlay.classList.add('fade-out');
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 500);
+    } else {
+        alert('密码错误，请重试');
+        input.value = '';
+        input.focus();
+    }
+}
+
+// 页面加载时检查
+document.addEventListener('DOMContentLoaded', checkPageAuth);
+</script>
+
     <!-- 左侧固定导航 -->
     <nav class="side-nav">
         <svg t="1772463283300" class="icon" viewBox="0 0 1194 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6666" width="32" height="32"><path d="M99.835972 194.323235a41.661988 41.661988 0 0 1 41.660988 41.406988 41.407988 41.407988 0 1 0 82.815976 0 41.661988 41.661988 0 0 1 41.406989-41.406988 41.407988 41.407988 0 1 0 0-82.815977 41.407988 41.407988 0 0 1-41.406989-41.660988 41.407988 41.407988 0 1 0-82.815976 0 41.661988 41.661988 0 0 1-41.660988 41.660988 41.407988 41.407988 0 0 0 0 82.815977m347.772901 572.593838a109.234969 109.234969 0 0 0 161.819954 0 27.689992 27.689992 0 0 0-19.814994-46.995987 25.402993 25.402993 0 0 0-19.305995 7.874998 55.379984 55.379984 0 0 1-41.915988 19.559994 54.362985 54.362985 0 0 1-41.661988-19.559994 27.689992 27.689992 0 0 0-46.995987 19.813994 25.402993 25.402993 0 0 0 7.620998 19.306995m524.073852-131.081963V443.277164A442.781875 442.781875 0 0 0 302.299914 62.225272a96.786973 96.786973 0 0 1-22.862993 186.460948 96.786973 96.786973 0 0 1-168.678952 50.806985 439.479876 439.479876 0 0 0-23.879994 143.52996v192.811945A275.373922 275.373922 0 0 1 0 837.030053C104.153971 948.552021 301.792915 1024 528.64585 1024s424.49188-76.209978 529.15385-186.969947a274.610922 274.610922 0 0 1-86.370975-201.194943m-166.392953-10.669997a281.72392 281.72392 0 0 1-276.389922 287.059919 281.72392 281.72392 0 0 1-276.643921-286.042919v-72.90798h27.689992a825.104766 825.104766 0 0 0 525.343851-187.731947z m359.712898-14.732996a27.689992 27.689992 0 0 1-27.689992-27.689992 27.689992 27.689992 0 1 0-55.379984 0 27.689992 27.689992 0 0 1-27.942992 27.689992 27.689992 27.689992 0 1 0 0 55.379984 27.943992 27.943992 0 0 1 27.943992 27.688993 27.689992 27.689992 0 1 0 55.379984 0 27.943992 27.943992 0 0 1 27.688992-27.689993 27.689992 27.689992 0 0 0 29.213992-29.975991 28.197992 28.197992 0 0 0-29.213992-25.402993" fill="#efb336" p-id="6667"></path></svg><br>
@@ -5004,12 +5149,11 @@
     <!-- 提示框 -->
     <div id="tooltip">
         <span class="tooltip-icon">⍟</span>
-        <br>
         ❖ <a href="/1/1002/index.html" download="清清.html">下载本网页文件</a><br>
         ▤ 分布式在线聚合：<br>
         <ol>
-            <li><a href="">下载</a></li>
-            
+            <li><a href="https://1drv.ms/u/c/e80df117aac6cf02/IQD9xrs8TfLqT7mGSh-FedsoAVJsfRmJ_lfPsqyjZ_3Veos?e=EMyHrm" target="_blank">下载</a></li>
+            <li>在人物资料群文件中找到1002文件夹</li>
         </ol>
     </div>
 
