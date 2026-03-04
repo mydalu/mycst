@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>大路的人生档案馆 - 我的生平</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="大路的人生档案馆 - 我的生平">
+    <style>
+        @media (min-width:641px) { body { width:640px; margin:auto; } }
+        a { text-decoration:none; color:#036; } a:hover { text-decoration:underline; }
+        body { background:#6CC; font-size:16px; margin:auto; }
+        
+        /* 统一头部样式 */
+        .header { background:url(//cp.eecms.com/skin/dalu/img/head_bg.gif); height:108px; padding:8px; }
+        .nav { background:#00a6a6; color:#fff; padding:8px; }
+        .breadcrumb { background:#F8F0DA; padding:8px; display:flex; justify-content:space-between; }
+        
+        /* 功能组件 */
+        .back-top { 
+            position:fixed; bottom:20px; right:20px; width:50px; height:50px; 
+            background:#00a6a6; color:#fff; border-radius:50%; text-align:center; 
+            line-height:50px; font-size:36px; cursor:pointer; z-index:1000; 
+            display:none; 
+        }
+        .back-top:hover { background:#2980b9; }
+        .highlight { background:yellow; }
+        #toc { padding:5px; background:linear-gradient(to bottom,#EEE,#FFF); }
+        
+        /* 播放器样式 */
+        .player { width:100%; background:#f5e6c8; aspect-ratio:16/9; position:relative; }
+        .player video { width:100%; height:100%; display:none; }
+        .cover { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
+        .cover svg { width:60px; height:60px; opacity:.3; }
+        .cover-text { margin-top:10px; font-size:14px; color:#8a7a63; }
+        .playlist { padding:10px; }
+        .playlist-item { 
+            display:flex; justify-content:space-between; padding:10px; 
+            border-bottom:1px solid #eee; cursor:pointer; 
+        }
+        .playlist-item:hover { background:#f5f5f5; }
+        .playlist-item.active { background:#f5f0e6; border-left:3px solid #d4b483; }
+        .player-controls { padding:10px; display:flex; justify-content:space-between; }
+        .toggle-control { display:flex; align-items:center; cursor:pointer; }
+        .toggle-control span { margin-right:8px; color:#666; }
+        .toggle-switch { 
+            width:36px; height:18px; background:#ddd; border-radius:9px; 
+            position:relative; transition:background .3s; 
+        }
+        .toggle-switch.active { background:#d4b483; }
+        .toggle-switch::after { 
+            content:''; position:absolute; width:14px; height:14px; 
+            background:#fff; border-radius:50%; top:2px; left:2px; 
+            transition:transform .3s; 
+        }
+        .toggle-switch.active::after { transform:translateX(18px); }
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <div class="header">
+        <h1 style="font-size:24px;color:#fff;margin:40px 0;">大路的档案馆</h1>
+    </div>
+    
+    <!-- 导航 -->
+    <div class="nav">
+        <a href="/3/1005/#top" style="color:#fff;">主页</a> &nbsp;&nbsp;
+        <a href="/3/1005/#a1" style="color:#fff;">文字</a> &nbsp;&nbsp;<a href="/3/1005/#a2" style="color:#fff;">留声</a> &nbsp;&nbsp;<a href="/3/1005/#a3" style="color:#fff;">画报</a> &nbsp;&nbsp;<a href="/3/1005/#a4" style="color:#fff;">影像</a> &nbsp;&nbsp;<a href="/3/1005/#a5" style="color:#fff;">见证</a> &nbsp;&nbsp;    </div>
+    
+    <!-- 面包屑和搜索 -->
+    <div class="breadcrumb">
+        <span>位置 &gt; 内容详情</span>
+        <span>
+            <input type="text" size="9" id="searchInput" placeholder="页内查找">
+            <button onclick="performSearch()">搜索</button>
+        </span>
+    </div>
+    
+    <!-- 文章标题 -->
+
+    <div style="padding:10px; background:#fff; line-height:2;">
+	    <div style="background:#fff; text-align:center; padding:15px;">
+        <h2 style="font-size:16px;">我的生平</h2>
+    </div>
+   <hr>
+	<p>
+	1983 ➟ 公历7月5日出生 
+<br />
+	1990 ➟ 韩庄小学,成绩一般 
+<br />
+	1996 ➟ 郝寨中学，成绩较差 
+<br />
+	1999 ➟ 郝寨二中，成绩较差 
+<br />
+	2000 ➟ 社旗三高，成绩很差 
+<br />
+	2002 ➟ 广东打工，冲压员，统计员 
+<br />
+	2005 ➟ 市电视台，吧主，广告业务及拍摄剪辑 
+<br />
+	2009 ➟ 结婚，工作之外接私活 
+<br />
+	2010 ➟ 创业做企业网站，女儿出生 
+<br />
+	2014 ➟ 组织自媒体联盟 
+<br />
+	2015 ➟ 儿子出生为我的忧愁增添欢笑 
+<br />
+	2016 ➟ 北京做培训直播技术，国内各城市跑 
+<br />
+	2020 ➟ 山东直播助理，广州直播助理 
+<br />
+	2022 ➟ 春回南阳后，秋疫情彻底放开
+</p>
+    <div style="background:#fff; text-align:center; padding:15px;">
+        <h2 style="font-size:16px;">我是谁？</h2>
+    </div>
+   <hr>
+ 
+ <p>我觉得这样写，能够更快更清楚的认识一个人吧。<br />
+<br />
+<strong>今天是哪一天？</strong><br />
+2021年10月30日。<br />
+<br />
+<strong>最喜欢的作家或诗人有哪些？</strong><br />
+奥古斯丁，泰戈尔，沈从文，路遥等，记录真实又有诗意的作者。<br />
+<br />
+<strong>最惊叹最喜欢的书籍有哪些？</strong><br />
+忏悔录，吉檀迦利，平凡的世界，聊斋志异，<br />
+<br />
+<strong>喜爱的歌手或创作者有哪些？</strong><br />
+蔡琴，吕小敏，费玉清，美歌者，<br />
+<br />
+<strong>喜欢国内的哪些影视剧？</strong><br />
+侠女，新龙门客栈，唐伯虎点秋香，芙容镇，<br />
+<br />
+<strong>喜欢的明星或美女有哪些？</strong><br />
+现在没有了，不再看外貌，只是喜欢她的角色。<br />
+<br />
+<strong>喜欢的国外影视剧是？</strong><br />
+魔戒，2012，权利的游戏，<br />
+<br />
+<strong>喜欢的评书有哪些？</strong><br />
+三国演义，杨家将，三侠五义，<br />
+<br />
+<strong>生活中有哪些兴趣？</strong><br />
+阅读，闲思，写日记，摄影，爬山，乒乓球，写信，硬币收集，陪孩子下五子棋，看妻子户外劳动，<br />
+<br />
+<strong>去过哪些城市？</strong><br />
+郑州，武汉，北京，三亚，乌市，沈阳，银川，青岛，柳州，广州，<br />
+<br />
+<strong>有哪些被别人认可的技能或成就？</strong><br />
+电脑熟练，会做网页，会剪视频，会写点东西，<br />
+<br />
+<strong>怎么看待自己的擅长？</strong><br />
+早些年自认为很牛，后来发现只要愿意学人人都能会，不值得自豪。现在已经普及了。<br />
+<br />
+<strong>认为人生最重要的事是什么？</strong><br />
+找到心中的平安，<br />
+<br />
+<strong>认为好的人生应该是什么样的？</strong><br />
+努力就有收获，一生欢喜无忧；但从人性角度看，没人能一生无忧。<br />
+<br />
+<strong>有没有五年计划？</strong><br />
+没有计划，攒点钱在村里盖几间房子留着我和妻养老。<br />
+<br />
+<strong>对十年后的生活想做什么？</strong><br />
+养狗，放羊，种红薯，陪老婆，<br />
+<br />
+<strong>为什么不把志向放远大一些？</strong><br />
+没有意义，许多事是无奈的，心安就好。<br />
+<br />
+<strong>是什么事开始让你的思想发生转变？</strong><br />
+2014年围绕微信的创业和2020年对快手大主播的服务。不论再努力再聪明或运气再好，终究要面对失败，时势不会一直在。曾以为完美的事仍旧以失败告终，我不再相信自己的抉择是正确的，我承认了自己的愚蠢。<br />
+<br />
+<strong>哪一年开始心态才真正转变的？</strong><br />
+2020年吧，读了一些书，纠结痛苦下清晰坚定地改变了心态。<br />
+<br />
+<strong>最喜欢的道理或名言？</strong><br />
+爱你的仇敌，常常喜乐，凡事谢恩，<br />
+<br />
+<strong>最近十年主要做些什么事？</strong><br />
+做网站，培训直播，写博客，拍摄生活纪录片，<br />
+<br />
+<strong>最近一年主要做些什么事？</strong><br />
+上班，思考造物主，偶而写写感悟，<br />
+<br />
+<strong>人生中最幸运的事？</strong><br />
+娶到了现在的妻子，<br />
+<br />
+<strong>近来有什么高兴的事？</strong><br />
+小宝上一年级了，他的独立性很强；也想通了许多事，包括命运，我不需要撑控命运。<br />
+<br />
+<strong>近来有什么烦心的事？</strong><br />
+妻子对孩子的学习过于计较，她对道理的漠视，但我慢慢等待吧，<br />
+<br />
+<strong>人生中最不幸或遗憾的事？</strong><br />
+小时侯太胆小，如果人生重来，我要胆大调皮干坏事。<br />
+<br />
+<strong>令自己内疚或对不起的人或事？</strong><br />
+史**，李*，周静（娟），我拒绝了。赵姨，没对她说声谢谢。<br />
+<strong><br />
+关于自己的健康情况？</strong><br />
+上学时常生病，多是感冒上火发烧皮肤病等，结婚后极少生病了。<br />
+<br />
+<strong>有哪些难忘的经历？</strong><br />
+在广东工厂打工的三年，在电视台临时工的五年，在电脑市场创业的几年，</p>
+<p><strong>喜欢的开源程序有哪些？</strong><br />
+Discuz5.5，ECMS6.0，typecho</p>
+<p><strong>你坚持做的最长的一件事是什么？</strong><br />
+应该是写博客吧，从2004年至今有十七年了。刚才统计一下，文章写了800多篇，散文诗500多篇，记录生活点滴3800多条<br />
+<br />
+<strong>你还有别的坚持做的较长的事是什么？</strong><br />
+给妻子拍照片录视频从2008年至今有十三年了。记得前年统计过大概有十万张吧。<br />
+
+<br />
+---以下是2023年补充----<br /><br />
+
+<strong>如何对待伴侣，你有什么话？</strong><br />
+
+如果你正为此痛苦则对方正是做为历练你的工具，对方的软弱正也正是其可怜悯之处；妻子应该无条件爱丈夫，丈夫应该爱妻子胜过爱自己。<br /><br />
+
+<strong>在如何对待时间方面你有什么话？</strong><br />
+
+闲谈莫论人非，静坐常思己过；说人坏话并不能提高自己，反而一定会传到人耳中，要说就只说别人的好话，时间是宝贵的，自满是危险的，应该常常思想自己做的事、说的话、起心动态的初衷是否对自己的心灵有益。<br /><br />
+
+<strong>你觉得如何对待妻子或孩子，为什么？</strong><br />
+
+允许其出错，允许其犯错误，允许其不理解你，不过多的干涉，不对其不听话而烦恼；因为想要改变一个人本身就是错误。倘若你有比对方更多的爱，你应该忍受不被理解的委屈，任由其去做某件事，并且不说指责和难听的话。<br /><br />
+
+<strong>面对繁杂世事，人是否应该躲在僻静处或山野处？</strong><br />
+
+如果你觉得需要，那就需要；如果你觉得需要成长，那么在哪里都行，或许在闹市中的成长会更快。<br /><br />
+
+<strong>人需要建功立业获取想要的成功吗？</strong><br />
+
+如果你觉得需要，那就需要；你追求的是结果，但人生却只要你的过程，在你追求成功之路上锤炼你的心境。<br /><br />
+
+<strong>人如何面对烦恼？</strong><br />
+
+回过头来看，烦恼是有益的，它使我们更清更深地认识这个世界和自己的内心，能够处理掉烦恼是一项极少人能掌握的本领。<br /><br />
+
+<strong>如何处理烦恼？</strong><br />
+
+如果你正在烦恼，则证明你确实心胸狭小或是未经世事或是未顾及他人痛苦，应该先纠正自己与提升自己；<br /><br /> 
+
+<strong>信仰真的能解除烦恼吗？</strong><br />
+
+不一定，但如果你喜欢这尝试这些烦恼不愿离开，那么你就再忍耐一下，直到无法忍耐为止。因为信仰也是建立在无数次失败教训之后的牢固规则之上的，倘若不能站立在牢固规则之上那么你仍会摇摆、仍会烦恼，由此一个人也能判断自己是否真的具备信仰。<br /><br />
+
+<strong>如果你的孩子现在二十岁，正在读你的这篇文字，你想说？</strong><br />
+
+如果你有意中人想结婚，那就结吧，但是要先问自己一句，倘若对方变了或自己变了，是否会后悔今天的选择，是否会承担最坏的结果，如果答案是不后悔，那么我就支持。<br /><br />
+
+<strong>如果你的孩子现在三十岁，正在读你的这篇文字，你想说？</strong><br />
+
+如果你想放弃你的工作，那就放弃吧，人生不能一直的委屈求全，你可以在自己擅长或喜欢的领域做低成本的创业，你将体会你忙碌但却自由或可能失败的生活。但你是自由的，你是被爱的。<br /><br />
+
+<strong>如果你的孩子现在四十岁，正在读你的这篇文字，你想说？</strong><br />
+
+感谢命运，这时我大概不需要多说什么了，社会和时间已经在你心里给了你答案，你也能读懂我所有的文字了。四十而不惑，五十而知天命，所以人生余下的时间都是清醒的，也是为自己一生负责的时间，我们知道了什么事值得做，什么事不值得做，什么事自己能够做，什么事自己不能够做；我们成了好朋友，好兄弟，因为你儿时眼中的爸爸是个有血有肉的囧态百出的市井男人，他也是个不断思考不断尝试又不断原谅自己又不断激励自己的大男孩儿，如果爸爸还健在，我的孩子，你应该拎瓶好酒来找爸爸喝上两杯，告诉我你的成长还有你的喜悦与苦恼。如果那时候爸爸的头脑已经糊涂，做没有条理的事，说让人伤心的话，我的孩子，爸爸请求你能够原谅。<br /><br />
+
+ <strong>还有要补充的吗？你认为最重要的事</strong><br />
+两个字：信心。从我的经验与感受来说，这是人生通向安宁的钥匙，能够解决一切问题，是的，是能够解决一切问题。
+ 
+
+</div>
+    
+    <div style="padding:10px; background:#fff; font-size:12px;color:#ccc;">
+        发布日期：2015-08-22 <br>
+        最近更新：2026-02-04<br>
+    </div>
+    
+    <!-- 返回顶部 -->
+    <div class="back-top" id="backTop"><span style="color:#fff;">⇪</span></div>
+    
+    <!-- 页脚 -->
+    <div style="text-align:center; font-size:12px; color:#666; padding:20px;">
+        创建人:大路 联系TA:1005@mycst.com 联系平台:us@mycst.com<br>
+        主馆址:mycst.com/3/1005 本页创建:2015-08-22 本页更新:2026-02-04<br>
+        Copyright &copy; 1995-2019<br>
+        <a onclick="zh_tran('t')">繁体</a> | <a onclick="zh_tran('s')">简体</a> | <a href="//cp.eecms.com/e/member/cp">管理</a><br>
+        人生博物馆
+    </div>
+    
+    <!-- 通用脚本 -->
+    <script src="//cp.eecms.com/skin/dalu/js/tw2cn.js"></script>
+    <script>
+    // 懒加载
+    document.addEventListener('DOMContentLoaded', () => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    observer.unobserve(img);
+                }
+            });
+        });
+        
+        document.querySelectorAll('img.lazy').forEach(img => observer.observe(img));
+    });
+    
+    // 目录生成
+    const toc = document.getElementById('toc');
+    if (toc) {
+        const h3s = document.querySelectorAll('h3');
+        if (h3s.length) {
+            const ol = document.createElement('ol');
+            h3s.forEach((h3, i) => {
+                h3.id = `section-${i+1}`;
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="#${h3.id}">${h3.textContent}</a>`;
+                ol.appendChild(li);
+            });
+            toc.appendChild(ol);
+        }
+    }
+    
+    // 返回顶部
+    const backTop = document.getElementById('backTop');
+    window.addEventListener('scroll', () => {
+        backTop.style.display = window.scrollY > 200 ? 'block' : 'none';
+    });
+    backTop.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+    
+    // 页内搜索
+    function performSearch() {
+        const text = document.getElementById('searchInput').value.trim();
+        if (!text) return;
+        
+        // 清除之前的高亮
+        document.querySelectorAll('.highlight').forEach(el => {
+            el.replaceWith(...el.childNodes);
+        });
+        
+        // 搜索并高亮
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        const regex = new RegExp(`(${text})`, 'gi');
+        const ranges = [];
+        let node;
+        
+        while (node = walker.nextNode()) {
+            const matches = node.textContent.match(regex);
+            if (matches) {
+                let offset = 0;
+                matches.forEach(match => {
+                    const idx = node.textContent.indexOf(match, offset);
+                    const range = document.createRange();
+                    range.setStart(node, idx);
+                    range.setEnd(node, idx + match.length);
+                    ranges.push(range);
+                    offset = idx + match.length;
+                });
+            }
+        }
+        
+        ranges.forEach(range => {
+            const span = document.createElement('span');
+            span.className = 'highlight';
+            span.textContent = range.toString();
+            range.deleteContents();
+            range.insertNode(span);
+        });
+    }
+    </script>
+</body>
+</html>
