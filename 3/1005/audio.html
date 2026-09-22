@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>大路的档案馆 - 留声录音</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="留声录音">
+    <style>
+        @media (min-width:641px) { body { width:640px; margin:auto; } }
+        a { text-decoration:none; color:#036; } a:hover { text-decoration:underline; }
+        body { background:#6CC; font-size:16px; margin:auto; }
+        
+        /* 统一头部样式 */
+        .header { background:url(//cp.eecms.com/skin/dalu/img/head_bg.gif); height:108px; padding:8px; }
+        .nav { background:#00a6a6; color:#fff; padding:8px; }
+        .breadcrumb { background:#F8F0DA; padding:8px; display:flex; justify-content:space-between; }
+        
+        /* 功能组件 */
+        .back-top { 
+            position:fixed; bottom:20px; right:20px; width:50px; height:50px; 
+            background:#00a6a6; color:#fff; border-radius:50%; text-align:center; 
+            line-height:50px; font-size:36px; cursor:pointer; z-index:1000; 
+            display:none; 
+        }
+        .back-top:hover { background:#2980b9; }
+        .highlight { background:yellow; }
+        
+        
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <div class="header">
+        <h1 style="font-size:24px;color:#fff;margin:40px 0;">大路的档案馆</h1>
+    </div>
+    
+    <!-- 导航 -->
+    <div class="nav">
+        <a href="/3/1005/#top" style="color:#fff;">主页</a> &nbsp;&nbsp;
+        <a href="/3/1005/#a1" style="color:#fff;">文字</a> &nbsp;&nbsp;<a href="/3/1005/#a2" style="color:#fff;">留声</a> &nbsp;&nbsp;<a href="/3/1005/#a3" style="color:#fff;">画报</a> &nbsp;&nbsp;<a href="/3/1005/#a4" style="color:#fff;">影像</a> &nbsp;&nbsp;<a href="/3/1005/#a5" style="color:#fff;">见证</a> &nbsp;&nbsp;    </div>
+    
+    <!-- 面包屑和搜索 -->
+    <div class="breadcrumb">
+        <span>位置 &gt; 内容详情</span>
+        <span>
+            <input type="text" size="9" id="searchInput" placeholder="页内查找">
+            <button onclick="performSearch()">搜索</button>
+        </span>
+    </div>
+    
+    <!-- 文章标题 -->
+    <div style="background:#fff; text-align:center; padding:15px;">
+        <h2 style="font-size:16px;">留声录音</h2>
+    </div>
+    
+   <style>
+        /* 播放器容器 - 避免样式冲突，使用唯一类名 */
+        .audio-album-player {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            /*margin: 20px auto;*/
+            padding: 20px;
+            border: 1px solid #eee;
+           /* border-radius: 8px;*/
+            background: #f9f9f9;
+        }
+
+        /* 美化audio控件 */
+        .audio-album-player #main-audio {
+            width: 100%;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background: #fff;
+            padding: 8px;
+            box-sizing: border-box;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .audio-album-player .player-controls {
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 6px; /* 按钮间距 */
+            align-items: center;
+        }
+
+        /* 缩小控制按钮样式 */
+        .audio-album-player .control-btn {
+            padding: 4px 10px; /* 缩小内边距 */
+            border: none;
+            border-radius: 6px;
+            background: #f0f4f9;
+            color: #333;
+            cursor: pointer;
+            font-size: 12px; /* 缩小字体 */
+            transition: all 0.2s ease;
+            min-width: 70px;
+            height: 32px; /* 统一按钮高度 */
+        }
+
+        .audio-album-player .control-btn:hover {
+            background: #e1e9f3;
+        }
+
+        /* 播放模式按钮高亮样式 */
+        .audio-album-player .control-btn.mode-active {
+            background: #6CC;
+            color: white;
+        }
+
+        /* 上一曲/下一曲按钮特殊样式 */
+        .audio-album-player .prev-next-btn {
+            background: #6CC;
+            color: white;
+        }
+        .audio-album-player .prev-next-btn:hover {
+            background: #0056b3;
+        }
+
+        .audio-album-player .audio-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .audio-album-player .audio-item {
+            padding: 5px;
+			font-size: 14px;
+            margin: 5px 0;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .audio-album-player .audio-item:hover {
+            background: #e9f5ff;
+        }
+        .audio-album-player .audio-item.active {
+            background: #6CC;
+            color: white;
+        }
+    </style>
+
+    <!-- 播放器容器 - 使用唯一ID避免冲突 -->
+    <div id="custom-audio-album" class="audio-album-player">
+        <audio id="main-audio" controls preload="metadata"></audio>
+        <div class="player-controls">
+            <!-- 拆分播放模式为独立按钮 -->
+            <button class="control-btn mode-active" id="mode-single">单曲循环</button>
+            <button class="control-btn" id="mode-list">列表循环</button>
+            <!--<button class="control-btn" id="mode-none">顺序播放</button>
+             缩小的上一曲/下一曲按钮
+            <button class="control-btn prev-next-btn" id="prev-btn">上一曲</button>
+            <button class="control-btn prev-next-btn" id="next-btn">下一曲</button> -->
+        </div>
+        <ul class="audio-list" id="audio-list-container"></ul>
+    </div>
+
+    <script>
+        // 命名空间隔离 - 避免变量/函数冲突
+        const CustomAudioPlayer = (function() {
+            // 音频数据 - 按你的格式定义
+            const audioDataStr = `
+                210409我这样做直播@http://file.e651.com/3/1005/v/210409.mp3|||
+231018我少年时的无知@http://file.e651.com/3/1005/v/231018.mp3|||
+231121对自己的提醒@http://file.e651.com/3/1005/v/231121.mp3|||
+231129不能等待的感谢@http://file.e651.com/3/1005/v/231129.mp3|||
+231205给孩子的信@http://file.e651.com/3/1005/v/231205.mp3|||
+231206我的忍耐与等候@http://file.e651.com/3/1005/v/231206.mp3|||
+231207怜悯我的孩子@http://file.e651.com/3/1005/v/231207.mp3|||
+231208我是个无情的丈夫@http://file.e651.com/3/1005/v/231208.mp3|||
+231212劣根性的美意@http://file.e651.com/3/1005/v/231212.mp3|||
+231221认知即命运@http://file.e651.com/3/1005/v/231221.mp3|||
+231231追求的统一@http://file.e651.com/3/1005/v/231231.mp3|||
+240101苏醒的状态@http://file.e651.com/3/1005/v/240101.mp3|||
+                260204音频留档供未来训练@http://file.e651.com/3/1005/v/260204-ai.mp3|||
+            `;
+
+            // 解析音频数据
+            const parseAudioData = (str) => {
+                return str.trim()
+                    .split('|||')
+                    .filter(item => item.trim())
+                    .map((item, index) => {
+                        const [title, url] = item.split('@');
+                        return {
+                            id: `audio-${index + 1}`,
+                            title: title.trim(),
+                            url: url.trim()
+                        };
+                    });
+            };
+
+            // 播放器状态
+            const state = {
+                audioList: [],
+                currentIndex: 0,
+                playMode: 'single', // single:单曲循环, list:列表循环, none:顺序播放(播放完停止)
+                audioElement: null,
+                listContainer: null,
+                modeButtons: {
+                    single: null,
+                    list: null,
+                    none: null
+                }
+            };
+
+            // 初始化函数
+            const init = () => {
+                // 解析音频数据
+                state.audioList = parseAudioData(audioDataStr);
+                
+                // 获取DOM元素
+                state.audioElement = document.getElementById('main-audio');
+                state.listContainer = document.getElementById('audio-list-container');
+                
+                // 获取播放模式按钮
+                state.modeButtons.single = document.getElementById('mode-single');
+                state.modeButtons.list = document.getElementById('mode-list');
+                state.modeButtons.none = document.getElementById('mode-none');
+                
+                // 检查URL锚点
+                checkHash();
+                
+                // 渲染音频列表
+                renderAudioList();
+                
+                // 绑定事件
+                bindEvents();
+                
+                // 初始化播放
+                playAudio(state.currentIndex);
+            };
+
+            // 检查URL锚点并定位音频
+            const checkHash = () => {
+                const hash = window.location.hash.slice(1);
+                if (hash) {
+                    const targetIndex = state.audioList.findIndex(item => item.id === hash);
+                    if (targetIndex !== -1) {
+                        state.currentIndex = targetIndex;
+                    }
+                }
+            };
+
+            // 渲染音频列表
+            const renderAudioList = () => {
+                state.listContainer.innerHTML = '';
+                state.audioList.forEach((item, index) => {
+                    const li = document.createElement('li');
+                    li.className = `audio-item ${index === state.currentIndex ? 'active' : ''}`;
+                    li.dataset.index = index;
+                    li.id = item.id; // 设置锚点ID
+                    li.innerHTML = `
+                        <span>${index + 1}. ${item.title}</span>
+                    `;
+                    state.listContainer.appendChild(li);
+                });
+            };
+
+            // 播放指定索引的音频
+            const playAudio = (index) => {
+                if (index < 0 || index >= state.audioList.length) return;
+                
+                // 更新当前索引
+                state.currentIndex = index;
+                const currentAudio = state.audioList[index];
+                
+                // 更新音频源
+                state.audioElement.src = currentAudio.url;
+                state.audioElement.play().catch(err => console.log('播放失败:', err));
+                
+                // 更新URL锚点
+                window.location.hash = currentAudio.id;
+                
+                // 更新列表选中状态
+                document.querySelectorAll('.audio-item').forEach((item, i) => {
+                    item.classList.toggle('active', i === index);
+                });
+            };
+
+            // 设置播放模式
+            const setPlayMode = (mode) => {
+                state.playMode = mode;
+                
+                // 移除所有模式按钮的高亮
+                Object.values(state.modeButtons).forEach(btn => {
+                    btn.classList.remove('mode-active');
+                });
+                
+                // 高亮当前模式按钮
+                state.modeButtons[mode].classList.add('mode-active');
+            };
+
+            // 上一曲
+            const playPrev = () => {
+                let newIndex = state.currentIndex - 1;
+                if (newIndex < 0) {
+                    newIndex = state.playMode === 'list' ? state.audioList.length - 1 : 0;
+                }
+                playAudio(newIndex);
+            };
+
+            // 下一曲
+            const playNext = () => {
+                let newIndex = state.currentIndex + 1;
+                if (newIndex >= state.audioList.length) {
+                    newIndex = state.playMode === 'list' ? 0 : state.audioList.length - 1;
+                }
+                playAudio(newIndex);
+            };
+
+            // 绑定事件
+            const bindEvents = () => {
+                // 音频播放结束事件
+                state.audioElement.addEventListener('ended', () => {
+                    switch (state.playMode) {
+                        case 'single':
+                            state.audioElement.play(); // 单曲循环
+                            break;
+                        case 'list':
+                            playNext(); // 列表循环
+                            break;
+                        case 'none':
+                            // 顺序播放 - 播放完停止
+                            break;
+                    }
+                });
+
+                // 音频列表点击事件
+                state.listContainer.addEventListener('click', (e) => {
+                    const li = e.target.closest('.audio-item');
+                    if (li) {
+                        const index = parseInt(li.dataset.index);
+                        playAudio(index);
+                    }
+                });
+
+                // 播放模式按钮事件
+                state.modeButtons.single.addEventListener('click', () => setPlayMode('single'));
+                state.modeButtons.list.addEventListener('click', () => setPlayMode('list'));
+                state.modeButtons.none.addEventListener('click', () => setPlayMode('none'));
+
+                // 上一曲/下一曲按钮事件
+                document.getElementById('prev-btn').addEventListener('click', playPrev);
+                document.getElementById('next-btn').addEventListener('click', playNext);
+
+                // 监听锚点变化
+                window.addEventListener('hashchange', checkHash);
+            };
+
+            // 暴露初始化方法
+            return { init };
+        })();
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            CustomAudioPlayer.init();
+        });
+    </script>
+     
+ 
+    
+    <div style="padding:10px; background:#fff; font-size:12px;color:#ccc;">
+        发布日期：2013-08-22 <br>
+        最近更新：2026-02-03<br>
+        
+    </div>
+    
+    <!-- 返回顶部 -->
+    <div class="back-top" id="backTop"><span style="color:#fff;">⇪</span></div>
+    
+    <!-- 页脚 -->
+    <div style="text-align:center; font-size:12px; color:#666; padding:20px;">
+        创建人:大路 联系TA:1005@mycst.com 联系平台:us@mycst.com<br>
+        主馆址:mycst.com/3/1005 本页创建:2013-08-22 本页更新:2026-02-03<br>
+        Copyright &copy; 1995-2019<br>
+        <a onclick="zh_tran('t')">繁体</a> | <a onclick="zh_tran('s')">简体</a> | <a href="//cp.eecms.com/e/member/cp">管理</a><br>
+        人生博物馆
+    </div>
+    
+    <!-- 通用脚本 -->
+   
+    <script>
+    
+    
+    // 返回顶部
+    const backTop = document.getElementById('backTop');
+    window.addEventListener('scroll', () => {
+        backTop.style.display = window.scrollY > 200 ? 'block' : 'none';
+    });
+    backTop.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+    
+    // 页内搜索
+    function performSearch() {
+        const text = document.getElementById('searchInput').value.trim();
+        if (!text) return;
+        
+        // 清除之前的高亮
+        document.querySelectorAll('.highlight').forEach(el => {
+            el.replaceWith(...el.childNodes);
+        });
+        
+        // 搜索并高亮
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        const regex = new RegExp(`(${text})`, 'gi');
+        const ranges = [];
+        let node;
+        
+        while (node = walker.nextNode()) {
+            const matches = node.textContent.match(regex);
+            if (matches) {
+                let offset = 0;
+                matches.forEach(match => {
+                    const idx = node.textContent.indexOf(match, offset);
+                    const range = document.createRange();
+                    range.setStart(node, idx);
+                    range.setEnd(node, idx + match.length);
+                    ranges.push(range);
+                    offset = idx + match.length;
+                });
+            }
+        }
+        
+        ranges.forEach(range => {
+            const span = document.createElement('span');
+            span.className = 'highlight';
+            span.textContent = range.toString();
+            range.deleteContents();
+            range.insertNode(span);
+        });
+    }
+    </script>
+</body>
+</html>
