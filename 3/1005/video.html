@@ -1,11 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>大路的档案馆 - 2005年前后的视频片段</title>
+        <title>大路的档案馆 - 拾光留声</title>
     <meta name="keywords" content="">
-    <meta name="description" content="2005年前后的视频片段">
+    <meta name="description" content="拾光留声">
     <style>
         @media (min-width:641px) { body { width:640px; margin:auto; } }
         a { text-decoration:none; color:#036; } a:hover { text-decoration:underline; }
@@ -78,7 +79,7 @@
     
     <!-- 文章标题 -->
     <div style="background:#fff; text-align:center; padding:15px;">
-        <h2 style="font-size:16px;">2006年前后的视频片段</h2>
+        <h2 style="font-size:16px;">拾光留声</h2>
     </div>
     
     <!-- 媒体内容区域 -->
@@ -107,7 +108,7 @@
             
             <div id="video-data" data-items='[
 			{"id":"v1","t":"2006游武侯祠-自拍-同事小聚","s":"http://file.e651.com/3/1005/v/v-2006.webm","d":"02:17"},
-			{"id":"v2","t":"游武侯祠2","s":"http://file.e651.com/3/1005/v/200609wuhouci.mp4","d":"222"},
+			{"id":"v2","t":"240106唱个小曲","s":"http://file.e651.com/3/1005/v/240106.webm","d":"02:29"},
 			{"id":"v3","t":"游武侯祠3","s":"http://file.e651.com/3/1005/v/200609wuhouci.mp4","d":"222"}
 			]'></div>
             
@@ -170,9 +171,7 @@
             </script>
             </div>
     
-    <!-- 目录和内容 -->
-    <div id="toc"></div>
-    <div style="padding:10px; background:#fff; line-height:2;">123<p><video controls="controls" src="//file.e651.com/3/1005/v/200609wuhouci.mp4" width="100%" height="240"></video></p></div>
+  
     
     <div style="padding:10px; background:#fff; font-size:12px;color:#ccc;">
         发布日期：2006-09-04 <br>
@@ -185,7 +184,7 @@
     
     <!-- 页脚 -->
     <div style="text-align:center; font-size:12px; color:#666; padding:20px;">
-        创建人:大路 联系TA:1005@mycst.com 联系平台:us@mycst.com<br>
+        创建人:大路 联系TA:<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="facbcacacfba978399898ed4999597">[email&#160;protected]</a> 联系平台:<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="90e5e3d0fde9f3e3e4bef3fffd">[email&#160;protected]</a><br>
         主馆址:mycst.com/3/1005 本页创建:2006-09-04 本页更新:2026-02-05<br>
         Copyright &copy; 1995-2019<br>
         <a onclick="zh_tran('t')">繁体</a> | <a onclick="zh_tran('s')">简体</a> | <a href="//cp.eecms.com/e/member/cp">管理</a><br>
@@ -193,38 +192,9 @@
     </div>
     
     <!-- 通用脚本 -->
-    <script src="//cp.eecms.com/skin/dalu/js/tw2cn.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="//cp.eecms.com/skin/dalu/js/tw2cn.js"></script>
     <script>
-    // 懒加载
-    document.addEventListener('DOMContentLoaded', () => {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    img.src = img.dataset.src;
-                    observer.unobserve(img);
-                }
-            });
-        });
-        
-        document.querySelectorAll('img.lazy').forEach(img => observer.observe(img));
-    });
-    
-    // 目录生成
-    const toc = document.getElementById('toc');
-    if (toc) {
-        const h3s = document.querySelectorAll('h3');
-        if (h3s.length) {
-            const ol = document.createElement('ol');
-            h3s.forEach((h3, i) => {
-                h3.id = `section-${i+1}`;
-                const li = document.createElement('li');
-                li.innerHTML = `<a href="#${h3.id}">${h3.textContent}</a>`;
-                ol.appendChild(li);
-            });
-            toc.appendChild(ol);
-        }
-    }
+ 
     
     // 返回顶部
     const backTop = document.getElementById('backTop');
@@ -273,5 +243,6 @@
         });
     }
     </script>
+
 </body>
 </html>
